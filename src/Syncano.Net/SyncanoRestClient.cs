@@ -4,6 +4,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,7 +28,7 @@ namespace Syncano.Net
             _client = new HttpClient(new HttpClientHandler() {AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip, UseCookies = true});
         }
 
-        private string CreateGetUri(string methodName, ExpandoObject query = null)
+        private string CreateGetUri(string methodName, object query = null)
         {
             var sb = new StringBuilder(_baseUrl);
             sb.Append(methodName);
@@ -36,9 +37,9 @@ namespace Syncano.Net
 
             if (query != null)
             {
-                foreach (var each in query)
+                foreach (var each in Type.GetTypeFromHandle(query.GetType().TypeHandle).GetRuntimeProperties())
                 {
-                    sb.AppendFormat("&{0}={1}", each.Key, Uri.EscapeDataString(each.Value.ToString()));
+                    sb.AppendFormat("&{0}={1}", each.Name, Uri.EscapeDataString(each.GetValue(query).ToString()));
                 }
             }
 
@@ -47,7 +48,12 @@ namespace Syncano.Net
 
         private async Task<T> GetAsync<T>(string methodName, string contentToken, Func<JToken, T> getResult)
         {
-            var response = await _client.GetStringAsync(CreateGetUri(methodName));
+            return await GetAsync<T>(methodName, null, contentToken, getResult);
+        }
+
+        private async Task<T> GetAsync<T>(string methodName, object query, string contentToken, Func<JToken, T> getResult)
+        {
+            var response = await _client.GetStringAsync(CreateGetUri(methodName, query));
 
             var json = JObject.Parse(response);
             var result = json.SelectToken("result").Value<string>();
@@ -74,6 +80,11 @@ namespace Syncano.Net
         public async Task<List<Project>> GetProjects()
         {
             return await GetAsync("project.get", "project", t => t.ToObject<List<Project>>());
+        }
+
+        public Task<Project> GetProject(string projectId)
+        {
+            return GetAsync("project.get_one", new { project_id = projectId  }, "project", t => t.ToObject<Project>());
         }
     }
 }

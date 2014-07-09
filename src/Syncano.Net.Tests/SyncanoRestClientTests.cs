@@ -12,6 +12,9 @@ namespace Syncano.Net.Tests
         public const string InstanceName = "icy-brook-267066";
 
         public const string BackendAdminApiKey = "f020f3a62b2ea236100a732adcf60cb98683e2e5";
+
+        public const string ProjectName = "Default";
+        public const string ProjectId = "1288";
     }
 
     public class SyncanoRestClientTests : IDisposable
@@ -59,7 +62,18 @@ namespace Syncano.Net.Tests
 
             //then
             response.ShouldNotBeEmpty();
-            response.Any(p => p.Name == "Default").ShouldBeTrue();
+            response.Any(p => p.Name == TestData.ProjectName).ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task GetProject()
+        {
+            //when
+            var project = await _client.GetProject(TestData.ProjectId);
+
+            //then
+            project.Id.ShouldEqual(TestData.ProjectId);
+            project.Name.ShouldNotBeNull();
         }
 
 
