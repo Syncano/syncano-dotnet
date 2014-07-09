@@ -4,6 +4,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -26,18 +27,6 @@ namespace Syncano.Net
             _client = new HttpClient(new HttpClientHandler() {AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip, UseCookies = true});
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="userApiKey"></param>
-        /// <returns></returns>
-        public async Task<Response> StartSession()
-        {
-            var response = await _client.GetStringAsync(CreateGetUri("apikey.start_session"));
-
-            return JsonConvert.DeserializeObject<Response>(response);
-        }
-
         private string CreateGetUri(string methodName, ExpandoObject query = null)
         {
             var sb = new StringBuilder(_baseUrl);
@@ -56,34 +45,35 @@ namespace Syncano.Net
             return sb.ToString();
         }
 
+        private async Task<T> GetAsync<T>(string methodName, string contentToken, Func<JToken, T> getResult)
+        {
+            var response = await _client.GetStringAsync(CreateGetUri(methodName));
+
+            var json = JObject.Parse(response);
+            var result = json.SelectToken("result").Value<string>();
+            if (result == null)
+                throw new SyncanoException("Unexpected response: " + response);
+
+            if (result == "NOK")
+                throw new SyncanoException("Error: " + json.SelectToken("error").Value<string>());
+
+
+            return getResult(json.SelectToken(contentToken));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userApiKey"></param>
+        /// <returns></returns>
+        public Task<string> StartSession()
+        {
+            return GetAsync("apikey.start_session", "session_id", t => t.Value<string>());
+        }
+
         public async Task<List<Project>> GetProjects()
         {
-            var response = await _client.GetStringAsync(CreateGetUri("project.get"));
-
-            var projects = JObject.Parse(response).SelectToken("project");
-            
-            return projects.ToObject<List<Project>>();
-
+            return await GetAsync("project.get", "project", t => t.ToObject<List<Project>>());
         }
-    }
-
-
-    public class Project
-    {
-        [JsonProperty("id")]
-        public string Id { get; set; }
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-    }
-
-    public class Response
-    {
-        [JsonProperty("result")]
-        public string Result { get; set; }
-
-        [JsonProperty("session_id")]
-        public string SessionId { get; set; }
     }
 }

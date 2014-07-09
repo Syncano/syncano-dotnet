@@ -12,13 +12,12 @@ namespace Syncano.Net.Tests
         public const string InstanceName = "icy-brook-267066";
 
         public const string BackendAdminApiKey = "f020f3a62b2ea236100a732adcf60cb98683e2e5";
-        
     }
 
-    public class SyncanoRestClientTests  : IDisposable
+    public class SyncanoRestClientTests : IDisposable
     {
         private SyncanoRestClient _client;
-        
+
 
         public SyncanoRestClientTests()
         {
@@ -29,28 +28,43 @@ namespace Syncano.Net.Tests
         public async Task StartSession_WhenValidInstanceAndKey_CreatesSessionId()
         {
             //when 
-            var response = await _client.StartSession();
-         
+            var sessionId = await _client.StartSession();
+
             //then
-            response.Result.ShouldEqual("OK");
-            response.SessionId.ShouldNotBeNull();
+            sessionId.ShouldNotBeNull();
+        }
+
+
+        [Fact]
+        public async Task StartSession_WithInvalidKeys_ThrowsException()
+        {
+            try
+            {
+                var session = await new SyncanoRestClient(TestData.InstanceName, "2123").StartSession();
+
+                throw new Exception("StartSession should throw exception");
+                
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<SyncanoException>();
+            }
         }
 
         [Fact]
         public async Task GetProjects()
         {
-
             //when
             var response = await _client.GetProjects();
 
             //then
             response.ShouldNotBeEmpty();
-            response.Any(p => p.Name  == "Default").ShouldBeTrue();
+            response.Any(p => p.Name == "Default").ShouldBeTrue();
         }
+
 
         public void Dispose()
         {
-            
         }
     }
 }

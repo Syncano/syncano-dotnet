@@ -38,6 +38,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Project.cs" />
+    <Compile Include="SyncanoException.cs" />
     <Compile Include="SyncanoRestClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
