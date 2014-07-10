@@ -63,6 +63,35 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task NewProject_WithoutDescription_CreatesNewProjectObject()
+        {
+            //when
+            string projectName = "NewProject test " + DateTime.Now.ToLongTimeString() + " " +
+                                 DateTime.Now.ToShortDateString();
+
+            var project = await _client.NewProject(projectName);
+
+            //then
+            project.ShouldNotBeNull();
+            project.Description.ShouldBeNull();
+        }
+
+        [Fact]
+        public async Task NewProject_WithDescription_CreatesNewProjectObject()
+        {
+            //when
+            string projectName = "NewProject test " + DateTime.Now.ToLongTimeString() + " " +
+                                 DateTime.Now.ToShortDateString();
+            string projectDescription = "qwerty";
+
+            var project = await _client.NewProject(projectName, projectDescription);
+
+            //then
+            project.ShouldNotBeNull();
+            project.Description.ShouldEqual(projectDescription);
+        }
+
+        [Fact]
         public async Task GetProjects()
         {
             //when

@@ -81,14 +81,15 @@ namespace Syncano.Net
             return true;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="userApiKey"></param>
-        /// <returns></returns>
         public Task<string> StartSession()
         {
             return GetAsync("apikey.start_session", "session_id", t => t.Value<string>());
+        }
+
+        public Task<Project> NewProject(string name, string description = null)
+        {
+            return GetAsync("project.new", new {name = name, description = description}, "project",
+                t => t.ToObject<Project>());
         }
 
         public async Task<List<Project>> GetProjects()
