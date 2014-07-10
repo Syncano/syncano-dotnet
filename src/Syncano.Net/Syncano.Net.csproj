@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Folder.cs" />
+    <Compile Include="Permissions.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="SyncanoException.cs" />
     <Compile Include="SyncanoRestClient.cs" />

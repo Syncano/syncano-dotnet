@@ -21,6 +21,8 @@ namespace Syncano.Net.Tests
 
         public const string FolderName = "Default";
         public const string FolderId = "1";
+
+        public const string UserApiClientId = "1086";
     }
 
     public class SyncanoRestClientTests : IDisposable
@@ -239,6 +241,135 @@ namespace Syncano.Net.Tests
             {
                 await _client.UpdateFolder(TestData.ProjectId, TestData.FolderName, null, null);
                 throw new Exception("GetFolders should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task AuthorizeFolder_ByCollectionId()
+        {
+            //when
+            string folderName = "Authorize Test " + DateTime.Now.ToLongTimeString() + " " +
+                                DateTime.Now.ToShortDateString();
+            
+            await _client.NewFolder(TestData.ProjectId, folderName, TestData.CollectionId);
+            try
+            {
+                await _client.DeauthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
+                        TestData.FolderName, TestData.CollectionId);
+            }
+            catch (Exception) { }
+            
+
+            var result = await _client.AuthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
+                        TestData.FolderName, TestData.CollectionId);
+
+            await _client.DeleteFolder(TestData.ProjectId, folderName, TestData.CollectionId);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task AuthorizeFolder_ByCollectionKey()
+        {
+            //when
+            string folderName = "Authorize Test " + DateTime.Now.ToLongTimeString() + " " +
+                                DateTime.Now.ToShortDateString();
+
+            await _client.NewFolder(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
+            try
+            {
+                await _client.DeauthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
+                        TestData.FolderName, TestData.CollectionId);
+            }
+            catch (Exception) { }
+            
+
+            var result = await _client.AuthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
+                        TestData.FolderName, collectionKey: TestData.CollectionKey);
+
+            await _client.DeleteFolder(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task AuthorizeFolder_WithInvalidIdAndKey_ThrowsException()
+        {
+            try
+            {
+                await _client.AuthorizeFolder(TestData.UserApiClientId, Permissions.DeleteData, TestData.ProjectId,
+                        TestData.FolderName, null, null);
+                throw new Exception("AuthorizeFolder should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task DeauthorizeFolder_ByCollectionId()
+        {
+            //when
+            string folderName = "Authorize Test " + DateTime.Now.ToLongTimeString() + " " +
+                                DateTime.Now.ToShortDateString();
+
+            await _client.NewFolder(TestData.ProjectId, folderName, TestData.CollectionId);
+            try
+            {
+                await _client.AuthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
+                        TestData.FolderName, TestData.CollectionId);
+            }
+            catch (Exception) { }
+            
+
+            var result = await _client.DeauthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
+                        TestData.FolderName, TestData.CollectionId);
+
+            await _client.DeleteFolder(TestData.ProjectId, folderName, TestData.CollectionId);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task DeauthorizeFolder_ByCollectionKey()
+        {
+            //when
+            string folderName = "Authorize Test " + DateTime.Now.ToLongTimeString() + " " +
+                                DateTime.Now.ToShortDateString();
+
+            await _client.NewFolder(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
+            try
+            {
+                await _client.AuthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
+                        TestData.FolderName, TestData.CollectionId);
+            }
+            catch (Exception) { }
+
+            var result = await _client.DeauthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
+                        TestData.FolderName, collectionKey: TestData.CollectionKey);
+
+            await _client.DeleteFolder(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task DeauthorizeFolder_WithInvalidIdAndKey_ThrowsException()
+        {
+            try
+            {
+                await _client.DeauthorizeFolder(TestData.UserApiClientId, Permissions.DeleteData, TestData.ProjectId,
+                        TestData.FolderName, null, null);
+                throw new Exception("DeauthorizeFolder should throw an exception");
             }
             catch (Exception e)
             {

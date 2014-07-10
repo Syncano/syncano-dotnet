@@ -149,6 +149,46 @@ namespace Syncano.Net
                 });
         }
 
+        public Task<bool> AuthorizeFolder(string apiClientId, Permissions permission, string projectId, string folderName,
+            string collectionId = null, string collectionKey = null)
+        {
+            if (collectionId == null && collectionKey == null)
+                throw new ArgumentNullException();
+
+            string permissionString = PermissionsParser.GetString(permission);
+
+            return GetAsync("folder.authorize",
+                new
+                {
+                    api_client_id = apiClientId,
+                    permission = permissionString,
+                    project_id = projectId,
+                    collection_id = collectionId,
+                    collection_key = collectionKey,
+                    folder_name = folderName
+                });
+        }
+
+        public Task<bool> DeauthorizeFolder(string apiClientId, Permissions permission, string projectId, string folderName,
+            string collectionId = null, string collectionKey = null)
+        {
+            if (collectionId == null && collectionKey == null)
+                throw new ArgumentNullException();
+
+            string permissionString = PermissionsParser.GetString(permission);
+
+            return GetAsync("folder.deauthorize",
+                new
+                {
+                    api_client_id = apiClientId,
+                    permission = permissionString,
+                    project_id = projectId,
+                    collection_id = collectionId,
+                    collection_key = collectionKey,
+                    folder_name = folderName
+                });
+        }
+
         public Task<bool> DeleteFolder(string projectId, string name, string collectionId = null, string collectionKey = null)
         {
             if (collectionId == null && collectionKey == null)
