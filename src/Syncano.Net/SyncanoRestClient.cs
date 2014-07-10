@@ -102,6 +102,17 @@ namespace Syncano.Net
             return GetAsync("project.get_one", new { project_id = projectId }, "project", t => t.ToObject<Project>());
         }
 
+        public Task<Project> UpdateProject(string projectId, string name = null, string description = null)
+        {
+            return GetAsync("project.update", new {project_id = projectId, name = name, description = description},
+                "project", t => t.ToObject<Project>());
+        }
+
+        public Task<bool> DeleteProject(string projectId)
+        {
+            return GetAsync("project.delete", new {project_id = projectId});
+        }
+
         public Task<Folder> NewFolder(string projectId, string name, string collectionId = null,
             string collectionKey = null)
         {

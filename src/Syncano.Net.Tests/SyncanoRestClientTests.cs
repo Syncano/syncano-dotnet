@@ -114,6 +114,43 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task UpdateProject_CreatesProjectObjectWithNewValues()
+        {
+            //when
+            string projectName = "UpdateProject test " + DateTime.Now.ToLongTimeString() + " " +
+                                 DateTime.Now.ToShortDateString();
+            string projectNewName = "UpdateProject test new name" + DateTime.Now.ToLongTimeString() + " " +
+                                 DateTime.Now.ToShortDateString();
+            string projectOldDescription = "qwerty";
+            string projectNewDescription = "abc";
+
+            var project = await _client.NewProject(projectName, projectOldDescription);
+            project = await _client.UpdateProject(project.Id, projectNewName, projectNewDescription);
+            await _client.DeleteProject(project.Id);
+
+            //then
+            project.ShouldNotBeNull();
+            project.Name.ShouldEqual(projectNewName);
+            project.Description.ShouldEqual(projectNewDescription);
+        }
+
+        [Fact]
+        public async Task DeleteProject()
+        {
+            //when
+            string projectName = "NewProject test " + DateTime.Now.ToLongTimeString() + " " +
+                                 DateTime.Now.ToShortDateString();
+            string projectDescription = "qwerty";
+            var project = await _client.NewProject(projectName, projectDescription);
+
+            var result = await _client.DeleteProject(project.Id);
+
+            //then
+            result.ShouldBeTrue();
+
+        }
+
+        [Fact]
         public async Task NewFolder_ByCollectionId()
         {
             //when
