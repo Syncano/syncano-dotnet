@@ -191,6 +191,62 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task UpdateFolder_ByCollectionId()
+        {
+            //when
+            string folderName = "Test " + DateTime.Now.ToLongTimeString() + " " +
+                                DateTime.Now.ToShortDateString();
+            string newFolderName = "Update test " + DateTime.Now.ToLongTimeString() + " " +
+                                DateTime.Now.ToShortDateString();
+            await _client.NewFolder(TestData.ProjectId, folderName, TestData.CollectionId);
+
+            var result =
+                await
+                    _client.UpdateFolder(TestData.ProjectId, folderName, TestData.CollectionId, null, newFolderName,
+                        "qwerty");
+
+            await _client.DeleteFolder(TestData.ProjectId, newFolderName, TestData.CollectionId);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task UpdateFolder_ByCollectionKey()
+        {
+            //when
+            string folderName = "Test " + DateTime.Now.ToLongTimeString() + " " +
+                                DateTime.Now.ToShortDateString();
+            string newFolderName = "Update test " + DateTime.Now.ToLongTimeString() + " " +
+                                DateTime.Now.ToShortDateString();
+            await _client.NewFolder(TestData.ProjectId, folderName, TestData.CollectionId);
+
+            var result =
+                await
+                    _client.UpdateFolder(TestData.ProjectId, folderName, null, TestData.CollectionKey, newFolderName,
+                        "qwerty");
+
+            await _client.DeleteFolder(TestData.ProjectId, newFolderName, collectionKey: TestData.CollectionKey);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task UpdateFolder_WithInvalidIdAndKey_ThrowsException()
+        {
+            try
+            {
+                await _client.UpdateFolder(TestData.ProjectId, TestData.FolderName, null, null);
+                throw new Exception("GetFolders should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
         public async Task DeleteFolder_ByCollectionId()
         {
             //when

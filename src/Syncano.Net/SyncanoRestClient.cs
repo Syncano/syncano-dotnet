@@ -131,6 +131,24 @@ namespace Syncano.Net
                 t => t.ToObject<Folder>());
         }
 
+        public Task<bool> UpdateFolder(string projectId, string name, string collectionId = null,
+            string collectionKey = null, string newName = null, string sourceId = null)
+        {
+            if (collectionId == null && collectionKey == null)
+                throw new ArgumentNullException();
+
+            return GetAsync("folder.update",
+                new
+                {
+                    project_id = projectId,
+                    collection_id = collectionId,
+                    collection_key = collectionKey,
+                    name = name,
+                    new_name = newName,
+                    source_id = sourceId
+                });
+        }
+
         public Task<bool> DeleteFolder(string projectId, string name, string collectionId = null, string collectionKey = null)
         {
             if (collectionId == null && collectionKey == null)
