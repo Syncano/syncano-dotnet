@@ -108,6 +108,20 @@ namespace Syncano.Net
                 "project", t => t.ToObject<Project>());
         }
 
+        public Task<bool> AuthorizeProject(string apiClientId, Permissions permission, string projectId)
+        {
+            string permissionString = PermissionsParser.GetString(permission);
+            return GetAsync("project.authorize",
+                new {api_client_id = apiClientId, permission = permissionString, project_id = projectId});
+        }
+
+        public Task<bool> DeauthorizeProject(string apiClientId, Permissions permission, string projectId)
+        {
+            string permissionString = PermissionsParser.GetString(permission);
+            return GetAsync("project.deauthorize",
+                new { api_client_id = apiClientId, permission = permissionString, project_id = projectId });
+        }
+
         public Task<bool> DeleteProject(string projectId)
         {
             return GetAsync("project.delete", new {project_id = projectId});

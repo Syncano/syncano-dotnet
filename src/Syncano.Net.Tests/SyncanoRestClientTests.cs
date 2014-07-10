@@ -135,6 +135,50 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task AuthorizeProject()
+        {
+            //when
+            string projectName = "Authorize Test " + DateTime.Now.ToLongTimeString() + " " +
+                                DateTime.Now.ToShortDateString();
+
+            var project = await _client.NewProject(projectName);
+            try
+            {
+                await _client.DeauthorizeProject(TestData.UserApiClientId, Permissions.ReadData, project.Id);
+            }
+            catch (Exception) { }
+
+            var result = await _client.AuthorizeProject(TestData.UserApiClientId, Permissions.ReadData, project.Id);
+
+            await _client.DeleteProject(project.Id);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task DeauthorizeProject()
+        {
+            //when
+            string projectName = "Deauthorize Test " + DateTime.Now.ToLongTimeString() + " " +
+                                DateTime.Now.ToShortDateString();
+
+            var project = await _client.NewProject(projectName);
+            try
+            {
+                await _client.AuthorizeProject(TestData.UserApiClientId, Permissions.ReadData, project.Id);
+            }
+            catch (Exception) { }
+
+            var result = await _client.DeauthorizeProject(TestData.UserApiClientId, Permissions.ReadData, project.Id);
+
+            await _client.DeleteProject(project.Id);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
         public async Task DeleteProject()
         {
             //when
