@@ -65,11 +65,14 @@ namespace Syncano.Net.Tests
         [Fact]
         public async Task NewProject_WithoutDescription_CreatesNewProjectObject()
         {
-            //when
+            //given
             string projectName = "NewProject test " + DateTime.Now.ToLongTimeString() + " " +
                                  DateTime.Now.ToShortDateString();
 
+            //when
             var project = await _client.NewProject(projectName);
+
+            await _client.DeleteProject(project.Id);
 
             //then
             project.ShouldNotBeNull();
@@ -79,12 +82,15 @@ namespace Syncano.Net.Tests
         [Fact]
         public async Task NewProject_WithDescription_CreatesNewProjectObject()
         {
-            //when
+            //given
             string projectName = "NewProject test " + DateTime.Now.ToLongTimeString() + " " +
                                  DateTime.Now.ToShortDateString();
             string projectDescription = "qwerty";
 
+            //when
             var project = await _client.NewProject(projectName, projectDescription);
+
+            await _client.DeleteProject(project.Id);
 
             //then
             project.ShouldNotBeNull();
@@ -116,15 +122,16 @@ namespace Syncano.Net.Tests
         [Fact]
         public async Task UpdateProject_CreatesProjectObjectWithNewValues()
         {
-            //when
+            //given
             string projectName = "UpdateProject test " + DateTime.Now.ToLongTimeString() + " " +
                                  DateTime.Now.ToShortDateString();
             string projectNewName = "UpdateProject test new name" + DateTime.Now.ToLongTimeString() + " " +
                                  DateTime.Now.ToShortDateString();
             string projectOldDescription = "qwerty";
             string projectNewDescription = "abc";
-
             var project = await _client.NewProject(projectName, projectOldDescription);
+
+            //when
             project = await _client.UpdateProject(project.Id, projectNewName, projectNewDescription);
             await _client.DeleteProject(project.Id);
 
@@ -137,19 +144,15 @@ namespace Syncano.Net.Tests
         [Fact]
         public async Task AuthorizeProject()
         {
-            //when
+            //given
             string projectName = "Authorize Test " + DateTime.Now.ToLongTimeString() + " " +
                                 DateTime.Now.ToShortDateString();
 
             var project = await _client.NewProject(projectName);
-            try
-            {
-                await _client.DeauthorizeProject(TestData.UserApiClientId, Permissions.ReadData, project.Id);
-            }
-            catch (Exception) { }
 
+            //TODO: Permisions already given on new projects problem to investigate.
+            //when
             var result = await _client.AuthorizeProject(TestData.UserApiClientId, Permissions.ReadData, project.Id);
-
             await _client.DeleteProject(project.Id);
 
             //then
@@ -159,19 +162,15 @@ namespace Syncano.Net.Tests
         [Fact]
         public async Task DeauthorizeProject()
         {
-            //when
+            //given
             string projectName = "Deauthorize Test " + DateTime.Now.ToLongTimeString() + " " +
                                 DateTime.Now.ToShortDateString();
 
             var project = await _client.NewProject(projectName);
-            try
-            {
-                await _client.AuthorizeProject(TestData.UserApiClientId, Permissions.ReadData, project.Id);
-            }
-            catch (Exception) { }
 
+            //TODO: Permisions already given on new projects problem to investigate.
+            //when
             var result = await _client.DeauthorizeProject(TestData.UserApiClientId, Permissions.ReadData, project.Id);
-
             await _client.DeleteProject(project.Id);
 
             //then
@@ -181,12 +180,13 @@ namespace Syncano.Net.Tests
         [Fact]
         public async Task DeleteProject()
         {
-            //when
+            //given
             string projectName = "NewProject test " + DateTime.Now.ToLongTimeString() + " " +
                                  DateTime.Now.ToShortDateString();
             string projectDescription = "qwerty";
             var project = await _client.NewProject(projectName, projectDescription);
 
+            //when
             var result = await _client.DeleteProject(project.Id);
 
             //then
@@ -195,11 +195,37 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task NewCollection_CreatesNewCollectionObject()
+        {
+            //given
+            string collectionKey = "qwert";
+            string collectionDescription = "abcde";
+
+            //when
+            var collection = await _client.NewCollection(TestData.ProjectId,
+                "NewCollection test " + DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToShortDateString(),
+                collectionKey, collectionDescription);
+
+            //then
+            collection.ShouldNotBeNull();
+            collection.Status.ShouldEqual(CollectionStatus.Inactive);
+            collection.Key.ShouldEqual(collectionKey);
+            collection.Description.ShouldEqual(collectionDescription);
+
+        }
+
+        [Fact]
         public async Task NewFolder_ByCollectionId()
         {
+            //given
+            string folderName = "NewFolderTest  " + DateTime.Now.ToLongTimeString() + " " +
+                                DateTime.Now.ToShortDateString();
+
             //when
-            var folder = await _client.NewFolder(TestData.ProjectId, "NewFolderTest  " + DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToShortDateString(),
+            var folder = await _client.NewFolder(TestData.ProjectId, folderName,
                 TestData.CollectionId);
+
+            await _client.DeleteFolder(TestData.ProjectId, folderName, TestData.CollectionId);
 
             //then
             folder.Id.ShouldNotEqual(null);
@@ -208,9 +234,14 @@ namespace Syncano.Net.Tests
         [Fact]
         public async Task NewFolder_ByCollectionKey()
         {
+            //given
+            string folderName = "NewFolderTest  " + DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToShortDateString();
+
             //when
-            var folder = await _client.NewFolder(TestData.ProjectId, "NewFolderTest  " + DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToShortDateString(),
+            var folder = await _client.NewFolder(TestData.ProjectId, folderName,
                 collectionKey: TestData.CollectionKey);
+
+            await _client.DeleteFolder(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
 
             //then
             folder.Id.ShouldNotEqual(null);
@@ -221,11 +252,13 @@ namespace Syncano.Net.Tests
         {
             try
             {
+                //when
                 var response = await _client.NewFolder(TestData.ProjectId, TestData.FolderName,null, null);
                 throw new Exception("Get folders should throw an exception");
             }
             catch (Exception e)
             {
+                //then
                 e.ShouldBeType<ArgumentNullException>();
             }
         }
@@ -257,11 +290,13 @@ namespace Syncano.Net.Tests
         {
             try
             {
+                //when
                 var response = await _client.GetFolders(TestData.ProjectId, null, null);
                 throw new Exception("Get folders should throw an exception");
             }
             catch (Exception e)
             {
+                //then
                 e.ShouldBeType<ArgumentNullException>();
             }
         }
@@ -293,11 +328,13 @@ namespace Syncano.Net.Tests
         {
             try
             {
+                //when
                 var response = await _client.GetFolder(TestData.ProjectId, TestData.FolderName,null, null);
                 throw new Exception("GetFolders should throw an exception");
             }
             catch (Exception e)
             {
+                //then
                 e.ShouldBeType<ArgumentNullException>();
             }
         }
@@ -305,16 +342,15 @@ namespace Syncano.Net.Tests
         [Fact]
         public async Task UpdateFolder_ByCollectionId()
         {
-            //when
+            //given
             string folderName = "Test " + DateTime.Now.ToLongTimeString() + " " +
                                 DateTime.Now.ToShortDateString();
             string newFolderName = "Update test " + DateTime.Now.ToLongTimeString() + " " +
                                 DateTime.Now.ToShortDateString();
             await _client.NewFolder(TestData.ProjectId, folderName, TestData.CollectionId);
 
-            var result =
-                await
-                    _client.UpdateFolder(TestData.ProjectId, folderName, TestData.CollectionId, null, newFolderName,
+            //when
+            var result = await _client.UpdateFolder(TestData.ProjectId, folderName, TestData.CollectionId, null, newFolderName,
                         "qwerty");
 
             await _client.DeleteFolder(TestData.ProjectId, newFolderName, TestData.CollectionId);
@@ -326,16 +362,15 @@ namespace Syncano.Net.Tests
         [Fact]
         public async Task UpdateFolder_ByCollectionKey()
         {
-            //when
+            //given
             string folderName = "Test " + DateTime.Now.ToLongTimeString() + " " +
                                 DateTime.Now.ToShortDateString();
             string newFolderName = "Update test " + DateTime.Now.ToLongTimeString() + " " +
                                 DateTime.Now.ToShortDateString();
             await _client.NewFolder(TestData.ProjectId, folderName, TestData.CollectionId);
 
-            var result =
-                await
-                    _client.UpdateFolder(TestData.ProjectId, folderName, null, TestData.CollectionKey, newFolderName,
+            //when
+            var result = await  _client.UpdateFolder(TestData.ProjectId, folderName, null, TestData.CollectionKey, newFolderName,
                         "qwerty");
 
             await _client.DeleteFolder(TestData.ProjectId, newFolderName, collectionKey: TestData.CollectionKey);
@@ -349,11 +384,13 @@ namespace Syncano.Net.Tests
         {
             try
             {
+                //when
                 await _client.UpdateFolder(TestData.ProjectId, TestData.FolderName, null, null);
                 throw new Exception("GetFolders should throw an exception");
             }
             catch (Exception e)
             {
+                //then
                 e.ShouldBeType<ArgumentNullException>();
             }
         }
@@ -361,19 +398,14 @@ namespace Syncano.Net.Tests
         [Fact]
         public async Task AuthorizeFolder_ByCollectionId()
         {
-            //when
+            //given
             string folderName = "Authorize Test " + DateTime.Now.ToLongTimeString() + " " +
                                 DateTime.Now.ToShortDateString();
             
             await _client.NewFolder(TestData.ProjectId, folderName, TestData.CollectionId);
-            try
-            {
-                await _client.DeauthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
-                        TestData.FolderName, TestData.CollectionId);
-            }
-            catch (Exception) { }
-            
 
+            //TODO: Permisions already given on new folders problem to investigate.
+            //when
             var result = await _client.AuthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
                         TestData.FolderName, TestData.CollectionId);
 
@@ -386,19 +418,14 @@ namespace Syncano.Net.Tests
         [Fact]
         public async Task AuthorizeFolder_ByCollectionKey()
         {
-            //when
+            //given
             string folderName = "Authorize Test " + DateTime.Now.ToLongTimeString() + " " +
                                 DateTime.Now.ToShortDateString();
 
             await _client.NewFolder(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
-            try
-            {
-                await _client.DeauthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
-                        TestData.FolderName, TestData.CollectionId);
-            }
-            catch (Exception) { }
-            
 
+            //TODO: Permisions already given on new folders problem to investigate.
+            //when
             var result = await _client.AuthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
                         TestData.FolderName, collectionKey: TestData.CollectionKey);
 
@@ -413,12 +440,14 @@ namespace Syncano.Net.Tests
         {
             try
             {
+                //when
                 await _client.AuthorizeFolder(TestData.UserApiClientId, Permissions.DeleteData, TestData.ProjectId,
                         TestData.FolderName, null, null);
                 throw new Exception("AuthorizeFolder should throw an exception");
             }
             catch (Exception e)
             {
+                //then
                 e.ShouldBeType<ArgumentNullException>();
             }
         }
@@ -426,19 +455,14 @@ namespace Syncano.Net.Tests
         [Fact]
         public async Task DeauthorizeFolder_ByCollectionId()
         {
-            //when
+            //given
             string folderName = "Authorize Test " + DateTime.Now.ToLongTimeString() + " " +
                                 DateTime.Now.ToShortDateString();
 
             await _client.NewFolder(TestData.ProjectId, folderName, TestData.CollectionId);
-            try
-            {
-                await _client.AuthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
-                        TestData.FolderName, TestData.CollectionId);
-            }
-            catch (Exception) { }
-            
 
+            //TODO: Permisions already given on new folders problem to investigate.
+            //when
             var result = await _client.DeauthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
                         TestData.FolderName, TestData.CollectionId);
 
@@ -451,18 +475,14 @@ namespace Syncano.Net.Tests
         [Fact]
         public async Task DeauthorizeFolder_ByCollectionKey()
         {
-            //when
+            //given
             string folderName = "Authorize Test " + DateTime.Now.ToLongTimeString() + " " +
                                 DateTime.Now.ToShortDateString();
 
             await _client.NewFolder(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
-            try
-            {
-                await _client.AuthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
-                        TestData.FolderName, TestData.CollectionId);
-            }
-            catch (Exception) { }
 
+            //TODO: Permisions already given on new folders problem to investigate.
+            //when
             var result = await _client.DeauthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
                         TestData.FolderName, collectionKey: TestData.CollectionKey);
 
@@ -477,12 +497,14 @@ namespace Syncano.Net.Tests
         {
             try
             {
+                //when
                 await _client.DeauthorizeFolder(TestData.UserApiClientId, Permissions.DeleteData, TestData.ProjectId,
                         TestData.FolderName, null, null);
                 throw new Exception("DeauthorizeFolder should throw an exception");
             }
             catch (Exception e)
             {
+                //then
                 e.ShouldBeType<ArgumentNullException>();
             }
         }
@@ -490,10 +512,12 @@ namespace Syncano.Net.Tests
         [Fact]
         public async Task DeleteFolder_ByCollectionId()
         {
-            //when
+            //given
             string folderName = "Delete test " + DateTime.Now.ToLongTimeString() + " " +
                                 DateTime.Now.ToShortDateString();
             await _client.NewFolder(TestData.ProjectId, folderName, TestData.CollectionId);
+
+            //when
             var result = await _client.DeleteFolder(TestData.ProjectId, folderName, TestData.CollectionId);
 
             //then
@@ -503,10 +527,12 @@ namespace Syncano.Net.Tests
         [Fact]
         public async Task DeleteFolder_ByCollectionKey()
         {
-            //when
+            //given
             string folderName = "Delete test " + DateTime.Now.ToLongTimeString() + " " +
                                 DateTime.Now.ToShortDateString();
             await _client.NewFolder(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
+
+            //when
             var result = await _client.DeleteFolder(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
 
             //then
@@ -518,11 +544,13 @@ namespace Syncano.Net.Tests
         {
             try
             {
+                //when
                 await _client.DeleteFolder(TestData.ProjectId, TestData.FolderName, null, null);
                 throw new Exception("GetFolders should throw an exception");
             }
             catch (Exception e)
             {
+                //then
                 e.ShouldBeType<ArgumentNullException>();
             }
         }

@@ -127,6 +127,14 @@ namespace Syncano.Net
             return GetAsync("project.delete", new {project_id = projectId});
         }
 
+        public Task<Collection> NewCollection(string projectId, string name, string key = null,
+            string description = null)
+        {
+            return GetAsync("collection.new",
+                new {project_id = projectId, name = name, key = key, description = description}, "collection",
+                t => t.ToObject<Collection>());
+        }
+
         public Task<Folder> NewFolder(string projectId, string name, string collectionId = null,
             string collectionKey = null)
         {
