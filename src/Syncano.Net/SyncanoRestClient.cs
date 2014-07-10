@@ -86,5 +86,17 @@ namespace Syncano.Net
         {
             return GetAsync("project.get_one", new { project_id = projectId  }, "project", t => t.ToObject<Project>());
         }
+
+        public async Task<List<Folder>> GetFoldersByCollectionId(string projectId, string collectionId)
+        {
+            return await GetAsync("folder.get", new {project_id = projectId, collection_id = collectionId}, "folder",
+                        t => t.ToObject<List<Folder>>());
+        }
+
+        public async Task<List<Folder>> GetFoldersByCollectionKey(string projectId, string collectionKey)
+        {
+            return await GetAsync("folder.get", new { project_id = projectId, collection_key = collectionKey }, "folder",
+                        t => t.ToObject<List<Folder>>());
+        }
     }
 }

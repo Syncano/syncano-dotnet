@@ -15,6 +15,11 @@ namespace Syncano.Net.Tests
 
         public const string ProjectName = "Default";
         public const string ProjectId = "1288";
+
+        public const string CollectionId = "4995";
+        public const string CollectionKey = "default";
+
+        public const string FolderName = "Default";
     }
 
     public class SyncanoRestClientTests : IDisposable
@@ -74,6 +79,28 @@ namespace Syncano.Net.Tests
             //then
             project.Id.ShouldEqual(TestData.ProjectId);
             project.Name.ShouldNotBeNull();
+        }
+
+        [Fact]
+        public async Task GetFoldersByCollectionId()
+        {
+            //when
+            var response = await _client.GetFoldersByCollectionId(TestData.ProjectId, TestData.CollectionId);
+
+            //then
+            response.ShouldNotBeEmpty();
+            response.Any(f => f.Name == TestData.FolderName).ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task GetFoldersByCollectionKey()
+        {
+            //when
+            var response = await _client.GetFoldersByCollectionKey(TestData.ProjectId, TestData.CollectionKey);
+
+            //then
+            response.ShouldNotBeEmpty();
+            response.Any(f => f.Name == TestData.FolderName).ShouldBeTrue();
         }
 
 
