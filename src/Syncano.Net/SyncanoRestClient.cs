@@ -87,16 +87,76 @@ namespace Syncano.Net
             return GetAsync("project.get_one", new { project_id = projectId  }, "project", t => t.ToObject<Project>());
         }
 
-        public async Task<List<Folder>> GetFoldersByCollectionId(string projectId, string collectionId)
+        private Task<Folder> NewFolderByCollectionId(string projectId, string collectionId, string name)
         {
-            return await GetAsync("folder.get", new {project_id = projectId, collection_id = collectionId}, "folder",
+            return GetAsync("folder.new", new {project_id = projectId, collection_id = collectionId, name = name},
+                "folder", t => t.ToObject<Folder>());
+        }
+
+        private Task<Folder> NewFolderByCollectionKey(string projectId, string collectionKey, string name)
+        {
+            return GetAsync("folder.new", new { project_id = projectId, collection_key = collectionKey, name = name },
+                "folder", t => t.ToObject<Folder>());
+        }
+
+        public Task<Folder> NewFolder(string projectId, string name, string collectionId = null,
+            string collectionKey = null)
+        {
+            if (collectionId != null)
+                return NewFolderByCollectionId(projectId, collectionId, name);
+
+            if (collectionKey != null)
+                return NewFolderByCollectionKey(projectId, collectionKey, name);
+
+            throw new ArgumentNullException();
+        } 
+
+        private Task<List<Folder>> GetFoldersByCollectionId(string projectId, string collectionId)
+        {
+            return GetAsync("folder.get", new {project_id = projectId, collection_id = collectionId}, "folder",
                         t => t.ToObject<List<Folder>>());
         }
 
-        public async Task<List<Folder>> GetFoldersByCollectionKey(string projectId, string collectionKey)
+        private async Task<List<Folder>> GetFoldersByCollectionKey(string projectId, string collectionKey)
         {
             return await GetAsync("folder.get", new { project_id = projectId, collection_key = collectionKey }, "folder",
                         t => t.ToObject<List<Folder>>());
+        }
+
+        public async Task<List<Folder>> GetFolders(string projectId, string collectionId = null,
+            string collectionKey = null)
+        {
+            if (collectionId != null)
+                return await GetFoldersByCollectionId(projectId, collectionId);
+
+            if (collectionKey != null)
+                return await GetFoldersByCollectionKey(projectId, collectionKey);
+
+            throw  new ArgumentNullException();
+        }
+
+        private Task<Folder> GetFolderByCollectionId(string projectId, string collectionId, string folderName)
+        {
+            return GetAsync("folder.get_one", new {project_id = projectId, collection_id = collectionId, folder_name = folderName}, "folder",
+                t => t.ToObject<Folder>());
+        }
+
+        private Task<Folder> GetFolderByCollectionKey(string projectId, string collectionKey, string folderName)
+        {
+            return GetAsync("folder.get_one", new { project_id = projectId, collection_key = collectionKey, folder_name = folderName }, "folder",
+                t => t.ToObject<Folder>());
+        }
+
+        public Task<Folder> GetFolder(string projectId, string folderName, string collectionId = null,
+            string collectionKey = null)
+        {
+            if (collectionId != null)
+                return GetFolderByCollectionId(projectId, collectionId, folderName);
+
+            if (collectionKey != null)
+                return GetFolderByCollectionKey(projectId, collectionKey, folderName);
+
+            throw new ArgumentNullException();
         }
     }
 }

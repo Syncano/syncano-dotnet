@@ -20,6 +20,7 @@ namespace Syncano.Net.Tests
         public const string CollectionKey = "default";
 
         public const string FolderName = "Default";
+        public const string FolderId = "1";
     }
 
     public class SyncanoRestClientTests : IDisposable
@@ -82,10 +83,46 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
-        public async Task GetFoldersByCollectionId()
+        public async Task NewFolder_ByCollectionId()
         {
             //when
-            var response = await _client.GetFoldersByCollectionId(TestData.ProjectId, TestData.CollectionId);
+            var folder = await _client.NewFolder(TestData.ProjectId, "NewFolderTest  " + DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToShortDateString(),
+                TestData.CollectionId);
+
+            //then
+            folder.Id.ShouldNotEqual(null);
+        }
+
+        [Fact]
+        public async Task NewFolder_ByCollectionKey()
+        {
+            //when
+            var folder = await _client.NewFolder(TestData.ProjectId, "NewFolderTest  " + DateTime.Now.ToLongTimeString() + " " + DateTime.Now.ToShortDateString(),
+                collectionKey: TestData.CollectionKey);
+
+            //then
+            folder.Id.ShouldNotEqual(null);
+        }
+
+        [Fact]
+        public async Task NewFolder_WithInvalidIdAndKey_ThrowsException()
+        {
+            try
+            {
+                var response = await _client.NewFolder(TestData.ProjectId, TestData.FolderName,null, null);
+                throw new Exception("Get folders should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetFolders_ByCollectionId()
+        {
+            //when
+            var response = await _client.GetFolders(TestData.ProjectId, TestData.CollectionId);
 
             //then
             response.ShouldNotBeEmpty();
@@ -93,14 +130,64 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
-        public async Task GetFoldersByCollectionKey()
+        public async Task GetFolders_ByCollectionKey()
         {
             //when
-            var response = await _client.GetFoldersByCollectionKey(TestData.ProjectId, TestData.CollectionKey);
+            var response = await _client.GetFolders(TestData.ProjectId, collectionKey: TestData.CollectionKey);
 
             //then
             response.ShouldNotBeEmpty();
             response.Any(f => f.Name == TestData.FolderName).ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task GetFolders_WithInvalidIdAndKey_ThrowsException()
+        {
+            try
+            {
+                var response = await _client.GetFolders(TestData.ProjectId, null, null);
+                throw new Exception("Get folders should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetFolder_ByCollectionId()
+        {
+            //when
+            var folder = await _client.GetFolder(TestData.ProjectId, TestData.FolderName, TestData.CollectionId);
+
+            //then
+            folder.Id.ShouldEqual(TestData.FolderId);
+            folder.Name.ShouldEqual(TestData.FolderName);
+        }
+
+        [Fact]
+        public async Task GetFolder_ByCollectionKey()
+        {
+            //when
+            var folder = await _client.GetFolder(TestData.ProjectId, TestData.FolderName, collectionKey: TestData.CollectionKey);
+
+            //then
+            folder.Id.ShouldEqual(TestData.FolderId);
+            folder.Name.ShouldEqual(TestData.FolderName);
+        }
+
+        [Fact]
+        public async Task GetFolder_WithInvalidIdAndKey_ThrowsException()
+        {
+            try
+            {
+                var response = await _client.GetFolder(TestData.ProjectId, TestData.FolderName,null, null);
+                throw new Exception("Get folders should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<ArgumentNullException>();
+            }
         }
 
 
