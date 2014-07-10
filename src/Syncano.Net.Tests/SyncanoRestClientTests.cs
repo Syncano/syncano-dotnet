@@ -150,9 +150,9 @@ namespace Syncano.Net.Tests
 
             var project = await _client.NewProject(projectName);
 
-            //TODO: Permisions already given on new projects problem to investigate.
             //when
             var result = await _client.AuthorizeProject(TestData.UserApiClientId, Permissions.ReadData, project.Id);
+            await _client.DeauthorizeProject(TestData.UserApiClientId, Permissions.ReadData, project.Id);
             await _client.DeleteProject(project.Id);
 
             //then
@@ -167,8 +167,8 @@ namespace Syncano.Net.Tests
                                 DateTime.Now.ToShortDateString();
 
             var project = await _client.NewProject(projectName);
+            await _client.AuthorizeProject(TestData.UserApiClientId, Permissions.ReadData, project.Id);
 
-            //TODO: Permisions already given on new projects problem to investigate.
             //when
             var result = await _client.DeauthorizeProject(TestData.UserApiClientId, Permissions.ReadData, project.Id);
             await _client.DeleteProject(project.Id);
@@ -404,9 +404,11 @@ namespace Syncano.Net.Tests
             
             await _client.NewFolder(TestData.ProjectId, folderName, TestData.CollectionId);
 
-            //TODO: Permisions already given on new folders problem to investigate.
             //when
             var result = await _client.AuthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
+                        TestData.FolderName, TestData.CollectionId);
+
+            await _client.DeauthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
                         TestData.FolderName, TestData.CollectionId);
 
             await _client.DeleteFolder(TestData.ProjectId, folderName, TestData.CollectionId);
@@ -424,9 +426,11 @@ namespace Syncano.Net.Tests
 
             await _client.NewFolder(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
 
-            //TODO: Permisions already given on new folders problem to investigate.
             //when
             var result = await _client.AuthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
+                        TestData.FolderName, collectionKey: TestData.CollectionKey);
+
+            await _client.DeauthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
                         TestData.FolderName, collectionKey: TestData.CollectionKey);
 
             await _client.DeleteFolder(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
@@ -460,8 +464,9 @@ namespace Syncano.Net.Tests
                                 DateTime.Now.ToShortDateString();
 
             await _client.NewFolder(TestData.ProjectId, folderName, TestData.CollectionId);
+            await _client.AuthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
+                        TestData.FolderName, TestData.CollectionId);
 
-            //TODO: Permisions already given on new folders problem to investigate.
             //when
             var result = await _client.DeauthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
                         TestData.FolderName, TestData.CollectionId);
@@ -480,8 +485,9 @@ namespace Syncano.Net.Tests
                                 DateTime.Now.ToShortDateString();
 
             await _client.NewFolder(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
+            await _client.AuthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
+                        TestData.FolderName, collectionKey: TestData.CollectionKey);
 
-            //TODO: Permisions already given on new folders problem to investigate.
             //when
             var result = await _client.DeauthorizeFolder(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
                         TestData.FolderName, collectionKey: TestData.CollectionKey);
