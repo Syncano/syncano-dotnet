@@ -197,18 +197,10 @@ namespace Syncano.Net.Tests
             string folderName = "Delete test " + DateTime.Now.ToLongTimeString() + " " +
                                 DateTime.Now.ToShortDateString();
             await _client.NewFolder(TestData.ProjectId, folderName, TestData.CollectionId);
-            await _client.DeleteFolder(TestData.ProjectId, folderName, TestData.CollectionId);
+            var result = await _client.DeleteFolder(TestData.ProjectId, folderName, TestData.CollectionId);
 
             //then
-            try
-            {
-                var folder = await _client.GetFolder(TestData.ProjectId, folderName, TestData.CollectionId);
-                throw new Exception("GetFolder should throw an exception");
-            }
-            catch (Exception e)
-            {
-                e.ShouldBeType<SyncanoException>();
-            }
+            result.ShouldBeTrue();
         }
 
         [Fact]
@@ -218,18 +210,10 @@ namespace Syncano.Net.Tests
             string folderName = "Delete test " + DateTime.Now.ToLongTimeString() + " " +
                                 DateTime.Now.ToShortDateString();
             await _client.NewFolder(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
-            await _client.DeleteFolder(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
+            var result = await _client.DeleteFolder(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
 
             //then
-            try
-            {
-                var folder = await _client.GetFolder(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
-                throw new Exception("GetFolder should throw an exception");
-            }
-            catch (Exception e)
-            {
-                e.ShouldBeType<SyncanoException>();
-            }
+            result.ShouldBeTrue();
         }
 
         [Fact]
