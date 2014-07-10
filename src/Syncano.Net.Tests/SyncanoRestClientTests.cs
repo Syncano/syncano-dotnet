@@ -182,7 +182,63 @@ namespace Syncano.Net.Tests
             try
             {
                 var response = await _client.GetFolder(TestData.ProjectId, TestData.FolderName,null, null);
-                throw new Exception("Get folders should throw an exception");
+                throw new Exception("GetFolders should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task DeleteFolder_ByCollectionId()
+        {
+            //when
+            string folderName = "Delete test " + DateTime.Now.ToLongTimeString() + " " +
+                                DateTime.Now.ToShortDateString();
+            await _client.NewFolder(TestData.ProjectId, folderName, TestData.CollectionId);
+            await _client.DeleteFolder(TestData.ProjectId, folderName, TestData.CollectionId);
+
+            //then
+            try
+            {
+                var folder = await _client.GetFolder(TestData.ProjectId, folderName, TestData.CollectionId);
+                throw new Exception("GetFolder should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task DeleteFolder_ByCollectionKey()
+        {
+            //when
+            string folderName = "Delete test " + DateTime.Now.ToLongTimeString() + " " +
+                                DateTime.Now.ToShortDateString();
+            await _client.NewFolder(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
+            await _client.DeleteFolder(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
+
+            //then
+            try
+            {
+                var folder = await _client.GetFolder(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
+                throw new Exception("GetFolder should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task DeleteFolder_WithInvalidIdAndKey_ThrowsException()
+        {
+            try
+            {
+                await _client.DeleteFolder(TestData.ProjectId, TestData.FolderName, null, null);
+                throw new Exception("GetFolders should throw an exception");
             }
             catch (Exception e)
             {

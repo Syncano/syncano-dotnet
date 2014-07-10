@@ -67,6 +67,19 @@ namespace Syncano.Net
             return getResult(json.SelectToken(contentToken));
         }
 
+        private async Task GetAsync(string methodName, object query)
+        {
+            var response = await _client.GetStringAsync(CreateGetUri(methodName, query));
+
+            var json = JObject.Parse(response);
+            var result = json.SelectToken("result").Value<string>();
+            if (result == null)
+                throw new SyncanoException("Unexpected response: " + response);
+
+            if (result == "NOK")
+                throw new SyncanoException("Error: " + json.SelectToken("error").Value<string>());
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -158,5 +171,28 @@ namespace Syncano.Net
 
             throw new ArgumentNullException();
         }
+
+        private Task DeleteFolderByCollectionId(string projectId, string name, string collectionId)
+        {
+            return GetAsync("folder.delete", new {project_id = projectId, collection_id = collectionId, name = name});
+        }
+
+        private Task DeleteFolderByCollectionKey(string projectId, string name, string collectionKey)
+        {
+            return GetAsync("folder.delete", new { project_id = projectId, collection_key = collectionKey, name = name });
+        }
+
+        public Task DeleteFolder(string projectId, string name, string collectionId = null, string collectionKey = null)
+        {
+            if (collectionId != null)
+                return DeleteFolderByCollectionId(projectId, name, collectionId);
+
+            if (collectionKey != null)
+                return DeleteFolderByCollectionKey(projectId, name, collectionKey);
+
+            throw new ArgumentNullException();
+        }
+
+        
     }
 }
