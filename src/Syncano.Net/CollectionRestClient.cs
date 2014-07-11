@@ -140,6 +140,9 @@ namespace Syncano.Net
         public Task<bool> AddTag(string projectId, IEnumerable<string> tags, string collectionId = null, string collectionKey = null,
             double weight = 1.0, bool removeOther = false)
         {
+            if (collectionId == null && collectionKey == null)
+                throw new ArgumentNullException();
+
             return _restClient.GetAsync("collection.add_tag",
                 new
                 {
@@ -147,7 +150,7 @@ namespace Syncano.Net
                     collection_id = collectionId,
                     collection_key = collectionKey,
                     tags = tags.ToArray(),
-                    weight = weight,
+                    weight = weight.ToString(CultureInfo.InvariantCulture),
                     remove_other = removeOther
                 });
         }
