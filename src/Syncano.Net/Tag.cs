@@ -2,12 +2,12 @@
 
 namespace Syncano.Net
 {
-    public class Tag
+    public class Tags
     {
-        [JsonProperty("name")]
-        public string Name { get; set; }
+        //[JsonProperty("name")]
+        //public string Name { get; set; }
 
-        [JsonProperty("weight")]
-        public decimal Weight { get; set; }
+        //[JsonProperty("weight")]
+        //public decimal Weight { get; set; }
     }
 }
