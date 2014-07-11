@@ -39,8 +39,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collection.cs" />
+    <Compile Include="CollectionRestClient.cs" />
     <Compile Include="CollectionStatus.cs" />
     <Compile Include="Folder.cs" />
+    <Compile Include="FolderRestClient.cs" />
     <Compile Include="Permissions.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="ProjectRestClient.cs" />
