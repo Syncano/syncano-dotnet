@@ -60,12 +60,12 @@ namespace Syncano.Net
             return json;
         }
 
-        private async Task<T> GetAsync<T>(string methodName, string contentToken, Func<JToken, T> getResult)
+        public async Task<T> GetAsync<T>(string methodName, string contentToken, Func<JToken, T> getResult)
         {
             return await GetAsync<T>(methodName, null, contentToken, getResult);
         }
 
-        private async Task<T> GetAsync<T>(string methodName, object query, string contentToken, Func<JToken, T> getResult)
+        public async Task<T> GetAsync<T>(string methodName, object query, string contentToken, Func<JToken, T> getResult)
         {
             var response = await _client.GetStringAsync(CreateGetUri(methodName, query));
             var json = CheckResponseStatus(response);
