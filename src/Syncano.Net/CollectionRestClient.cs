@@ -55,6 +55,44 @@ namespace Syncano.Net
                 }, "collection", t => t.ToObject<Collection>());
         }
 
+        public Task<bool> Authorize(string apiClientId, Permissions permission, string projectId,
+            string collectionId = null, string collectionKey = null)
+        {
+            if(collectionId == null && collectionKey == null)
+                throw new ArgumentNullException();
+
+            string permissionString = PermissionsParser.GetString(permission);
+
+            return _restClient.GetAsync("collection.authorize",
+                new
+                {
+                    api_client_id = apiClientId,
+                    permission = permissionString,
+                    project_id = projectId,
+                    collection_id = collectionId,
+                    collection_key = collectionKey
+                });
+        }
+
+        public Task<bool> Deauthorize(string apiClientId, Permissions permission, string projectId,
+            string collectionId = null, string collectionKey = null)
+        {
+            if (collectionId == null && collectionKey == null)
+                throw new ArgumentNullException();
+
+            string permissionString = PermissionsParser.GetString(permission);
+
+            return _restClient.GetAsync("collection.deauthorize",
+                new
+                {
+                    api_client_id = apiClientId,
+                    permission = permissionString,
+                    project_id = projectId,
+                    collection_id = collectionId,
+                    collection_key = collectionKey
+                });
+        }
+
         public Task<bool> Delete(string projectId, string collectionId = null, string collectionKey = null)
         {
             if(collectionId == null && collectionKey == null)

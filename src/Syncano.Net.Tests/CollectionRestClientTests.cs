@@ -251,6 +251,136 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task Authorize_ByCollectionId()
+        {
+            //given
+            string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
+                                    DateTime.Now.ToShortDateString();
+
+            var collection =
+                await _client.Collections.New(TestData.ProjectId, collectionName);
+
+            //when
+            var result =
+                await
+                    _client.Collections.Authorize(TestData.UserApiClientId, Permissions.UpdateOwnData,
+                        TestData.ProjectId, collection.Id);
+
+            await _client.Collections.Deauthorize(TestData.UserApiClientId, Permissions.UpdateOwnData,
+                        TestData.ProjectId, collection.Id);
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task Authorize_ByCollectionKey()
+        {
+            //given
+            string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
+                                    DateTime.Now.ToShortDateString();
+            string collectionKey = "qwert";
+
+            var collection =
+                await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
+            await _client.Collections.Activate(TestData.ProjectId, collection.Id, true);
+
+            //when
+            var result =
+                await
+                    _client.Collections.Authorize(TestData.UserApiClientId, Permissions.UpdateOwnData,
+                        TestData.ProjectId, collectionKey: collectionKey);
+
+            await _client.Collections.Deauthorize(TestData.UserApiClientId, Permissions.UpdateOwnData,
+                        TestData.ProjectId, collection.Id);
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task Authorize_WithInvalidIdAndKey_ThrowsException()
+        {
+            try
+            {
+                //when
+                await
+                    _client.Collections.Authorize(TestData.UserApiClientId, Permissions.DeleteOwnData,
+                        TestData.ProjectId);
+                throw new Exception("Delete should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Deauthorize_ByCollectionId()
+        {
+            //given
+            string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
+                                    DateTime.Now.ToShortDateString();
+
+            var collection =
+                await _client.Collections.New(TestData.ProjectId, collectionName);
+
+                await _client.Collections.Authorize(TestData.UserApiClientId, Permissions.UpdateOwnData,
+                        TestData.ProjectId, collection.Id);
+
+            //when
+            var result = await _client.Collections.Deauthorize(TestData.UserApiClientId, Permissions.UpdateOwnData,
+                        TestData.ProjectId, collection.Id);
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task Deauthorize_ByCollectionKey()
+        {
+            //given
+            string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
+                                    DateTime.Now.ToShortDateString();
+            string collectionKey = "qwert";
+
+            var collection =
+                await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
+            await _client.Collections.Activate(TestData.ProjectId, collection.Id, true);
+
+            await _client.Collections.Authorize(TestData.UserApiClientId, Permissions.UpdateOwnData,
+                        TestData.ProjectId, collectionKey: collectionKey);
+
+            //when
+            var result = await _client.Collections.Deauthorize(TestData.UserApiClientId, Permissions.UpdateOwnData,
+                        TestData.ProjectId, collection.Id);
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task Deauthorize_WithInvalidIdAndKey_ThrowsException()
+        {
+            try
+            {
+                //when
+                await
+                    _client.Collections.Deauthorize(TestData.UserApiClientId, Permissions.DeleteOwnData,
+                        TestData.ProjectId);
+                throw new Exception("Delete should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
         public async Task Delete_ByCollectionId()
         {
             //given
