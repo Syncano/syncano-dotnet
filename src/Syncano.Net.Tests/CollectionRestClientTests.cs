@@ -59,6 +59,60 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task Get_OneTagVersion_WithoutTagAndStatus()
+        {
+            //when
+            var result = await _client.Collections.Get(TestData.ProjectId);
+
+            //then
+            result.ShouldNotBeEmpty();
+        }
+
+        [Fact]
+        public async Task Get_OneTagVersion_WithoutTag_ActiveStatus()
+        {
+            //when
+            var result = await _client.Collections.Get(TestData.ProjectId, CollectionStatus.Active);
+
+            //then
+            result.ShouldNotBeEmpty();
+            result.Any(c => c.Id == TestData.CollectionId).ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task Get_OneTagVersion_WithoutTag_InctiveStatus()
+        {
+            //given
+            var collection = await _client.Collections.New(TestData.ProjectId, "Get test");
+
+            //when
+            var result = await _client.Collections.Get(TestData.ProjectId, CollectionStatus.Inactive);
+
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldNotBeEmpty();
+            result.Any(c => c.Id == collection.Id).ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task Get_OneTagVersion_WithTagWithoutStatus()
+        {
+            //given
+            string tag = "qwert";
+            var collection = await _client.Collections.New(TestData.ProjectId, "Get test");
+            await _client.Collections.AddTag(TestData.ProjectId, tag, collection.Id);
+
+            //when
+            var result = await _client.Collections.Get(TestData.ProjectId, withTag: tag);
+
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldNotBeEmpty();
+        }
+
+        [Fact]
         public async Task Activate_WithForce()
         {
             //given

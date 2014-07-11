@@ -23,6 +23,20 @@ namespace Syncano.Net
                 t => t.ToObject<Collection>());
         }
 
+        public async Task<List<Collection>> Get(string projectId, CollectionStatus status = CollectionStatus.All,
+            string withTag = null)
+        {
+            return await _restClient.GetAsync("collection.get",
+                new {project_id = projectId, status = status, with_tags = withTag}, "collection",
+                t => t.ToObject<List<Collection>>());
+        }
+
+        //public async Task<List<Collection>> Get(string projectId, CollectionStatus status = CollectionStatus.All,
+        //    IEnumerable<string> withTags = null)
+        //{
+
+        //}
+
         public Task<bool> Activate(string projectId, string collectionId, bool force = false)
         {
             return _restClient.GetAsync("collection.activate",
@@ -100,6 +114,21 @@ namespace Syncano.Net
 
             return _restClient.GetAsync("collection.delete",
                 new {project_id = projectId, collection_id = collectionId, collection_key = collectionKey});
+        }
+
+        public Task<bool> AddTag(string projectId, string tag, string collectionId = null, string collectionKey = null, 
+            double weight = 1.0, bool removeOther = false)
+        {
+            return _restClient.GetAsync("collection.add_tag",
+                new
+                {
+                    project_id = projectId,
+                    collection_id = collectionId,
+                    collection_key = collectionKey,
+                    tags = tag,
+                    weight = weight,
+                    remove_other = removeOther
+                });
         }
     }
 }

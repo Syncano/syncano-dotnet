@@ -29,6 +29,6 @@ namespace Syncano.Net
         public string EndDate { get; set; }
 
         [JsonProperty("tags")]
-        public Tags Tags { get; set; }
+        public Dictionary<string, double> Tags { get; set; }
     }
 }
