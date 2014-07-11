@@ -485,6 +485,107 @@ namespace Syncano.Net.Tests
             }
         }
 
+        [Fact]
+        public async Task AddTag_SingleTagVersion_ByCollectionId_WithoutWeightAndRemoveOther()
+        {
+            //given
+            string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
+                                    DateTime.Now.ToShortDateString();
+            string collectionKey = "qwert";
+            string tag = "abcde";
+
+            var collection =
+                await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
+
+            //when
+            var result = await _client.Collections.AddTag(TestData.ProjectId, tag, collection.Id);
+
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task AddTag_SingleTagVersion_ByCollectionId_WithWeightAndRemoveOther()
+        {
+            //given
+            string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
+                                    DateTime.Now.ToShortDateString();
+            string collectionKey = "qwert";
+            string tag = "abcde";
+
+            var collection =
+                await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
+
+            //when
+            var result = await _client.Collections.AddTag(TestData.ProjectId, tag, collection.Id, weight: 3.5, removeOther: true);
+
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task AddTag_SingleTagVersion_ByCollectionKey_WithoutWeightAndRemoveOther()
+        {
+            //given
+            string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
+                                    DateTime.Now.ToShortDateString();
+            string collectionKey = "qwert";
+            string tag = "abcde";
+
+            var collection =
+                await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
+            await _client.Collections.Activate(TestData.ProjectId, collection.Id);
+
+            //when
+            var result = await _client.Collections.AddTag(TestData.ProjectId, tag, collectionKey: collectionKey);
+
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task AddTag_SingleTagVersion_ByCollectionKey_WithWeightAndRemoveOther()
+        {
+            //given
+            string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
+                                    DateTime.Now.ToShortDateString();
+            string collectionKey = "qwert";
+            string tag = "abcde";
+
+            var collection =
+                await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
+            await _client.Collections.Activate(TestData.ProjectId, collection.Id);
+
+            //when
+            var result = await _client.Collections.AddTag(TestData.ProjectId, tag, collectionKey: collectionKey, weight: 3.5, removeOther: true);
+
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task Add_Tag_SingleTagVersion_WithInvalidKeyAndId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Collections.AddTag(TestData.ProjectId, "tag");
+                throw new Exception("AddTag should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
         public void Dispose()
         {
         }

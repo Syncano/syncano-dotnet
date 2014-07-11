@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -119,6 +120,9 @@ namespace Syncano.Net
         public Task<bool> AddTag(string projectId, string tag, string collectionId = null, string collectionKey = null, 
             double weight = 1.0, bool removeOther = false)
         {
+            if(collectionId == null && collectionKey == null)
+                throw new ArgumentNullException();
+
             return _restClient.GetAsync("collection.add_tag",
                 new
                 {
@@ -126,6 +130,21 @@ namespace Syncano.Net
                     collection_id = collectionId,
                     collection_key = collectionKey,
                     tags = tag,
+                    weight = weight.ToString(CultureInfo.InvariantCulture),
+                    remove_other = removeOther
+                });
+        }
+
+        public Task<bool> AddTag(string projectId, IEnumerable<string> tags, string collectionId = null, string collectionKey = null,
+            double weight = 1.0, bool removeOther = false)
+        {
+            return _restClient.GetAsync("collection.add_tag",
+                new
+                {
+                    project_id = projectId,
+                    collection_id = collectionId,
+                    collection_key = collectionKey,
+                    tags = tags.ToArray(),
                     weight = weight,
                     remove_other = removeOther
                 });
