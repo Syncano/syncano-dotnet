@@ -154,5 +154,35 @@ namespace Syncano.Net
                     remove_other = removeOther
                 });
         }
+
+        public Task<bool> DeleteTag(string projectId, string tag, string collectionId = null, string collectionKey = null)
+        {
+            if (collectionId == null && collectionKey == null || tag == null)
+                throw new ArgumentNullException();
+
+            return _restClient.GetAsync("collection.delete_tag",
+                new
+                {
+                    project_id = projectId,
+                    collection_id = collectionId,
+                    collection_key = collectionKey,
+                    tags = tag,
+                });
+        }
+
+        public Task<bool> DeleteTag(string projectId, IEnumerable<string> tags, string collectionId = null, string collectionKey = null)
+        {
+            if (collectionId == null && collectionKey == null || tags == null)
+                throw new ArgumentNullException();
+
+            return _restClient.GetAsync("collection.delete_tag",
+                new
+                {
+                    project_id = projectId,
+                    collection_id = collectionId,
+                    collection_key = collectionKey,
+                    tags = tags.ToArray(),
+                });
+        }
     }
 }

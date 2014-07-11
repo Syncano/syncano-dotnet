@@ -572,7 +572,7 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
-        public async Task Add_Tag_SingleTagVersion_WithInvalidKeyAndId_ThrowsException()
+        public async Task AddTag_SingleTagVersion_WithInvalidKeyAndId_ThrowsException()
         {
             try
             {
@@ -686,7 +686,7 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
-        public async Task Add_Tag_MultipleTagVersion_WithInvalidKeyAndId_ThrowsException()
+        public async Task AddTag_MultipleTagVersion_WithInvalidKeyAndId_ThrowsException()
         {
             //given
             string[] tags = new[] {"abc", "def", "ghi"};
@@ -723,6 +723,305 @@ namespace Syncano.Net.Tests
                 await
                     _client.Collections.AddTag(TestData.ProjectId, tags, collectionKey: collectionKey, weight: 10.84,
                         removeOther: true);
+                throw new Exception("AddTag should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+        }
+
+        [Fact]
+        public async Task DeleteTag_SingleTagVersion_ByCollectionId_WithoutWeightAndRemoveOther()
+        {
+            //given
+            string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
+                                    DateTime.Now.ToShortDateString();
+            string collectionKey = "qwert";
+            string tag = "abcde";
+
+            var collection =
+                await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
+
+            await _client.Collections.AddTag(TestData.ProjectId, tag, collection.Id);
+
+            //when
+            var result = await _client.Collections.DeleteTag(TestData.ProjectId, tag, collection.Id);
+
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task DeleteTag_SingleTagVersion_ByCollectionId_WithWeightAndRemoveOther()
+        {
+            //given
+            string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
+                                    DateTime.Now.ToShortDateString();
+            string collectionKey = "qwert";
+            string tag = "abcde";
+
+            var collection =
+                await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
+
+            await _client.Collections.AddTag(TestData.ProjectId, tag, collection.Id, weight: 3.5, removeOther: true);
+
+            //when
+            var result = await _client.Collections.DeleteTag(TestData.ProjectId, tag, collection.Id);
+
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task DeleteTag_SingleTagVersion_ByCollectionKey_WithoutWeightAndRemoveOther()
+        {
+            //given
+            string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
+                                    DateTime.Now.ToShortDateString();
+            string collectionKey = "qwert";
+            string tag = "abcde";
+
+            var collection =
+                await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
+            await _client.Collections.Activate(TestData.ProjectId, collection.Id);
+
+            await _client.Collections.AddTag(TestData.ProjectId, tag, collectionKey: collectionKey);
+
+            //when
+            var result = await _client.Collections.DeleteTag(TestData.ProjectId, tag, collectionKey: collectionKey);
+
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task DeleteTag_SingleTagVersion_ByCollectionKey_WithWeightAndRemoveOther()
+        {
+            //given
+            string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
+                                    DateTime.Now.ToShortDateString();
+            string collectionKey = "qwert";
+            string tag = "abcde";
+
+            var collection =
+                await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
+            await _client.Collections.Activate(TestData.ProjectId, collection.Id);
+
+            await _client.Collections.AddTag(TestData.ProjectId, tag, collectionKey: collectionKey, weight: 3.5, removeOther: true);
+
+            //when
+            var result = await _client.Collections.DeleteTag(TestData.ProjectId, tag, collectionKey: collectionKey);
+
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task DeleteTag_SingleTagVersion_WithInvalidKeyAndId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Collections.DeleteTag(TestData.ProjectId, "tag");
+
+                throw new Exception("AddTag should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task DeleteTag_SingleTagVersion_WithInvalidTags_ThrowsException()
+        {
+            //given
+            string tag = null;
+
+            try
+            {
+                //when
+                await _client.Collections.DeleteTag(TestData.ProjectId, tag, TestData.CollectionId);
+                throw new Exception("AddTag should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task DeleteTag_MultipleTagVersion_ByCollectionId_WithoutWeightAndRemoveOther()
+        {
+            //given
+            string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
+                                    DateTime.Now.ToShortDateString();
+            string collectionKey = "qwert";
+            string[] tags = new[] { "abc", "def", "ghi" };
+
+            var collection =
+                await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
+
+            await _client.Collections.AddTag(TestData.ProjectId, tags, collection.Id);
+
+            //when
+            var result = await _client.Collections.DeleteTag(TestData.ProjectId, tags, collection.Id);
+
+            var array = await _client.Collections.Get(TestData.ProjectId, CollectionStatus.All, withTag: tags[0]);
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldBeTrue();
+            array.ShouldBeEmpty();
+        }
+
+        [Fact]
+        public async Task DeleteTag_MultipleTagVersion_ByCollectionId_WithWeightAndRemoveOther()
+        {
+            //given
+            string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
+                                    DateTime.Now.ToShortDateString();
+            string collectionKey = "qwert";
+            string[] tags = new[] { "abc", "def", "ghi" };
+
+            var collection =
+                await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
+
+            await _client.Collections.AddTag(TestData.ProjectId, tags, collection.Id, weight: 10.84, removeOther: true);
+
+            //when
+            var result = await _client.Collections.DeleteTag(TestData.ProjectId, tags, collection.Id);
+
+            var array = await _client.Collections.Get(TestData.ProjectId, CollectionStatus.All, withTag: tags[0]);
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldBeTrue();
+            array.ShouldBeEmpty();
+        }
+
+        [Fact]
+        public async Task DeleteTag_MultipleTagVersion_ByCollectionKey_WithoutWeightAndRemoveOther()
+        {
+            //given
+            string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
+                                    DateTime.Now.ToShortDateString();
+            string collectionKey = "qwert";
+            string[] tags = new[] { "abc", "def", "ghi" };
+
+            var collection =
+                await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
+            await _client.Collections.Activate(TestData.ProjectId, collection.Id, true);
+
+            await _client.Collections.AddTag(TestData.ProjectId, tags, collectionKey: collectionKey);
+
+            //when
+            var result = await _client.Collections.DeleteTag(TestData.ProjectId, tags, collectionKey: collectionKey);
+
+            var array = await _client.Collections.Get(TestData.ProjectId, CollectionStatus.All, withTag: tags[0]);
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldBeTrue();
+            array.ShouldBeEmpty();
+        }
+
+        [Fact]
+        public async Task DeleteTag_MultipleTagVersion_ByCollectionKey_WithWeightAndRemoveOther()
+        {
+            //given
+            string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
+                                    DateTime.Now.ToShortDateString();
+            string collectionKey = "qwert";
+            string[] tags = new[] { "abc", "def", "ghi" };
+
+            var collection =
+                await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
+            await _client.Collections.Activate(TestData.ProjectId, collection.Id, true);
+
+            await _client.Collections.AddTag(TestData.ProjectId, tags, collectionKey: collectionKey, weight: 10.84, removeOther: true);
+
+            //when
+            var result = await _client.Collections.DeleteTag(TestData.ProjectId, tags, collectionKey: collectionKey);
+
+            var array = await _client.Collections.Get(TestData.ProjectId, CollectionStatus.All, withTag: tags[0]);
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldBeTrue();
+            array.ShouldBeEmpty();
+        }
+
+        [Fact]
+        public async Task DeleteTag_MultipleTagVersion_WithInvalidKeyAndId_ThrowsException()
+        {
+            //given
+            string[] tags = new[] { "abc", "def", "ghi" };
+
+            try
+            {
+                //when
+                await _client.Collections.DeleteTag(TestData.ProjectId, tags);
+                throw new Exception("AddTag should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task DeleteTag_MultipleTagVersion_WithInvalidTags_ThrowsException()
+        {
+            //given
+            string[] tags = null;
+
+            try
+            {
+                //when
+                await _client.Collections.DeleteTag(TestData.ProjectId, tags, TestData.CollectionId);
+                throw new Exception("AddTag should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task DeleteTag_MultipleTagVersion_ByCollectionKey_WithWeightAndRemoveOther_EmptyTagsArray_ThrowsException()
+        {
+            //given
+            string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
+                                    DateTime.Now.ToShortDateString();
+            string collectionKey = "qwert";
+            string[] tags = new string[0];
+
+            var collection =
+                await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
+            await _client.Collections.Activate(TestData.ProjectId, collection.Id, true);
+
+            try
+            {
+                //when
+                await
+                    _client.Collections.DeleteTag(TestData.ProjectId, tags, collectionKey: collectionKey);
                 throw new Exception("AddTag should throw an exception");
             }
             catch (Exception e)

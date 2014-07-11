@@ -43,7 +43,6 @@ namespace Syncano.Net
                     {
                         if (each.GetValue(query).GetType().IsArray)
                         {
-                            int i = 0;
                             var array = (Array)each.GetValue(query);
 
                             foreach (var item in array)
