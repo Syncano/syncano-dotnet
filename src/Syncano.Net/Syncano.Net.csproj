@@ -38,6 +38,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collection.cs" />
+    <Compile Include="CollectionStatus.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="Permissions.cs" />
     <Compile Include="Project.cs" />
@@ -46,6 +48,7 @@
     <Compile Include="SyncanoException.cs" />
     <Compile Include="SyncanoRestClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tag.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
