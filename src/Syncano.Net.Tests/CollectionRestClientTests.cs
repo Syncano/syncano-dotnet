@@ -582,8 +582,33 @@ namespace Syncano.Net.Tests
             }
             catch (Exception e)
             {
+                //then
                 e.ShouldBeType<ArgumentNullException>();
             }
+        }
+
+        [Fact]
+        public async Task AddTag_MultipleTagVersion_ByCollectionId_WithoutWeightAndRemoveOther()
+        {
+            //given
+            string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
+                                    DateTime.Now.ToShortDateString();
+            string collectionKey = "qwert";
+            string[] tags = new[] {"abc", "def", "ghi"};
+
+            var collection =
+                await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
+
+            //when
+            var result = await _client.Collections.AddTag(TestData.ProjectId, tags, collection.Id);
+
+            var array = await _client.Collections.Get(TestData.ProjectId, CollectionStatus.All, withTag: tags[0]);
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldBeTrue();
+            array.ShouldNotBeEmpty();
+            array.Any(c => c.Tags.Count == tags.Length).ShouldBeTrue();
         }
 
         public void Dispose()

@@ -40,7 +40,23 @@ namespace Syncano.Net
                 foreach (var each in Type.GetTypeFromHandle(query.GetType().TypeHandle).GetRuntimeProperties())
                 {
                     if (each.GetValue(query) != null)
-                        sb.AppendFormat("&{0}={1}", each.Name, Uri.EscapeDataString(each.GetValue(query).ToString()));
+                    {
+                        if (each.GetValue(query).GetType().IsArray)
+                        {
+                            int i = 0;
+                            var array = (Array)each.GetValue(query);
+
+                            foreach (var item in array)
+                            {
+                                sb.AppendFormat("&{0}={1}", each.Name, Uri.EscapeDataString(item.ToString()));
+                            }
+                        }
+                        else
+                        {
+                            sb.AppendFormat("&{0}={1}", each.Name, Uri.EscapeDataString(each.GetValue(query).ToString()));
+                        }
+                    }
+
                 }
             }
 
