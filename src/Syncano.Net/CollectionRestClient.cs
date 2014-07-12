@@ -43,13 +43,23 @@ namespace Syncano.Net
                 t => t.ToObject<List<Collection>>());
         }
 
-        public Task<List<Collection>> Get(string projectId, IEnumerable<string> withTags, CollectionStatus status = CollectionStatus.All)
+        public async Task<List<Collection>> Get(string projectId, IEnumerable<string> withTags, CollectionStatus status = CollectionStatus.All)
         {
             if(withTags == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("collection.get",
+            return await _restClient.GetAsync("collection.get",
                         new {project_id = projectId, status = status, with_tags = withTags.ToArray()}, "collection", t => t.ToObject<List<Collection>>());
+        }
+
+        public Task<Collection> GetOne(string projectId, string collectionId = null, string collectionKey = null)
+        {
+            if(collectionId == null && collectionKey == null)
+                throw  new ArgumentNullException();
+
+            return _restClient.GetAsync("collection.get_one",
+                new {project_id = projectId, collection_id = collectionId, collection_key = collectionKey}, "collection",
+                t => t.ToObject<Collection>());
         }
 
         public Task<bool> Activate(string projectId, string collectionId, bool force = false)

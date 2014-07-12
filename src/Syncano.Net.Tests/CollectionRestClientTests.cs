@@ -221,6 +221,69 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task GetOne_ByCollectionId_CreatesNewCollectionObject()
+        {
+            //given
+            string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
+                                    DateTime.Now.ToShortDateString();
+
+            
+            var collection =
+                await _client.Collections.New(TestData.ProjectId, collectionName);
+
+            //then
+            var result = await _client.Collections.GetOne(TestData.ProjectId, collection.Id);
+
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldNotBeNull();
+            result.Status.ShouldEqual(CollectionStatus.Inactive);
+            result.Key.ShouldBeNull();
+            result.Description.ShouldBeNull();
+        }
+
+        [Fact]
+        public async Task GetOne_ByCollectionKey_CreatesNewCollectionObject()
+        {
+            //given
+            string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
+                                    DateTime.Now.ToShortDateString();
+            string collectionKey = "abcde";
+
+            var collection =
+                await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
+            await _client.Collections.Activate(TestData.ProjectId, collection.Id, true);
+
+            //then
+            var result = await _client.Collections.GetOne(TestData.ProjectId, collectionKey: collectionKey);
+
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+
+            //then
+            result.ShouldNotBeNull();
+            result.Status.ShouldEqual(CollectionStatus.Active);
+            result.Key.ShouldEqual(collectionKey);
+            result.Description.ShouldBeNull();
+        }
+
+        [Fact]
+        public async Task GetOne_InvalidCollectionIdAndKey()
+        {
+            try
+            {
+                //when
+                await _client.Collections.GetOne(TestData.ProjectId);
+                throw new Exception("GetOne should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
         public async Task Activate_WithForce()
         {
             //given
