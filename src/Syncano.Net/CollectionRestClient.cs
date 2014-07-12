@@ -26,19 +26,31 @@ namespace Syncano.Net
                 t => t.ToObject<Collection>());
         }
 
-        public async Task<List<Collection>> Get(string projectId, CollectionStatus status = CollectionStatus.All,
-            string withTag = null)
+        public async Task<List<Collection>> Get(string projectId, CollectionStatus status = CollectionStatus.All)
         {
+            return await _restClient.GetAsync("collection.get",
+                new { project_id = projectId, status = status }, "collection",
+                t => t.ToObject<List<Collection>>());
+        }
+
+        public async Task<List<Collection>> Get(string projectId, string withTag, CollectionStatus status = CollectionStatus.All)
+        {
+            if(withTag == null)
+                throw new ArgumentNullException();
+
             return await _restClient.GetAsync("collection.get",
                 new {project_id = projectId, status = status, with_tags = withTag}, "collection",
                 t => t.ToObject<List<Collection>>());
         }
 
-        //public async Task<List<Collection>> Get(string projectId, CollectionStatus status = CollectionStatus.All,
-        //    IEnumerable<string> withTags = null)
-        //{
+        public Task<List<Collection>> Get(string projectId, IEnumerable<string> withTags, CollectionStatus status = CollectionStatus.All)
+        {
+            if(withTags == null)
+                throw new ArgumentNullException();
 
-        //}
+            return _restClient.GetAsync("collection.get",
+                        new {project_id = projectId, status = status, with_tags = withTags.ToArray()}, "collection", t => t.ToObject<List<Collection>>());
+        }
 
         public Task<bool> Activate(string projectId, string collectionId, bool force = false)
         {

@@ -23,10 +23,10 @@ namespace Syncano.Net
         public string Key { get; set; }
 
         [JsonProperty("start_date")]
-        public string StartDate { get; set; }
+        public DateTime? StartDate { get; set; }
 
         [JsonProperty("end_date")]
-        public string EndDate { get; set; }
+        public DateTime? EndDate { get; set; }
 
         [JsonProperty("tags")]
         public Dictionary<string, double> Tags { get; set; }
