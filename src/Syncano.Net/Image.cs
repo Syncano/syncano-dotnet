@@ -10,7 +10,7 @@ namespace Syncano.Net
     public class Image
     {
         [JsonProperty("image")]
-        public string Image { get; set; }
+        public string ImageUrl { get; set; }
 
         [JsonProperty("image_width")]
         public int? ImageWidth { get; set; }
