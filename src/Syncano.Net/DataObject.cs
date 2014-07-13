@@ -1,0 +1,70 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+
+namespace Syncano.Net
+{
+    public class DataObject
+    {
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("created_at")]
+        public DateTime? CreatedAt { get; set; }
+
+        [JsonProperty("updated_at")]
+        public DateTime? UpdatedAt { get; set; }
+
+        [JsonProperty("folder")]
+        public string Folder { get; set; }
+
+        [JsonProperty("state")]
+        [JsonConverter(typeof(DataObjectStateEnumConverter))]
+        public DataObjectState State { get; set; }
+
+        [JsonProperty("user")]
+        public User User { get; set; }
+
+        [JsonProperty("key")]
+        public string Key { get; set; }
+
+        [JsonProperty("title")]
+        public string Title { get; set; }
+
+        [JsonProperty("text")]
+        public string Text { get; set; }
+
+        [JsonProperty("link")]
+        public string Link { get; set; }
+
+        [JsonProperty("data1")]
+        public int? DataOne { get; set; }
+
+        [JsonProperty("data2")]
+        public int? DataTwo { get; set; }
+
+        [JsonProperty("data3")]
+        public int? DataThree { get; set; }
+
+        [JsonProperty("source_url")]
+        public int? SourceUrl { get; set; }
+
+        [JsonProperty("image")]
+        public Image Image { get; set; }
+
+        [JsonProperty("additional")]
+        public Dictionary<string, string> Additional { get; set; }
+
+        [JsonProperty("children_count")]
+        public int ChildrenCount { get; set; }
+
+        [JsonProperty("children")]
+        public DataObject [] Children { get; set; }
+
+
+    }
+}
