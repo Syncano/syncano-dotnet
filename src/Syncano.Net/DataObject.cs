@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace Syncano.Net
 {
@@ -51,7 +47,7 @@ namespace Syncano.Net
         public int? DataThree { get; set; }
 
         [JsonProperty("source_url")]
-        public int? SourceUrl { get; set; }
+        public string SourceUrl { get; set; }
 
         [JsonProperty("image")]
         public Image Image { get; set; }

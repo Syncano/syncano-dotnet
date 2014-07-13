@@ -1,9 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Syncano.Net
 {
@@ -11,7 +7,8 @@ namespace Syncano.Net
     {
         Pending,
         Moderated,
-        Rejected
+        Rejected,
+        All
     }
 
     public class DataObjectStateEnumConverter : JsonConverter
@@ -38,7 +35,8 @@ namespace Syncano.Net
                     state = DataObjectState.Rejected;
                     break;
                 default:
-                    throw new ArgumentException("Unknown DataObjectState value");
+                    state = DataObjectState.All;
+                    break;
             }
 
             return state;
@@ -60,7 +58,8 @@ namespace Syncano.Net
                     writer.WriteValue("Rejected");
                     break;
                 default:
-                    throw new ArgumentException("Unknown DataObjectState value");
+                    writer.WriteValue("All");
+                    break;
             }
         }
     }
