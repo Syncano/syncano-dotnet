@@ -15,5 +15,7 @@
 
         public CollectionRestClient Collections { get { return new CollectionRestClient(_restClient);} }
 
+        public DataObjectRestClient DataObjects { get { return new DataObjectRestClient(_restClient);} }
+
     }
 }

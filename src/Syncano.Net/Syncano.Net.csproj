@@ -41,6 +41,7 @@
     <Compile Include="Collection.cs" />
     <Compile Include="CollectionRestClient.cs" />
     <Compile Include="CollectionStatus.cs" />
+    <Compile Include="DataObjectRestClient.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="FolderRestClient.cs" />
     <Compile Include="Permissions.cs" />

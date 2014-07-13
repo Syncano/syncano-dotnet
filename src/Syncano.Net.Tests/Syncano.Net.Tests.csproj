@@ -62,6 +62,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="CollectionRestClientTests.cs" />
+    <Compile Include="DataObjectRestClientTests.cs" />
     <Compile Include="FolderRestClientTests.cs" />
     <Compile Include="ProjectRestClientTests.cs" />
     <Compile Include="SyncanoRestClientTests.cs" />
