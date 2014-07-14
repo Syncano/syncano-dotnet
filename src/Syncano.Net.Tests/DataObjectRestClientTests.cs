@@ -509,8 +509,10 @@ namespace Syncano.Net.Tests
                         includeChildren: true);
 
             //then
-            childResult.ShouldNotBeNull();
-            childResult.Folder.ShouldEqual(request.Folder);
+            result.ShouldNotBeNull();
+            result.Id.ShouldEqual(parentResult.Id);
+            result.Children.ShouldNotBeEmpty();
+            result.Children.Any(d => d.Id == childResult.Id).ShouldBeTrue();
 
             //cleanup
             var deleteRequest = new DeleteDataObjectRequest();
@@ -600,6 +602,39 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task Delete_FilterByStatePending()
+        {
+            //given
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.State = DataObjectState.Pending;
+            var dataObject = await _client.DataObjects.New(request);
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            deleteRequest.DataId = dataObject.Id;
+            deleteRequest.State = DataObjectState.Pending;
+
+            //when
+            var result = await _client.DataObjects.Delete(deleteRequest);
+
+            //then
+            try
+            {
+                var getDataObject =
+                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObject.Id);
+                throw new Exception("GetOne should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<SyncanoException>();
+            }
+
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
         public async Task Delete_MultipleDataIds()
         {
             //given
@@ -610,7 +645,7 @@ namespace Syncano.Net.Tests
             var dataObjectTwo = await _client.DataObjects.New(request);
             var dataObjectThree = await _client.DataObjects.New(request);
 
-            var dataIds = new string[] {dataObjectTwo.Id, dataObjectThree.Id};
+            var dataIds = new List<string>() {dataObjectTwo.Id, dataObjectThree.Id};
             var deleteRequest = new DeleteDataObjectRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
@@ -658,6 +693,80 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task Delete_MultipleDataIds_WithLimit()
+        {
+            //given
+            int counter = 0;
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            var dataObjectOne = await _client.DataObjects.New(request);
+            var dataObjectTwo = await _client.DataObjects.New(request);
+            var dataObjectThree = await _client.DataObjects.New(request);
+
+            var dataIds = new List<string>() { dataObjectTwo.Id, dataObjectThree.Id };
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            deleteRequest.DataId = dataObjectOne.Id;
+            deleteRequest.DataIds = dataIds;
+            deleteRequest.Limit = 2;
+
+            //when
+            var result = await _client.DataObjects.Delete(deleteRequest);
+
+            //then
+            try
+            {
+                var getDataObject =
+                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectOne.Id);
+                throw new Exception("GetOne should throw an exception");
+            }
+            catch (Exception e)
+            {
+                if (!(e is SyncanoException))
+                {
+                    ++counter;
+                }
+            }
+
+            try
+            {
+                var getDataObject =
+                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectTwo.Id);
+                throw new Exception("GetOne should throw an exception");
+            }
+            catch (Exception e)
+            {
+                if (!(e is SyncanoException))
+                {
+                    ++counter;
+                }
+            }
+
+            try
+            {
+                var getDataObject =
+                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectThree.Id);
+                throw new Exception("GetOne should throw an exception");
+            }
+            catch (Exception e)
+            {
+                if (!(e is SyncanoException))
+                {
+                    ++counter;
+                }
+            }
+
+            counter.ShouldEqual(1);
+            result.ShouldBeTrue();
+
+            //cleanup
+            deleteRequest.Limit = 100;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
         public async Task Delete_FilterByUserName()
         {
             //given
@@ -685,7 +794,7 @@ namespace Syncano.Net.Tests
             var request = new NewDataObjectRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
-            //request.Text = "text content";
+            request.Text = "text content";
             var dataObject = await _client.DataObjects.New(request);
             var deleteRequest = new DeleteDataObjectRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
@@ -711,9 +820,321 @@ namespace Syncano.Net.Tests
             result.ShouldBeTrue();
         }
 
+        [Fact]
+        public async Task Delete_FilterByImageContent()
+        {
+            //given
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.ImageBase64 = ImageToBase64("sampleImage.jpg");
+            var dataObject = await _client.DataObjects.New(request);
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            deleteRequest.DataId = dataObject.Id;
+            deleteRequest.Filter = DataObjectContentFilter.Image;
 
+            //when
+            var result = await _client.DataObjects.Delete(deleteRequest);
 
+            //then
+            try
+            {
+                var getDataObject =
+                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObject.Id);
+                throw new Exception("GetOne should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<SyncanoException>();
+            }
 
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task Delete_WithNullProjectId_ThrowsException()
+        {
+            //given
+            var request = new DeleteDataObjectRequest();
+            request.ProjectId = null;
+            request.CollectionId = TestData.CollectionId;
+
+            try
+            {
+                //when
+                await _client.DataObjects.Delete(request);
+                throw new Exception("Delete should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Delete_WithInvalidProjectId_ThrowsException()
+        {
+            //given
+            var request = new DeleteDataObjectRequest();
+            request.ProjectId = "abc";
+            request.CollectionId = TestData.CollectionId;
+
+            try
+            {
+                //when
+                await _client.DataObjects.Delete(request);
+                throw new Exception("Delete should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task Delete_WithNullCollectionIdAndCollectionKey_ThrowsException()
+        {
+            //given
+            var request = new DeleteDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+
+            try
+            {
+                //when
+                await _client.DataObjects.Delete(request);
+                throw new Exception("Delete should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Delete_WithNegativeLimit_ThrowsException()
+        {
+            //given
+            var request = new DeleteDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.Limit = -1;
+
+            try
+            {
+                //when
+                await _client.DataObjects.Delete(request);
+                throw new Exception("Delete should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Fact]
+        public async Task Delete_WithToBigLimit_ThrowsException()
+        {
+            //given
+            var request = new DeleteDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.Limit = DataObjectRestClient.MaxVauluesPerRequest + 1;
+
+            try
+            {
+                //when
+                await _client.DataObjects.Delete(request);
+                throw new Exception("Delete should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Fact]
+        public async Task Delete_WithToMuchIds_ThrowsException()
+        {
+            //given
+            var request = new DeleteDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.DataIds = new List<string>();
+            for(int i = 0; i < DataObjectRestClient.MaxVauluesPerRequest; ++i)
+                request.DataIds.Add("abc");
+            request.DataId = "abc";
+
+            try
+            {
+                //when
+                await _client.DataObjects.Delete(request);
+                throw new Exception("Delete should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Fact]
+        public async Task Delete_WithToMuchFolders_ThrowsException()
+        {
+            //given
+            var request = new DeleteDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.Folders = new List<string>();
+            for (int i = 0; i < DataObjectRestClient.MaxVauluesPerRequest; ++i)
+                request.Folders.Add("abc");
+            request.Folder = "abc";
+
+            try
+            {
+                //when
+                await _client.DataObjects.Delete(request);
+                throw new Exception("Delete should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Fact]
+        public async Task Delete_FilterWithStateAll()
+        {
+            //given
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            var dataObjectOne = await _client.DataObjects.New(request);
+            request.State = DataObjectState.Moderated;
+            var dataObjectTwo = await _client.DataObjects.New(request);
+            request.State = DataObjectState.Rejected;
+            var dataObjectThree = await _client.DataObjects.New(request);
+
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            deleteRequest.State = DataObjectState.All;
+
+            //when
+            var result = await _client.DataObjects.Delete(deleteRequest);
+
+            //then
+            try
+            {
+                var getDataObject =
+                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectOne.Id);
+                throw new Exception("GetOne should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<SyncanoException>();
+            }
+
+            try
+            {
+                var getDataObject =
+                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectTwo.Id);
+                throw new Exception("GetOne should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<SyncanoException>();
+            }
+
+            try
+            {
+                var getDataObject =
+                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectThree.Id);
+                throw new Exception("GetOne should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<SyncanoException>();
+            }
+
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task Delete_MultipleFolders()
+        {
+            //given
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            var folderOne = await _client.Folders.New(TestData.ProjectId, "folderOne", TestData.CollectionId);
+            var folderTwo = await _client.Folders.New(TestData.ProjectId, "folderTwo", TestData.CollectionId);
+            var folderThree = await _client.Folders.New(TestData.ProjectId, "folderThree", TestData.CollectionId);
+            request.Folder = folderOne.Name;
+            var dataObjectOne = await _client.DataObjects.New(request);
+            request.Folder = folderTwo.Name;
+            var dataObjectTwo = await _client.DataObjects.New(request);
+            request.Folder = folderThree.Name;
+            var dataObjectThree = await _client.DataObjects.New(request);
+
+            var folders = new List<string>() { folderOne.Name, folderTwo.Name };
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            deleteRequest.Folders = folders;
+            deleteRequest.Folder = folderThree.Name;
+
+            //when
+            var result = await _client.DataObjects.Delete(deleteRequest);
+
+            //then
+            try
+            {
+                var getDataObject =
+                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectOne.Id);
+                throw new Exception("GetOne should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<SyncanoException>();
+            }
+
+            try
+            {
+                var getDataObject =
+                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectTwo.Id);
+                throw new Exception("GetOne should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<SyncanoException>();
+            }
+
+            try
+            {
+                var getDataObject =
+                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectThree.Id);
+                throw new Exception("GetOne should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<SyncanoException>();
+            }
+
+            result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Folders.Delete(TestData.ProjectId, folderOne.Name, TestData.CollectionId);
+            await _client.Folders.Delete(TestData.ProjectId, folderTwo.Name, TestData.CollectionId);
+            await _client.Folders.Delete(TestData.ProjectId, folderThree.Name, TestData.CollectionId);
+        }
 
         public void Dispose()
         {

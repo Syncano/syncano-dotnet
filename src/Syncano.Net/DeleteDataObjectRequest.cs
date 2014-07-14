@@ -23,13 +23,13 @@ namespace Syncano.Net
 
         public string DataId { get; set; }
 
-        public IEnumerable<string> DataIds { get; set; }
+        public List<string> DataIds { get; set; }
 
         public DataObjectState State { get; set; }
 
         public string Folder { get; set; }
 
-        public IEnumerable<string> Folders { get; set; }
+        public List<string> Folders { get; set; }
 
         public DataObjectContentFilter? Filter { get; set; }
 

@@ -81,16 +81,21 @@ namespace Syncano.Net
             if (request.CollectionId == null && request.CollectionKey == null)
                 throw new ArgumentNullException();
 
-            if (request.Limit > MaxVauluesPerRequest)
+            if (request.Limit > MaxVauluesPerRequest || request.Limit < 0)
                 throw new ArgumentException();
 
             var dataIds = request.DataIds == null ? new List<string>() : new List<string>(request.DataIds);
+            if (dataIds.Count + (request.DataId != null ? 1 : 0) > MaxVauluesPerRequest)
+                throw new ArgumentException();
             if(request.DataId != null)
                 dataIds.Add(request.DataId);
 
             var folders = request.Folders == null ? new List<string>() : new List<string>(request.Folders);
+            if (folders.Count + (request.Folder != null ? 1 : 0) >
+                MaxVauluesPerRequest)
+                throw new ArgumentException();
             if (request.Folder != null)
-                dataIds.Add(request.Folder);
+                folders.Add(request.Folder);
 
             return _restClient.GetAsync("data.delete",
                 new
