@@ -17,7 +17,14 @@ namespace Syncano.Net
             _restClient = restClient;
         }
 
-        public Task<DataObject> New(string projectId, string collectionId = null, string collectionKey = null,
+        public Task<DataObject> New(NewDataObjectRequest request)
+        {
+            return New(request.ProjectId, request.CollectionId, request.CollectionKey, request.DataKey, request.UserName,
+                request.SourceUrl, request.Title, request.Text, request.Link, request.ImageBase64, request.ImageUrl,
+                request.DataOne, request.DataTwo, request.DataThree, request.Folder, request.State, request.ParentId);
+        }
+
+        private Task<DataObject> New(string projectId, string collectionId = null, string collectionKey = null,
             string dataKey = null, string userName = null, string sourceUrl = null, string title = null,
             string text = null, string link = null, string imageBase64 = null, string imageUrl = null,
             int? dataOne = null, int? dataTwo = null, int? dataThree = null, string folder = "Default",
