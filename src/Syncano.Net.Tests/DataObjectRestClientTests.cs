@@ -228,11 +228,11 @@ namespace Syncano.Net.Tests
             result.Folder.ShouldEqual(request.Folder);
 
             //cleanup
-           /* var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DeleteDataObjectRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            deleteRequest.DataId = result.Id;*/
-            //await _client.DataObjects.Delete(deleteRequest);
+            deleteRequest.DataId = result.Id;
+            await _client.DataObjects.Delete(deleteRequest);
         }
 
         [Fact]
