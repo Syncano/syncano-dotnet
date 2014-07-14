@@ -23,6 +23,7 @@ namespace Syncano.Net.Tests
         public const string FolderId = "1";
 
         public const string UserApiClientId = "1086";
+        public const string UserName = "UserName";
     }
 
     public class SyncanoRestClientTests : IDisposable
