@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Net.Http.Headers;
 
 namespace Syncano.Net
 {
@@ -30,11 +31,24 @@ namespace Syncano.Net
 
         private string CreateGetUri(string methodName, object query = null)
         {
+            var sb = new StringBuilder(CreateBaseUri(methodName));
+            sb.Append(CreateParametersString(methodName, query));
+            return sb.ToString();
+        }
+
+        private string CreateBaseUri(string methodName)
+        {
             var sb = new StringBuilder(_baseUrl);
             sb.Append(methodName);
             sb.Append("?api_key=");
             sb.Append(_apiKey);
+            return sb.ToString();
+        }
 
+        private string CreateParametersString(string methodName, object query)
+        {
+            var sb = new StringBuilder();
+            
             if (query != null)
             {
                 foreach (var each in Type.GetTypeFromHandle(query.GetType().TypeHandle).GetRuntimeProperties())
@@ -61,7 +75,6 @@ namespace Syncano.Net
 
             return sb.ToString();
         }
-
         private JObject CheckResponseStatus(string response)
         {
             var json = JObject.Parse(response);
@@ -86,6 +99,46 @@ namespace Syncano.Net
             var json = CheckResponseStatus(response);
 
             return getResult(json.SelectToken(contentToken));
+        }
+
+        public async Task<T> PostAsync<T>(string methodName, object query, string contentToken, Func<JToken, T> getResult)
+        {
+            var content = CreatePostContent(query);
+            var response = await _client.PostAsync(CreateBaseUri(methodName), content);
+            var json = CheckResponseStatus(await response.Content.ReadAsStringAsync());
+
+            return getResult(json.SelectToken(contentToken));
+        }
+
+        private HttpContent CreatePostContent(object query)
+        {
+            var content = new List<KeyValuePair<string, string>>();
+
+            if (query != null)
+            {
+                foreach (var each in Type.GetTypeFromHandle(query.GetType().TypeHandle).GetRuntimeProperties())
+                {
+                    if (each.GetValue(query) != null)
+                    {
+                        if (each.GetValue(query).GetType().IsArray)
+                        {
+                            var array = (Array)each.GetValue(query);
+
+                            foreach (var item in array)
+                            {
+                                content.Add(new KeyValuePair<string, string>(each.Name, Uri.EscapeDataString(item.ToString())));
+                            }
+                        }
+                        else
+                        {
+                            content.Add(new KeyValuePair<string, string>(each.Name, Uri.EscapeDataString(each.GetValue(query).ToString())));
+                        }
+                    }
+
+                }
+            }
+
+            return new FormUrlEncodedContent(content);
         }
 
         public async Task<bool> GetAsync(string methodName, object query)

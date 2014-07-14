@@ -33,7 +33,7 @@ namespace Syncano.Net
             if(collectionId == null && collectionKey == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("data.new",
+            return _restClient.PostAsync("data.new",
                 new
                 {
                     project_id = projectId,
