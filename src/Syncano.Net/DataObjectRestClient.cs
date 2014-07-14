@@ -49,6 +49,30 @@ namespace Syncano.Net
                 }, "data", t => t.ToObject<DataObject>());
         }
 
+        public Task<DataObject> GetOne(string projectId, string collectionId = null, string collectionKey = null,
+            string dataId = null, string dataKey = null, bool includeChildren = false, int? depth = null,
+            int childrenLimit = 100)
+        {
+            if (projectId == null)
+                throw new ArgumentNullException();
+
+            if (collectionId == null && collectionKey == null)
+                throw new ArgumentNullException();
+
+            return _restClient.GetAsync("data.get_one",
+                new
+                {
+                    project_id = projectId,
+                    collection_id = collectionId,
+                    collection_key = collectionKey,
+                    data_id = dataId,
+                    data_key = dataKey,
+                    include_children = includeChildren,
+                    depth = depth,
+                    children_limit = childrenLimit
+                }, "data", t => t.ToObject<DataObject>());
+        }
+
         public Task<bool> Delete(DeleteDataObjectRequest request)
         {
             if(request.ProjectId == null)
