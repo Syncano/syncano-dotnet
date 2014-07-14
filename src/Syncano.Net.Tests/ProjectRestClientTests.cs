@@ -26,11 +26,12 @@ namespace Syncano.Net.Tests
             //when
             var project = await _client.Projects.New(projectName);
 
-            await _client.Projects.Delete(project.Id);
-
             //then
             project.ShouldNotBeNull();
             project.Description.ShouldBeNull();
+
+            //cleanup
+            await _client.Projects.Delete(project.Id);
         }
 
         [Fact]
@@ -44,11 +45,12 @@ namespace Syncano.Net.Tests
             //when
             var project = await _client.Projects.New(projectName, projectDescription);
 
-            await _client.Projects.Delete(project.Id);
-
             //then
             project.ShouldNotBeNull();
             project.Description.ShouldEqual(projectDescription);
+
+            //cleanup
+            await _client.Projects.Delete(project.Id);
         }
 
         [Fact]
@@ -87,12 +89,14 @@ namespace Syncano.Net.Tests
 
             //when
             project = await _client.Projects.Update(project.Id, projectNewName, projectNewDescription);
-            await _client.Projects.Delete(project.Id);
-
+            
             //then
             project.ShouldNotBeNull();
             project.Name.ShouldEqual(projectNewName);
             project.Description.ShouldEqual(projectNewDescription);
+
+            //cleanup
+            await _client.Projects.Delete(project.Id);
         }
 
         [Fact]
@@ -106,11 +110,13 @@ namespace Syncano.Net.Tests
 
             //when
             var result = await _client.Projects.Authorize(TestData.UserApiClientId, Permissions.ReadData, project.Id);
-            await _client.Projects.Deauthorize(TestData.UserApiClientId, Permissions.ReadData, project.Id);
-            await _client.Projects.Delete(project.Id);
-
+            
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Projects.Deauthorize(TestData.UserApiClientId, Permissions.ReadData, project.Id);
+            await _client.Projects.Delete(project.Id);
         }
 
         [Fact]
@@ -125,10 +131,12 @@ namespace Syncano.Net.Tests
 
             //when
             var result = await _client.Projects.Deauthorize(TestData.UserApiClientId, Permissions.ReadData, project.Id);
-            await _client.Projects.Delete(project.Id);
 
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Projects.Delete(project.Id);
         }
 
         [Fact]

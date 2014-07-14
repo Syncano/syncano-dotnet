@@ -29,13 +29,14 @@ namespace Syncano.Net.Tests
             var collection =
                 await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey, collectionDescription);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             collection.ShouldNotBeNull();
             collection.Status.ShouldEqual(CollectionStatus.Inactive);
             collection.Key.ShouldEqual(collectionKey);
             collection.Description.ShouldEqual(collectionDescription);
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -49,13 +50,14 @@ namespace Syncano.Net.Tests
             var collection =
                 await _client.Collections.New(TestData.ProjectId, collectionName);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             collection.ShouldNotBeNull();
             collection.Status.ShouldEqual(CollectionStatus.Inactive);
             collection.Key.ShouldBeNull();
             collection.Description.ShouldBeNull();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -88,11 +90,12 @@ namespace Syncano.Net.Tests
             //when
             var result = await _client.Collections.Get(TestData.ProjectId, CollectionStatus.Inactive);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             result.ShouldNotBeEmpty();
             result.Any(c => c.Id == collection.Id).ShouldBeTrue();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -106,10 +109,11 @@ namespace Syncano.Net.Tests
             //when
             var result = await _client.Collections.Get(TestData.ProjectId, withTag: tag);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             result.ShouldNotBeEmpty();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -123,10 +127,11 @@ namespace Syncano.Net.Tests
             //when
             var result = await _client.Collections.Get(TestData.ProjectId, tag, CollectionStatus.Inactive);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             result.ShouldNotBeEmpty();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -159,10 +164,11 @@ namespace Syncano.Net.Tests
             //when
             var result = await _client.Collections.Get(TestData.ProjectId, withTag: tags);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             result.ShouldNotBeEmpty();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -176,10 +182,11 @@ namespace Syncano.Net.Tests
             //when
             var result = await _client.Collections.Get(TestData.ProjectId, tags, CollectionStatus.Inactive);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             result.ShouldNotBeEmpty();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -192,12 +199,12 @@ namespace Syncano.Net.Tests
             //when
             var result = await _client.Collections.Get(TestData.ProjectId, tags, CollectionStatus.All);
             
-
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             result.ShouldNotBeEmpty();
             result.Any(c => c.Id == collection.Id).ShouldBeTrue();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
 
         }
 
@@ -227,20 +234,20 @@ namespace Syncano.Net.Tests
             string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
                                     DateTime.Now.ToShortDateString();
 
-            
             var collection =
                 await _client.Collections.New(TestData.ProjectId, collectionName);
 
             //then
             var result = await _client.Collections.GetOne(TestData.ProjectId, collection.Id);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             result.ShouldNotBeNull();
             result.Status.ShouldEqual(CollectionStatus.Inactive);
             result.Key.ShouldBeNull();
             result.Description.ShouldBeNull();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -258,13 +265,14 @@ namespace Syncano.Net.Tests
             //then
             var result = await _client.Collections.GetOne(TestData.ProjectId, collectionKey: collectionKey);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             result.ShouldNotBeNull();
             result.Status.ShouldEqual(CollectionStatus.Active);
             result.Key.ShouldEqual(collectionKey);
             result.Description.ShouldBeNull();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -297,10 +305,11 @@ namespace Syncano.Net.Tests
             //when
             var result = await _client.Collections.Activate(TestData.ProjectId, collection.Id, true);
 
-            await _client.Collections.Delete(TestData.ProjectId, collectionKey: collection.Key);
-
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collectionKey: collection.Key);
         }
 
         [Fact]
@@ -317,10 +326,11 @@ namespace Syncano.Net.Tests
             //when
             var result = await _client.Collections.Activate(TestData.ProjectId, collection.Id, false);
 
-            await _client.Collections.Delete(TestData.ProjectId, collectionKey: collection.Key);
-
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collectionKey: collection.Key);
         }
 
         [Fact]
@@ -338,10 +348,11 @@ namespace Syncano.Net.Tests
             //when
             var result = await _client.Collections.Deactivate(TestData.ProjectId, collection.Id);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -359,10 +370,11 @@ namespace Syncano.Net.Tests
             //when
             var result = await _client.Collections.Deactivate(TestData.ProjectId, collectionKey: collection.Key);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -399,13 +411,14 @@ namespace Syncano.Net.Tests
                     _client.Collections.Update(TestData.ProjectId, collection.Id, name: newCollectionName,
                         description: collectionDescription);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             collection.ShouldNotBeNull();
             collection.Key.ShouldEqual(collectionKey);
             collection.Name.ShouldEqual(newCollectionName);
             collection.Description.ShouldEqual(collectionDescription);
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -428,13 +441,14 @@ namespace Syncano.Net.Tests
                     _client.Collections.Update(TestData.ProjectId, collectionKey: collectionKey, name: newCollectionName,
                         description: collectionDescription);
 
-            await _client.Collections.Delete(TestData.ProjectId, collectionKey: collection.Key);
-
             //then
             collection.ShouldNotBeNull();
             collection.Key.ShouldEqual(collectionKey);
             collection.Name.ShouldEqual(newCollectionName);
             collection.Description.ShouldEqual(collectionDescription);
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collectionKey: collection.Key);
         }
 
         [Fact]
@@ -453,11 +467,12 @@ namespace Syncano.Net.Tests
                 await
                     _client.Collections.Update(TestData.ProjectId, collection.Id);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             collection.ShouldNotBeNull();
             collection.Key.ShouldEqual(collectionKey);
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -491,12 +506,14 @@ namespace Syncano.Net.Tests
                     _client.Collections.Authorize(TestData.UserApiClientId, Permissions.UpdateOwnData,
                         TestData.ProjectId, collection.Id);
 
+            //then
+            result.ShouldBeTrue();
+
+            //cleanup
             await _client.Collections.Deauthorize(TestData.UserApiClientId, Permissions.UpdateOwnData,
                         TestData.ProjectId, collection.Id);
             await _client.Collections.Delete(TestData.ProjectId, collection.Id);
 
-            //then
-            result.ShouldBeTrue();
         }
 
         [Fact]
@@ -517,12 +534,13 @@ namespace Syncano.Net.Tests
                     _client.Collections.Authorize(TestData.UserApiClientId, Permissions.UpdateOwnData,
                         TestData.ProjectId, collectionKey: collectionKey);
 
+            //then
+            result.ShouldBeTrue();
+
+            //cleanup
             await _client.Collections.Deauthorize(TestData.UserApiClientId, Permissions.UpdateOwnData,
                         TestData.ProjectId, collection.Id);
             await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
-            //then
-            result.ShouldBeTrue();
         }
 
         [Fact]
@@ -558,10 +576,12 @@ namespace Syncano.Net.Tests
             //when
             var result = await _client.Collections.Deauthorize(TestData.UserApiClientId, Permissions.UpdateOwnData,
                         TestData.ProjectId, collection.Id);
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
 
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -582,10 +602,12 @@ namespace Syncano.Net.Tests
             //when
             var result = await _client.Collections.Deauthorize(TestData.UserApiClientId, Permissions.UpdateOwnData,
                         TestData.ProjectId, collection.Id);
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
+            
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -671,10 +693,11 @@ namespace Syncano.Net.Tests
             //when
             var result = await _client.Collections.AddTag(TestData.ProjectId, tag, collection.Id);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -692,10 +715,11 @@ namespace Syncano.Net.Tests
             //when
             var result = await _client.Collections.AddTag(TestData.ProjectId, tag, collection.Id, weight: 3.5, removeOther: true);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -714,10 +738,11 @@ namespace Syncano.Net.Tests
             //when
             var result = await _client.Collections.AddTag(TestData.ProjectId, tag, collectionKey: collectionKey);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -736,10 +761,11 @@ namespace Syncano.Net.Tests
             //when
             var result = await _client.Collections.AddTag(TestData.ProjectId, tag, collectionKey: collectionKey, weight: 3.5, removeOther: true);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -772,14 +798,15 @@ namespace Syncano.Net.Tests
 
             //when
             var result = await _client.Collections.AddTag(TestData.ProjectId, tags, collection.Id);
-
             var array = await _client.Collections.Get(TestData.ProjectId, tags[0], CollectionStatus.All);
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
+            
             //then
             result.ShouldBeTrue();
             array.ShouldNotBeEmpty();
             array.Any(c => c.Tags.Count == tags.Length).ShouldBeTrue();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -796,14 +823,15 @@ namespace Syncano.Net.Tests
 
             //when
             var result = await _client.Collections.AddTag(TestData.ProjectId, tags, collection.Id, weight: 10.84, removeOther: true);
-
             var array = await _client.Collections.Get(TestData.ProjectId, tags[0], CollectionStatus.All);
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
+            
             //then
             result.ShouldBeTrue();
             array.ShouldNotBeEmpty();
             array.Any(c => c.Tags.Count == tags.Length).ShouldBeTrue();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -821,14 +849,15 @@ namespace Syncano.Net.Tests
 
             //when
             var result = await _client.Collections.AddTag(TestData.ProjectId, tags, collectionKey: collectionKey);
-
-            var array = await _client.Collections.Get(TestData.ProjectId, tags[0], CollectionStatus.All);
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+            var array = await _client.Collections.Get(TestData.ProjectId, tags[0], CollectionStatus.All);         
 
             //then
             result.ShouldBeTrue();
             array.ShouldNotBeEmpty();
             array.Any(c => c.Tags.Count == tags.Length).ShouldBeTrue();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -846,14 +875,15 @@ namespace Syncano.Net.Tests
 
             //when
             var result = await _client.Collections.AddTag(TestData.ProjectId, tags, collectionKey: collectionKey, weight: 10.84, removeOther: true);
-
             var array = await _client.Collections.Get(TestData.ProjectId, tags[0], CollectionStatus.All);
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
+            
             //then
             result.ShouldBeTrue();
             array.ShouldNotBeEmpty();
             array.Any(c => c.Tags.Count == tags.Length).ShouldBeTrue();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -902,6 +932,7 @@ namespace Syncano.Net.Tests
                 e.ShouldBeType<SyncanoException>();
             }
 
+            //cleanup
             await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
@@ -922,10 +953,11 @@ namespace Syncano.Net.Tests
             //when
             var result = await _client.Collections.DeleteTag(TestData.ProjectId, tag, collection.Id);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -945,10 +977,11 @@ namespace Syncano.Net.Tests
             //when
             var result = await _client.Collections.DeleteTag(TestData.ProjectId, tag, collection.Id);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -969,10 +1002,11 @@ namespace Syncano.Net.Tests
             //when
             var result = await _client.Collections.DeleteTag(TestData.ProjectId, tag, collectionKey: collectionKey);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -993,10 +1027,11 @@ namespace Syncano.Net.Tests
             //when
             var result = await _client.Collections.DeleteTag(TestData.ProjectId, tag, collectionKey: collectionKey);
 
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -1051,13 +1086,14 @@ namespace Syncano.Net.Tests
 
             //when
             var result = await _client.Collections.DeleteTag(TestData.ProjectId, tags, collection.Id);
-
             var array = await _client.Collections.Get(TestData.ProjectId, tags[0], CollectionStatus.All);
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
+            
             //then
             result.ShouldBeTrue();
             array.ShouldBeEmpty();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -1076,13 +1112,14 @@ namespace Syncano.Net.Tests
 
             //when
             var result = await _client.Collections.DeleteTag(TestData.ProjectId, tags, collection.Id);
-
             var array = await _client.Collections.Get(TestData.ProjectId, tags[0], CollectionStatus.All);
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
+            
             //then
             result.ShouldBeTrue();
             array.ShouldBeEmpty();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -1102,13 +1139,14 @@ namespace Syncano.Net.Tests
 
             //when
             var result = await _client.Collections.DeleteTag(TestData.ProjectId, tags, collectionKey: collectionKey);
-
             var array = await _client.Collections.Get(TestData.ProjectId, tags[0], CollectionStatus.All);
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
+            
             //then
             result.ShouldBeTrue();
             array.ShouldBeEmpty();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -1128,13 +1166,14 @@ namespace Syncano.Net.Tests
 
             //when
             var result = await _client.Collections.DeleteTag(TestData.ProjectId, tags, collectionKey: collectionKey);
-
             var array = await _client.Collections.Get(TestData.ProjectId, tags[0], CollectionStatus.All);
-            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
-
+            
             //then
             result.ShouldBeTrue();
             array.ShouldBeEmpty();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 
         [Fact]
@@ -1201,6 +1240,7 @@ namespace Syncano.Net.Tests
                 e.ShouldBeType<SyncanoException>();
             }
 
+            //cleanup
             await _client.Collections.Delete(TestData.ProjectId, collection.Id);
         }
 

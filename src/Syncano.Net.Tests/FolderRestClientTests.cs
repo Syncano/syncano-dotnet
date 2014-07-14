@@ -27,10 +27,11 @@ namespace Syncano.Net.Tests
             var folder = await _client.Folders.New(TestData.ProjectId, folderName,
                 TestData.CollectionId);
 
-            await _client.Folders.Delete(TestData.ProjectId, folderName, TestData.CollectionId);
-
             //then
             folder.Id.ShouldNotEqual(null);
+
+            //cleanup
+            await _client.Folders.Delete(TestData.ProjectId, folderName, TestData.CollectionId);
         }
 
         [Fact]
@@ -43,10 +44,11 @@ namespace Syncano.Net.Tests
             var folder = await _client.Folders.New(TestData.ProjectId, folderName,
                 collectionKey: TestData.CollectionKey);
 
-            await _client.Folders.Delete(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
-
             //then
             folder.Id.ShouldNotEqual(null);
+
+            //cleanup
+            await _client.Folders.Delete(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
         }
 
         [Fact]
@@ -155,10 +157,11 @@ namespace Syncano.Net.Tests
             var result = await _client.Folders.Update(TestData.ProjectId, folderName, TestData.CollectionId, null, newFolderName,
                         "qwerty");
 
-            await _client.Folders.Delete(TestData.ProjectId, newFolderName, TestData.CollectionId);
-
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Folders.Delete(TestData.ProjectId, newFolderName, TestData.CollectionId);
         }
 
         [Fact]
@@ -175,10 +178,11 @@ namespace Syncano.Net.Tests
             var result = await _client.Folders.Update(TestData.ProjectId, folderName, null, TestData.CollectionKey, newFolderName,
                         "qwerty");
 
-            await _client.Folders.Delete(TestData.ProjectId, newFolderName, collectionKey: TestData.CollectionKey);
-
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Folders.Delete(TestData.ProjectId, newFolderName, collectionKey: TestData.CollectionKey);
         }
 
         [Fact]
@@ -213,10 +217,11 @@ namespace Syncano.Net.Tests
             await _client.Folders.Deauthorize(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
                         TestData.FolderName, TestData.CollectionId);
 
-            await _client.Folders.Delete(TestData.ProjectId, folderName, TestData.CollectionId);
-
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Folders.Delete(TestData.ProjectId, folderName, TestData.CollectionId);
         }
 
         [Fact]
@@ -235,10 +240,11 @@ namespace Syncano.Net.Tests
             await _client.Folders.Deauthorize(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
                         TestData.FolderName, collectionKey: TestData.CollectionKey);
 
-            await _client.Folders.Delete(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
-
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Folders.Delete(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
         }
 
         [Fact]
@@ -273,10 +279,11 @@ namespace Syncano.Net.Tests
             var result = await _client.Folders.Deauthorize(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
                         TestData.FolderName, TestData.CollectionId);
 
-            await _client.Folders.Delete(TestData.ProjectId, folderName, TestData.CollectionId);
-
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Folders.Delete(TestData.ProjectId, folderName, TestData.CollectionId);
         }
 
         [Fact]
@@ -294,10 +301,11 @@ namespace Syncano.Net.Tests
             var result = await _client.Folders.Deauthorize(TestData.UserApiClientId, Permissions.CreateData, TestData.ProjectId,
                         TestData.FolderName, collectionKey: TestData.CollectionKey);
 
-            await _client.Folders.Delete(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
-
             //then
             result.ShouldBeTrue();
+
+            //cleanup
+            await _client.Folders.Delete(TestData.ProjectId, folderName, collectionKey: TestData.CollectionKey);
         }
 
         [Fact]
