@@ -36,11 +36,11 @@ namespace Syncano.Net
 
         public string ImageUrl { get; set; }
 
-        public int? DataOne { get; set; }
+        public long? DataOne { get; set; }
 
-        public int? DataTwo { get; set; }
+        public long? DataTwo { get; set; }
 
-        public int? DataThree { get; set; }
+        public long? DataThree { get; set; }
 
         public string Folder { get; set; }
 
