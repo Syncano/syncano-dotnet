@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,17 +18,22 @@ namespace Syncano.Net.Tests
             _client = new Syncano(TestData.InstanceName, TestData.BackendAdminApiKey);
         }
 
-        private string ImageToBase64(System.Drawing.Image image, System.Drawing.Imaging.ImageFormat format)
+        private string ImageToBase64(string path)
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                // Convert Image to byte[]
-                image.Save(ms, format);
-                byte[] imageBytes = ms.ToArray();
 
-                // Convert byte[] to Base64 String
-                string base64String = Convert.ToBase64String(imageBytes);
-                return base64String;
+            using (var f = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+             
+                using (MemoryStream ms = new MemoryStream())
+                {
+
+                    f.CopyTo(ms);
+                    byte[] imageBytes = ms.ToArray();
+
+                    // Convert byte[] to Base64 String
+                    string base64String = Convert.ToBase64String(imageBytes);
+                    return base64String;
+                }
             }
         }
 
@@ -212,8 +216,7 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
 
-            System.Drawing.Image image = System.Drawing.Image.FromFile("sampleImage.jpg");
-            var imageBase64 = ImageToBase64(image, ImageFormat.Jpeg);
+            var imageBase64 = ImageToBase64("sampleImage.jpg");
 
             request.ImageBase64 = imageBase64;
 
@@ -229,7 +232,7 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            //await _client.DataObjects.Delete(deleteRequest);
+            await _client.DataObjects.Delete(deleteRequest);
         }
 
         [Fact]

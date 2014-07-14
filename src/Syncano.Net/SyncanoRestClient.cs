@@ -112,7 +112,7 @@ namespace Syncano.Net
 
         private HttpContent CreatePostContent(object query)
         {
-            var content = new List<KeyValuePair<string, string>>();
+            var content = new MultipartFormDataContent();
 
             if (query != null)
             {
@@ -126,19 +126,21 @@ namespace Syncano.Net
 
                             foreach (var item in array)
                             {
-                                content.Add(new KeyValuePair<string, string>(each.Name, Uri.EscapeDataString(item.ToString())));
+                                content.Add( new StringContent(item.ToString()),each.Name);
                             }
                         }
                         else
                         {
-                            content.Add(new KeyValuePair<string, string>(each.Name, Uri.EscapeDataString(each.GetValue(query).ToString())));
+                            content.Add(new StringContent(each.GetValue(query).ToString()), each.Name);
                         }
                     }
 
                 }
             }
 
-            return new FormUrlEncodedContent(content);
+
+
+            return content;
         }
 
         public async Task<bool> GetAsync(string methodName, object query)
