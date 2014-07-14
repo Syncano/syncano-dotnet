@@ -487,6 +487,46 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task GetOne_ByCollectionId_IncludeChildren_CreatesNewDataObject()
+        {
+            //given
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+
+            var parentRequest = new NewDataObjectRequest();
+            parentRequest.ProjectId = TestData.ProjectId;
+            parentRequest.CollectionId = TestData.CollectionId;
+            var parentResult = await _client.DataObjects.New(parentRequest);
+
+            request.ParentId = parentResult.Id;
+            var childResult = await _client.DataObjects.New(request);
+
+            //when
+            var result =
+                await
+                    _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentResult.Id,
+                        includeChildren: true);
+
+            //then
+            childResult.ShouldNotBeNull();
+            childResult.Folder.ShouldEqual(request.Folder);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            deleteRequest.DataId = childResult.Id;
+            await _client.DataObjects.Delete(deleteRequest);
+
+            var parentDeleteRequest = new DeleteDataObjectRequest();
+            parentDeleteRequest.ProjectId = TestData.ProjectId;
+            parentDeleteRequest.CollectionId = TestData.CollectionId;
+            parentDeleteRequest.DataId = parentResult.Id;
+            await _client.DataObjects.Delete(parentDeleteRequest);
+        }
+
+        [Fact]
         public async Task Delete_ByCollectionId()
         {
             //given

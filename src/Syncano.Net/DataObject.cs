@@ -59,7 +59,7 @@ namespace Syncano.Net
         public int ChildrenCount { get; set; }
 
         [JsonProperty("children")]
-        public DataObject [] Children { get; set; }
+        public List<DataObject> Children { get; set; }
 
 
     }
