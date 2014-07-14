@@ -38,13 +38,13 @@ namespace Syncano.Net
         public string Link { get; set; }
 
         [JsonProperty("data1")]
-        public int? DataOne { get; set; }
+        public long? DataOne { get; set; }
 
         [JsonProperty("data2")]
-        public int? DataTwo { get; set; }
+        public long? DataTwo { get; set; }
 
         [JsonProperty("data3")]
-        public int? DataThree { get; set; }
+        public long? DataThree { get; set; }
 
         [JsonProperty("source_url")]
         public string SourceUrl { get; set; }
