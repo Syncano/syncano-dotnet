@@ -33,7 +33,11 @@ namespace Syncano.Net.Tests
             result.Folder.ShouldEqual(request.Folder);
 
             //cleanup
-            await _client.DataObjects.Delete(TestData.ProjectId, new[] { result.Id }, null, TestData.CollectionId);
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            deleteRequest.DataId = result.Id;
+            await _client.DataObjects.Delete(deleteRequest);
         }
 
         [Fact]
@@ -52,7 +56,11 @@ namespace Syncano.Net.Tests
             result.Folder.ShouldEqual(request.Folder);
 
             //cleanup
-            await _client.DataObjects.Delete(TestData.ProjectId, new[] { result.Id }, null, TestData.CollectionId);
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            deleteRequest.DataId = result.Id;
+            await _client.DataObjects.Delete(deleteRequest);
         }
 
         [Fact]
@@ -73,7 +81,11 @@ namespace Syncano.Net.Tests
             result.User.Name.ShouldEqual(request.UserName);
 
             //cleanup
-            await _client.DataObjects.Delete(TestData.ProjectId, new[] { result.Id }, null, TestData.CollectionId);
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            deleteRequest.DataId = result.Id;
+            await _client.DataObjects.Delete(deleteRequest);
         }
 
         [Fact]
@@ -94,7 +106,11 @@ namespace Syncano.Net.Tests
             result.SourceUrl.ShouldEqual(request.SourceUrl);
 
             //cleanup
-            await _client.DataObjects.Delete(TestData.ProjectId, new[] { result.Id }, null, TestData.CollectionId);
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            deleteRequest.DataId = result.Id;
+            await _client.DataObjects.Delete(deleteRequest);
         }
 
         [Fact]
@@ -115,7 +131,11 @@ namespace Syncano.Net.Tests
             result.Title.ShouldEqual(request.Title);
 
             //cleanup
-            await _client.DataObjects.Delete(TestData.ProjectId, new[] { result.Id }, null, TestData.CollectionId);
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            deleteRequest.DataId = result.Id;
+            await _client.DataObjects.Delete(deleteRequest);
         }
 
         [Fact]
@@ -136,7 +156,11 @@ namespace Syncano.Net.Tests
             result.Text.ShouldEqual(request.Text);
 
             //cleanup
-            await _client.DataObjects.Delete(TestData.ProjectId, new[] { result.Id }, null, TestData.CollectionId);
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            deleteRequest.DataId = result.Id;
+            await _client.DataObjects.Delete(deleteRequest);
         }
 
         [Fact]
@@ -157,7 +181,11 @@ namespace Syncano.Net.Tests
             result.Link.ShouldEqual(request.Link);
 
             //cleanup
-            await _client.DataObjects.Delete(TestData.ProjectId, new[] { result.Id }, null, TestData.CollectionId);
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            deleteRequest.DataId = result.Id;
+            await _client.DataObjects.Delete(deleteRequest);
         }
 
         public void Dispose()

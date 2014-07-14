@@ -149,6 +149,15 @@ namespace Syncano.Net
             return true;
         }
 
+        public async Task<bool> PostAsync(string methodName, object query)
+        {
+            var content = CreatePostContent(query);
+            var response = await _client.PostAsync(CreateBaseUri(methodName), content);
+            var json = CheckResponseStatus(await response.Content.ReadAsStringAsync());
+
+            return true;
+        }
+
         public Task<string> StartSession()
         {
             return GetAsync("apikey.start_session", "session_id", t => t.Value<string>());

@@ -8,7 +8,7 @@ namespace Syncano.Net
 {
     public class DataObjectRestClient
     {
-        private static readonly int MAX_VALUES_PER_REQUEST = 100;
+        public static readonly int MaxVauluesPerRequest = 100;
 
         private readonly SyncanoRestClient _restClient;
 
@@ -17,83 +17,69 @@ namespace Syncano.Net
             _restClient = restClient;
         }
 
+
         public Task<DataObject> New(NewDataObjectRequest request)
         {
-            return New(request.ProjectId, request.CollectionId, request.CollectionKey, request.DataKey, request.UserName,
-                request.SourceUrl, request.Title, request.Text, request.Link, request.ImageBase64, request.ImageUrl,
-                request.DataOne, request.DataTwo, request.DataThree, request.Folder, request.State, request.ParentId);
-        }
+            if(request.ProjectId == null)
+                throw new ArgumentNullException();
 
-        private Task<DataObject> New(string projectId, string collectionId = null, string collectionKey = null,
-            string dataKey = null, string userName = null, string sourceUrl = null, string title = null,
-            string text = null, string link = null, string imageBase64 = null, string imageUrl = null,
-            int? dataOne = null, int? dataTwo = null, int? dataThree = null, string folder = "Default",
-            DataObjectState state = DataObjectState.Pending, string parentId = null)
-        {
-            if(collectionId == null && collectionKey == null)
+            if(request.CollectionId == null && request.CollectionKey == null)
                 throw new ArgumentNullException();
 
             return _restClient.PostAsync("data.new",
                 new
                 {
-                    project_id = projectId,
-                    collection_id = collectionId,
-                    collection_key = collectionKey,
-                    data_key = dataKey,
-                    user_name = userName,
-                    source_url = sourceUrl,
-                    title = title,
-                    text = text,
-                    link = link,
-                    image = imageBase64,
-                    image_url = imageUrl,
-                    folder = folder,
-                    state = state,
-                    parent_id = parentId,
-                    data1 = dataOne,
-                    data2 = dataTwo,
-                    data3 = dataThree
+                    project_id = request.ProjectId,
+                    collection_id = request.CollectionId,
+                    collection_key = request.CollectionKey,
+                    data_key = request.DataKey,
+                    user_name = request.UserName,
+                    source_url = request.SourceUrl,
+                    title = request.Title,
+                    text = request.Text,
+                    link = request.Link,
+                    image = request.ImageBase64,
+                    image_url = request.ImageUrl,
+                    folder = request.Folder,
+                    state = request.State,
+                    parent_id = request.ParentId,
+                    data1 = request.DataOne,
+                    data2 = request.DataTwo,
+                    data3 = request.DataThree
                 }, "data", t => t.ToObject<DataObject>());
         }
 
-        public Task<bool> Delete(string projectId, string[] dataIds, string[] folders, string collectionId = null,
-            string collectionKey = null,
-            DataObjectState state = DataObjectState.All, DataObjectContentFilter? filter = null, string byUser = null,
-            int limit = 100)
+        public Task<bool> Delete(DeleteDataObjectRequest request)
         {
-            if (collectionId == null && collectionKey == null)
+            if(request.ProjectId == null)
                 throw new ArgumentNullException();
 
-            if (limit > MAX_VALUES_PER_REQUEST)
-                throw new ArgumentException();
-            if (dataIds != null)
-            {
-                if (dataIds.Length > MAX_VALUES_PER_REQUEST)
-                    throw new ArgumentException();
-                if (dataIds.Length == 0)
-                    dataIds = null;
-            }
+            if (request.CollectionId == null && request.CollectionKey == null)
+                throw new ArgumentNullException();
 
-            if (folders != null)
-            {
-                if (folders.Length > MAX_VALUES_PER_REQUEST)
-                    throw new ArgumentException();
-                if (folders.Length == 0)
-                    folders = null;
-            }
+            if (request.Limit > MaxVauluesPerRequest)
+                throw new ArgumentException();
+
+            var dataIds = request.DataIds == null ? new List<string>() : new List<string>(request.DataIds);
+            if(request.DataId != null)
+                dataIds.Add(request.DataId);
+
+            var folders = request.Folders == null ? new List<string>() : new List<string>(request.Folders);
+            if (request.Folder != null)
+                dataIds.Add(request.Folder);
 
             return _restClient.GetAsync("data.delete",
                 new
                 {
-                    project_id = projectId,
-                    collection_id = collectionId,
-                    collection_key = collectionKey,
-                    data_ids = dataIds,
-                    state = state,
-                    folders = folders,
-                    filter = filter,
-                    by_user = byUser,
-                    limit = limit
+                    project_id = request.ProjectId,
+                    collection_id = request.CollectionId,
+                    collection_key = request.CollectionKey,
+                    data_ids = dataIds.ToArray(),
+                    state = request.State,
+                    folders = folders.ToArray(),
+                    filter = request.Filter,
+                    by_user = request.ByUser,
+                    limit = request.Limit
                 });
         }
 

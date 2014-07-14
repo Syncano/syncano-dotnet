@@ -46,6 +46,7 @@
     <Compile Include="DataObjectContentFilter.cs" />
     <Compile Include="DataObjectRestClient.cs" />
     <Compile Include="DataObjectState.cs" />
+    <Compile Include="DeleteDataObjectRequest.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="FolderRestClient.cs" />
     <Compile Include="NewDataObjectRequest.cs" />
