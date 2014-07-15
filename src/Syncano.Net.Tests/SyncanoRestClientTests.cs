@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Should;
@@ -24,6 +25,25 @@ namespace Syncano.Net.Tests
 
         public const string UserApiClientId = "1086";
         public const string UserName = "UserName";
+
+        public static string ImageToBase64(string path)
+        {
+
+            using (var f = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+
+                    f.CopyTo(ms);
+                    byte[] imageBytes = ms.ToArray();
+
+                    // Convert byte[] to Base64 String
+                    string base64String = Convert.ToBase64String(imageBytes);
+                    return base64String;
+                }
+            }
+        }
     }
 
     public class SyncanoRestClientTests : IDisposable
