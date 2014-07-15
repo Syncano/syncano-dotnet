@@ -43,6 +43,7 @@
     <Compile Include="CollectionRestClient.cs" />
     <Compile Include="CollectionStatus.cs" />
     <Compile Include="CopyDataObjectRequest.cs" />
+    <Compile Include="CountDataObjectRequest.cs" />
     <Compile Include="DataObject.cs" />
     <Compile Include="DataObjectContentFilter.cs" />
     <Compile Include="DataObjectRestClient.cs" />

@@ -141,6 +141,32 @@ namespace Syncano.Net
                 });
         }
 
+        public Task<int> Count(CountDataObjectRequest request)
+        {
+            if (request.ProjectId == null)
+                throw new ArgumentNullException();
 
+            if (request.CollectionId == null && request.CollectionKey == null)
+                throw new ArgumentNullException();
+
+            var folders = request.Folders == null ? new List<string>() : new List<string>(request.Folders);
+            if (folders.Count + (request.Folder != null ? 1 : 0) >
+                MaxVauluesPerRequest)
+                throw new ArgumentException();
+            if (request.Folder != null)
+                folders.Add(request.Folder);
+
+            return _restClient.GetAsync("data.count",
+                new
+                {
+                    project_id = request.ProjectId,
+                    collection_id = request.CollectionId,
+                    collection_key = request.CollectionKey,
+                    state = request.State,
+                    folders = folders.ToArray(),
+                    filter = request.Filter,
+                    by_user = request.ByUser
+                }, "count", t => t.ToObject<int>());
+        }
     }
 }

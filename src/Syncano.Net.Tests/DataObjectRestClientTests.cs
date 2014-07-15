@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -1680,6 +1681,621 @@ namespace Syncano.Net.Tests
             await _client.Folders.Delete(TestData.ProjectId, folderOne.Name, TestData.CollectionId);
             await _client.Folders.Delete(TestData.ProjectId, folderTwo.Name, TestData.CollectionId);
             await _client.Folders.Delete(TestData.ProjectId, folderThree.Name, TestData.CollectionId);
+        }
+
+        [Fact]
+        public async Task Count_ByCollectionId()
+        {
+            //given
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            var dataObject = await _client.DataObjects.New(request);
+
+            var countRequest = new CountDataObjectRequest();
+            countRequest.ProjectId = TestData.ProjectId;
+            countRequest.CollectionId = TestData.CollectionId;
+
+            //when
+            var result = await _client.DataObjects.Count(countRequest);
+
+            //then
+            result.ShouldEqual(1);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Count_ByCollectionId_MultipleDataObjects()
+        {
+            //given
+            var count = 15;
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+
+            for(int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            var countRequest = new CountDataObjectRequest();
+            countRequest.ProjectId = TestData.ProjectId;
+            countRequest.CollectionId = TestData.CollectionId;
+
+            //when
+            var result = await _client.DataObjects.Count(countRequest);
+
+            //then
+            result.ShouldEqual(count);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Count_ByCollectionId_MultipleDataObjects_FilterByStateModerated()
+        {
+            //given
+            var count = 15;
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+
+            for (int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            request.State = DataObjectState.Moderated;
+
+            for (int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            var countRequest = new CountDataObjectRequest();
+            countRequest.ProjectId = TestData.ProjectId;
+            countRequest.CollectionId = TestData.CollectionId;
+            countRequest.State = DataObjectState.Moderated;
+
+            //when
+            var result = await _client.DataObjects.Count(countRequest);
+
+            //then
+            result.ShouldEqual(count);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Count_ByCollectionKey_MultipleDataObjects()
+        {
+            //given
+            var count = 15;
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionKey = TestData.CollectionKey;
+
+            for (int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            var countRequest = new CountDataObjectRequest();
+            countRequest.ProjectId = TestData.ProjectId;
+            countRequest.CollectionId = TestData.CollectionId;
+
+            //when
+            var result = await _client.DataObjects.Count(countRequest);
+
+            //then
+            result.ShouldEqual(count);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Count_ByCollectionKey_MultipleDataObjects_FilterByStateModerated()
+        {
+            //given
+            var count = 15;
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionKey = TestData.CollectionKey;
+
+            for (int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            request.State = DataObjectState.Moderated;
+
+            for (int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            var countRequest = new CountDataObjectRequest();
+            countRequest.ProjectId = TestData.ProjectId;
+            countRequest.CollectionId = TestData.CollectionId;
+            countRequest.State = DataObjectState.Moderated;
+
+            //when
+            var result = await _client.DataObjects.Count(countRequest);
+
+            //then
+            result.ShouldEqual(count);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Count_ByCollectionId_MultipleDataObjects_FilterByStateAll()
+        {
+            //given
+            var count = 15;
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.State = DataObjectState.Rejected;
+
+            for (int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            request.State = DataObjectState.Moderated;
+
+            for (int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            var countRequest = new CountDataObjectRequest();
+            countRequest.ProjectId = TestData.ProjectId;
+            countRequest.CollectionId = TestData.CollectionId;
+            countRequest.State = DataObjectState.All;
+
+            //when
+            var result = await _client.DataObjects.Count(countRequest);
+
+            //then
+            result.ShouldEqual(2*count);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Count_ByCollectionId_MultipleDataObjects_FilterByImageContent()
+        {
+            //given
+            var count = 15;
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+
+            for (int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            request.UserName = TestData.UserName;
+
+            for (int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            var countRequest = new CountDataObjectRequest();
+            countRequest.ProjectId = TestData.ProjectId;
+            countRequest.CollectionId = TestData.CollectionId;
+            countRequest.ByUser = TestData.UserName;
+
+            //when
+            var result = await _client.DataObjects.Count(countRequest);
+
+            //then
+            result.ShouldEqual(count);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Count_ByCollectionId_MultipleDataObjects_FilterByTextContent()
+        {
+            //given
+            var count = 15;
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+
+            for (int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            request.Text = "text content";
+
+            for (int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            var countRequest = new CountDataObjectRequest();
+            countRequest.ProjectId = TestData.ProjectId;
+            countRequest.CollectionId = TestData.CollectionId;
+            countRequest.Filter = DataObjectContentFilter.Text;
+
+            //when
+            var result = await _client.DataObjects.Count(countRequest);
+
+            //then
+            result.ShouldEqual(2*count);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Count_ByCollectionId_MultipleDataObjects_FilterByFolders()
+        {
+            //given
+            var folderOne =
+                await _client.Folders.New(TestData.ProjectId, "folderOne", collectionId: TestData.CollectionId);
+            var folderTwo =
+                await _client.Folders.New(TestData.ProjectId, "folderTwo", collectionId: TestData.CollectionId);
+            var folderThree =
+                await _client.Folders.New(TestData.ProjectId, "foldeThree", collectionId: TestData.CollectionId);
+
+            var count = 15;
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+
+            request.Folder = folderOne.Name;
+
+            for (int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            request.Folder = folderTwo.Name;
+
+            for (int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            request.Folder = folderThree.Name;
+
+            for (int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            var countRequest = new CountDataObjectRequest();
+            countRequest.ProjectId = TestData.ProjectId;
+            countRequest.CollectionId = TestData.CollectionId;
+            countRequest.Folder = folderOne.Name;
+
+            //when
+            var result = await _client.DataObjects.Count(countRequest);
+
+            //then
+            result.ShouldEqual(count);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+            await _client.Folders.Delete(TestData.ProjectId, folderOne.Name, TestData.CollectionId);
+            await _client.Folders.Delete(TestData.ProjectId, folderTwo.Name, TestData.CollectionId);
+            await _client.Folders.Delete(TestData.ProjectId, folderThree.Name, TestData.CollectionId);
+        }
+
+        [Fact]
+        public async Task Count_ByCollectionId_MultipleDataObjects_FilterByFoldersUsingFoldersList()
+        {
+            //given
+            var folderOne =
+                await _client.Folders.New(TestData.ProjectId, "folderOne", collectionId: TestData.CollectionId);
+            var folderTwo =
+                await _client.Folders.New(TestData.ProjectId, "folderTwo", collectionId: TestData.CollectionId);
+            var folderThree =
+                await _client.Folders.New(TestData.ProjectId, "foldeThree", collectionId: TestData.CollectionId);
+
+            var count = 15;
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+
+            request.Folder = folderOne.Name;
+
+            for (int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            request.Folder = folderTwo.Name;
+
+            for (int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            request.Folder = folderThree.Name;
+
+            for (int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            var countRequest = new CountDataObjectRequest();
+            countRequest.ProjectId = TestData.ProjectId;
+            countRequest.CollectionId = TestData.CollectionId;
+            countRequest.Folders = new List<string>() { folderOne.Name, folderTwo.Name };
+
+            //when
+            var result = await _client.DataObjects.Count(countRequest);
+
+            //then
+            result.ShouldEqual(2*count);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+            await _client.Folders.Delete(TestData.ProjectId, folderOne.Name, TestData.CollectionId);
+            await _client.Folders.Delete(TestData.ProjectId, folderTwo.Name, TestData.CollectionId);
+            await _client.Folders.Delete(TestData.ProjectId, folderThree.Name, TestData.CollectionId);
+        }
+
+        [Fact]
+        public async Task Count_ByCollectionId_MultipleDataObjects_FilterByFoldersUsingFolderAndFoldersList()
+        {
+            //given
+            var folderOne =
+                await _client.Folders.New(TestData.ProjectId, "folderOne", collectionId: TestData.CollectionId);
+            var folderTwo =
+                await _client.Folders.New(TestData.ProjectId, "folderTwo", collectionId: TestData.CollectionId);
+            var folderThree =
+                await _client.Folders.New(TestData.ProjectId, "foldeThree", collectionId: TestData.CollectionId);
+
+            var count = 15;
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+
+            request.Folder = folderOne.Name;
+
+            for (int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            request.Folder = folderTwo.Name;
+
+            for (int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            request.Folder = folderThree.Name;
+
+            for (int i = 0; i < count; ++i)
+                await _client.DataObjects.New(request);
+
+            var countRequest = new CountDataObjectRequest();
+            countRequest.ProjectId = TestData.ProjectId;
+            countRequest.CollectionId = TestData.CollectionId;
+            countRequest.Folders = new List<string>() { folderOne.Name };
+            countRequest.Folder = folderTwo.Name;
+
+            //when
+            var result = await _client.DataObjects.Count(countRequest);
+
+            //then
+            result.ShouldEqual(2 * count);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+            await _client.Folders.Delete(TestData.ProjectId, folderOne.Name, TestData.CollectionId);
+            await _client.Folders.Delete(TestData.ProjectId, folderTwo.Name, TestData.CollectionId);
+            await _client.Folders.Delete(TestData.ProjectId, folderThree.Name, TestData.CollectionId);
+        }
+
+        [Fact]
+        public async Task Count_WithInvalidProjectId_ThrowsException()
+        {
+            //given
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            var dataObject = await _client.DataObjects.New(request);
+
+            var countRequest = new CountDataObjectRequest();
+            countRequest.ProjectId = "abc";
+            countRequest.CollectionId = TestData.CollectionId;
+
+
+            try
+            {
+                //when
+                await _client.DataObjects.Count(countRequest);
+                throw new Exception("Count should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<SyncanoException>();
+            }
+            
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Count_WithNullProjectId_ThrowsException()
+        {
+            //given
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            var dataObject = await _client.DataObjects.New(request);
+
+            var countRequest = new CountDataObjectRequest();
+            countRequest.ProjectId = null;
+            countRequest.CollectionId = TestData.CollectionId;
+
+
+            try
+            {
+                //when
+                await _client.DataObjects.Count(countRequest);
+                throw new Exception("Count should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<ArgumentNullException>();
+            }
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Count_WithNullCollectionIdAndCollectionKey_ThrowsException()
+        {
+            //given
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            var dataObject = await _client.DataObjects.New(request);
+
+            var countRequest = new CountDataObjectRequest();
+            countRequest.ProjectId = TestData.ProjectId;
+
+            try
+            {
+                //when
+                await _client.DataObjects.Count(countRequest);
+                throw new Exception("Count should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<ArgumentNullException>();
+            }
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Count_WithInvalidCollectionId_ThrowsException()
+        {
+            //given
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            var dataObject = await _client.DataObjects.New(request);
+
+            var countRequest = new CountDataObjectRequest();
+            countRequest.ProjectId = TestData.ProjectId;
+            countRequest.CollectionId = "abc";
+
+
+            try
+            {
+                //when
+                await _client.DataObjects.Count(countRequest);
+                throw new Exception("Count should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<SyncanoException>();
+            }
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Count_WithToBigFoldersList_ThrowsException()
+        {
+            //given
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            var dataObject = await _client.DataObjects.New(request);
+
+            var countRequest = new CountDataObjectRequest();
+            countRequest.ProjectId = TestData.ProjectId;
+            countRequest.CollectionId = TestData.CollectionId;
+            countRequest.Folders = new List<string>();
+
+            for(int i = 0; i < DataObjectRestClient.MaxVauluesPerRequest + 10; ++i)
+                countRequest.Folders.Add("folder");
+
+            try
+            {
+                //when
+                await _client.DataObjects.Count(countRequest);
+                throw new Exception("Count should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<ArgumentException>();
+            }
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Count_WithToMuchFolders_ThrowsException()
+        {
+            //given
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            var dataObject = await _client.DataObjects.New(request);
+
+            var countRequest = new CountDataObjectRequest();
+            countRequest.ProjectId = TestData.ProjectId;
+            countRequest.CollectionId = TestData.CollectionId;
+            countRequest.Folders = new List<string>();
+
+            for (int i = 0; i < DataObjectRestClient.MaxVauluesPerRequest; ++i)
+                countRequest.Folders.Add("folder");
+
+            countRequest.Folder = "folder";
+
+            try
+            {
+                //when
+                await _client.DataObjects.Count(countRequest);
+                throw new Exception("Count should throw an exception");
+            }
+            catch (Exception e)
+            {
+                e.ShouldBeType<ArgumentException>();
+            }
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
         }
 
         public void Dispose()
