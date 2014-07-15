@@ -662,6 +662,75 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task GetOne_ChildrenTreeParentHierarchy_CreatesNewDataObject()
+        {
+            //given
+            var newRequest = new NewDataObjectRequest();
+            newRequest.ProjectId = TestData.ProjectId;
+            newRequest.CollectionKey = TestData.CollectionKey;
+            var dataObject = await _client.DataObjects.New(newRequest);
+            newRequest.ParentId = dataObject.Id;
+            var childObject = await _client.DataObjects.New(newRequest);
+            newRequest.ParentId = childObject.Id;
+            childObject = await _client.DataObjects.New(newRequest);
+            newRequest.ParentId = childObject.Id;
+            await _client.DataObjects.New(newRequest);
+
+            //when
+            var result =
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObject.Id, includeChildren: true);
+
+            //then
+            result.ShouldNotBeNull();
+            result.Folder.ShouldEqual(newRequest.Folder);
+            result.Id.ShouldEqual(dataObject.Id);
+            result.Children.Count.ShouldEqual(1);
+            result.Children[0].Children.Count.ShouldEqual(1);
+            result.Children[0].Children[0].Children.Count.ShouldEqual(1);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task GetOne_ChildrenTreeParentHierarchyWithLimit_CreatesNewDataObject()
+        {
+            //given
+            var newRequest = new NewDataObjectRequest();
+            newRequest.ProjectId = TestData.ProjectId;
+            newRequest.CollectionKey = TestData.CollectionKey;
+            var dataObject = await _client.DataObjects.New(newRequest);
+            newRequest.ParentId = dataObject.Id;
+            var childObject = await _client.DataObjects.New(newRequest);
+            newRequest.ParentId = childObject.Id;
+            childObject = await _client.DataObjects.New(newRequest);
+            newRequest.ParentId = childObject.Id;
+            await _client.DataObjects.New(newRequest);
+            var limit = 2;
+
+            //when
+            var result =
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObject.Id, includeChildren: true, childrenLimit: limit);
+
+            //then
+            result.ShouldNotBeNull();
+            result.Folder.ShouldEqual(newRequest.Folder);
+            result.Id.ShouldEqual(dataObject.Id);
+            result.Children.Count.ShouldEqual(1);
+            result.Children[0].Children.Count.ShouldEqual(1);
+            result.Children[0].Children[0].Children.Count.ShouldEqual(1);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
         public async Task GetOne_ByCollectionId_IncludeChildren_CreatesNewDataObject()
         {
             //given
@@ -781,6 +850,228 @@ namespace Syncano.Net.Tests
                 //then
                 e.ShouldBeType<ArgumentException>();
             }
+        }
+
+        [Fact]
+        public async Task Copy_ByCollectionId_CreatesNewDataObject()
+        {
+            //given
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            var dataObject = await _client.DataObjects.New(request);
+            var copyRequest = new CopyDataObjectRequest();
+            copyRequest.ProjectId = TestData.ProjectId;
+            copyRequest.CollectionId = TestData.CollectionId;
+            copyRequest.DataId = dataObject.Id;
+
+            //when
+            var result = await _client.DataObjects.Copy(copyRequest);
+
+            //then
+            result.ShouldNotBeNull();
+            result[0].Folder.ShouldEqual(request.Folder);
+            result[0].Id.ShouldNotEqual(dataObject.Id);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Copy_DataIdsListCountGreaterThenOne_CreatesNewDataObject()
+        {
+            //given
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            var dataObject = await _client.DataObjects.New(request);
+            var dataIds = new List<string>();
+            dataIds.Add(dataObject.Id);
+            dataObject = await _client.DataObjects.New(request);
+            dataIds.Add(dataObject.Id);
+            
+            var copyRequest = new CopyDataObjectRequest();
+            copyRequest.ProjectId = TestData.ProjectId;
+            copyRequest.CollectionId = TestData.CollectionId;
+            copyRequest.DataIds = dataIds;
+
+            //when
+            var result = await _client.DataObjects.Copy(copyRequest);
+
+            //then
+            result.ShouldNotBeNull();
+            result.Count.ShouldEqual(2);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Copy_DataIdsListAndDataIdUsed_CreatesNewDataObject()
+        {
+            //given
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            var dataObject = await _client.DataObjects.New(request);
+            var dataIds = new List<string>();
+            dataIds.Add(dataObject.Id);
+            dataObject = await _client.DataObjects.New(request);
+            
+            var copyRequest = new CopyDataObjectRequest();
+            copyRequest.ProjectId = TestData.ProjectId;
+            copyRequest.CollectionId = TestData.CollectionId;
+            copyRequest.DataIds = dataIds;
+            copyRequest.DataId = dataObject.Id;
+
+            //when
+            var result = await _client.DataObjects.Copy(copyRequest);
+
+            //then
+            result.ShouldNotBeNull();
+            result.Count.ShouldEqual(2);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Copy_WithNullProjectId_ThrowsException()
+        {
+            //given
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            var dataObject = await _client.DataObjects.New(request);
+
+            var copyRequest = new CopyDataObjectRequest();
+            copyRequest.ProjectId = null;
+            copyRequest.CollectionId = TestData.CollectionId;
+            copyRequest.DataId = dataObject.Id;
+
+            try
+            {
+                //when
+                await _client.DataObjects.Copy(copyRequest);
+                throw new Exception("New should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Copy_WithNullCollectionIdAndCollectionKey_ThrowsException()
+        {
+            //given
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            var dataObject = await _client.DataObjects.New(request);
+
+            var copyRequest = new CopyDataObjectRequest();
+            copyRequest.ProjectId = TestData.ProjectId;
+            copyRequest.DataId = dataObject.Id;
+
+            try
+            {
+                //when
+                await _client.DataObjects.Copy(copyRequest);
+                throw new Exception("New should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Copy_WithInvalidProjectId_ThrowsException()
+        {
+            //given
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            var dataObject = await _client.DataObjects.New(request);
+
+            var copyRequest = new CopyDataObjectRequest();
+            copyRequest.ProjectId = "abc";
+            copyRequest.CollectionId = TestData.CollectionId;
+            copyRequest.DataId = dataObject.Id;
+
+            try
+            {
+                //when
+                await _client.DataObjects.Copy(copyRequest);
+                throw new Exception("New should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Copy_WithoutAnyDataIds_ThrowsException()
+        {
+            //given
+            var request = new NewDataObjectRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            var dataObject = await _client.DataObjects.New(request);
+
+            var copyRequest = new CopyDataObjectRequest();
+            copyRequest.ProjectId = TestData.ProjectId;
+            copyRequest.CollectionId = TestData.CollectionId;
+
+            try
+            {
+                //when
+                await _client.DataObjects.Copy(copyRequest);
+                throw new Exception("New should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
         }
 
         [Fact]

@@ -76,6 +76,32 @@ namespace Syncano.Net
                 }, "data", t => t.ToObject<DataObject>());
         }
 
+        public async Task<List<DataObject>> Copy(CopyDataObjectRequest request)
+        {
+            if (request.ProjectId == null)
+                throw new ArgumentNullException();
+
+            if (request.CollectionId == null && request.CollectionKey == null)
+                throw new ArgumentNullException();
+
+            var dataIds = request.DataIds == null ? new List<string>() : new List<string>(request.DataIds);
+            if (dataIds.Count + (request.DataId != null ? 1 : 0) > MaxVauluesPerRequest)
+                throw new ArgumentException();
+            if (request.DataId != null)
+                dataIds.Add(request.DataId);
+
+            if(dataIds.Count < 1)
+                throw new ArgumentException();
+
+            return await _restClient.GetAsync("data.copy", new
+            {
+                project_id = request.ProjectId,
+                collection_id = request.CollectionId,
+                collection_key = request.CollectionKey,
+                data_ids = dataIds.ToArray()
+            }, "data", t => t.ToObject<List<DataObject>>());
+        }
+
         public Task<bool> Delete(DeleteDataObjectRequest request)
         {
             if(request.ProjectId == null)
