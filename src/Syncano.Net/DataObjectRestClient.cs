@@ -135,6 +135,9 @@ namespace Syncano.Net
             if (collectionId == null && collectionKey == null)
                 throw new ArgumentNullException();
 
+            if (dataId == null || childId == null)
+                throw new ArgumentNullException();
+
             return _restClient.GetAsync("data.remove_child",
                 new
                 {
