@@ -59,6 +59,9 @@ namespace Syncano.Net
             if (collectionId == null && collectionKey == null)
                 throw new ArgumentNullException();
 
+            if(childrenLimit < 0 || childrenLimit > MaxVauluesPerRequest)
+                throw new ArgumentException();
+
             return _restClient.GetAsync("data.get_one",
                 new
                 {

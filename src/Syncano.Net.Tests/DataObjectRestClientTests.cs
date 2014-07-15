@@ -471,6 +471,58 @@ namespace Syncano.Net.Tests
 
             //when
             var result =
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId);
+
+            //then
+            result.ShouldNotBeNull();
+            result.Folder.ShouldEqual(newRequest.Folder);
+            result.Id.ShouldEqual(dataObject.Id);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            deleteRequest.DataId = result.Id;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task GetOne_ByCollectionKey_CreatesNewDataObject()
+        {
+            //given
+            var newRequest = new NewDataObjectRequest();
+            newRequest.ProjectId = TestData.ProjectId;
+            newRequest.CollectionKey = TestData.CollectionKey;
+            var dataObject = await _client.DataObjects.New(newRequest);
+
+            //when
+            var result =
+                await _client.DataObjects.GetOne(TestData.ProjectId, collectionKey: TestData.CollectionKey);
+
+            //then
+            result.ShouldNotBeNull();
+            result.Folder.ShouldEqual(newRequest.Folder);
+            result.Id.ShouldEqual(dataObject.Id);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            deleteRequest.DataId = result.Id;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task GetOne_FilterByDataId_CreatesNewDataObject()
+        {
+            //given
+            var newRequest = new NewDataObjectRequest();
+            newRequest.ProjectId = TestData.ProjectId;
+            newRequest.CollectionKey = TestData.CollectionKey;
+            var dataObject = await _client.DataObjects.New(newRequest);
+
+            //when
+            var result =
                 await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObject.Id);
 
             //then
@@ -483,6 +535,129 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task GetOne_FilterByDataKey_CreatesNewDataObject()
+        {
+            //given
+            var newRequest = new NewDataObjectRequest();
+            newRequest.ProjectId = TestData.ProjectId;
+            newRequest.CollectionKey = TestData.CollectionKey;
+            newRequest.DataKey = "testDataKey";
+            var dataObject = await _client.DataObjects.New(newRequest);
+
+            //when
+            var result =
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataKey: newRequest.DataKey);
+
+            //then
+            result.ShouldNotBeNull();
+            result.Folder.ShouldEqual(newRequest.Folder);
+            result.Id.ShouldEqual(dataObject.Id);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            deleteRequest.DataId = result.Id;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task GetOne_ChildrenDefaultLimit_CreatesNewDataObject()
+        {
+            //given
+            var newRequest = new NewDataObjectRequest();
+            newRequest.ProjectId = TestData.ProjectId;
+            newRequest.CollectionKey = TestData.CollectionKey;
+            var dataObject = await _client.DataObjects.New(newRequest);
+            newRequest.ParentId = dataObject.Id;
+
+            for (int i = 0; i < DataObjectRestClient.MaxVauluesPerRequest + 10; ++i)
+                await _client.DataObjects.New(newRequest);
+
+            //when
+            var result =
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObject.Id, includeChildren: true);
+
+            //then
+            result.ShouldNotBeNull();
+            result.Folder.ShouldEqual(newRequest.Folder);
+            result.Id.ShouldEqual(dataObject.Id);
+            result.Children.Count.ShouldEqual(DataObjectRestClient.MaxVauluesPerRequest);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task GetOne_ChildrenLimit_CreatesNewDataObject()
+        {
+            //given
+            var newRequest = new NewDataObjectRequest();
+            newRequest.ProjectId = TestData.ProjectId;
+            newRequest.CollectionKey = TestData.CollectionKey;
+            var dataObject = await _client.DataObjects.New(newRequest);
+            newRequest.ParentId = dataObject.Id;
+            var limit = 20;
+
+            for (int i = 0; i < limit + 10; ++i)
+                await _client.DataObjects.New(newRequest);
+
+            //when
+            var result =
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObject.Id, includeChildren: true, childrenLimit: limit);
+
+            //then
+            result.ShouldNotBeNull();
+            result.Folder.ShouldEqual(newRequest.Folder);
+            result.Id.ShouldEqual(dataObject.Id);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task GetOne_ChildrenDepth_CreatesNewDataObject()
+        {
+            //given
+            var newRequest = new NewDataObjectRequest();
+            newRequest.ProjectId = TestData.ProjectId;
+            newRequest.CollectionKey = TestData.CollectionKey;
+            var dataObject = await _client.DataObjects.New(newRequest);
+            newRequest.ParentId = dataObject.Id;
+            var childObject = await _client.DataObjects.New(newRequest);
+            newRequest.ParentId = childObject.Id;
+            childObject = await _client.DataObjects.New(newRequest);
+            newRequest.ParentId = childObject.Id;
+            await _client.DataObjects.New(newRequest);
+            var depth = 2;
+
+            //when
+            var result =
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObject.Id, includeChildren: true, depth: depth);
+
+            //then
+            result.ShouldNotBeNull();
+            result.Folder.ShouldEqual(newRequest.Folder);
+            result.Id.ShouldEqual(dataObject.Id);
+            result.Children.Count.ShouldEqual(1);
+            result.Children[0].Children.Count.ShouldEqual(1);
+            result.Children[0].Children[0].Children.ShouldBeNull();
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
             await _client.DataObjects.Delete(deleteRequest);
         }
 
@@ -526,6 +701,86 @@ namespace Syncano.Net.Tests
             parentDeleteRequest.CollectionId = TestData.CollectionId;
             parentDeleteRequest.DataId = parentResult.Id;
             await _client.DataObjects.Delete(parentDeleteRequest);
+        }
+
+        [Fact]
+        public async Task GetOne_WithNullCollectionIdAndCollectionKey_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.DataObjects.GetOne(TestData.ProjectId);
+                throw new Exception("New should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetOne_WithNullProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.DataObjects.GetOne(null, collectionId: TestData.CollectionId);
+                throw new Exception("New should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetOne_WithInvalidProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.DataObjects.GetOne("abc", collectionId: TestData.CollectionId);
+                throw new Exception("New should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetOne_WithNegativeLimit_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.DataObjects.GetOne(TestData.ProjectId, collectionId: TestData.CollectionId, childrenLimit: -1);
+                throw new Exception("New should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetOne_WithToBigLimit_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.DataObjects.GetOne(TestData.ProjectId, collectionId: TestData.CollectionId, childrenLimit: DataObjectRestClient.MaxVauluesPerRequest + 1);
+                throw new Exception("New should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
         }
 
         [Fact]
