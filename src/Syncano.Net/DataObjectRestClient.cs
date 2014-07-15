@@ -102,6 +102,50 @@ namespace Syncano.Net
             }, "data", t => t.ToObject<List<DataObject>>());
         }
 
+        public Task<bool> AddChild(string projectId, string dataId, string childId, string collectionId = null,
+            string collectionKey = null, bool removeOther = false)
+        {
+            if (projectId == null)
+                throw new ArgumentNullException();
+
+            if (collectionId == null && collectionKey == null)
+                throw new ArgumentNullException();
+
+            if(dataId == null || childId == null)
+                throw new ArgumentNullException();
+
+            return _restClient.GetAsync("data.add_child",
+                new
+                {
+                    project_id = projectId,
+                    collection_id = collectionId,
+                    collection_key = collectionKey,
+                    data_id = dataId,
+                    child_id = childId,
+                    remove_other = removeOther
+                });
+        }
+
+        public Task<bool> RemoveChild(string projectId, string dataId, string childId, string collectionId = null,
+            string collectionKey = null)
+        {
+            if (projectId == null)
+                throw new ArgumentNullException();
+
+            if (collectionId == null && collectionKey == null)
+                throw new ArgumentNullException();
+
+            return _restClient.GetAsync("data.remove_child",
+                new
+                {
+                    project_id = projectId,
+                    collection_id = collectionId,
+                    collection_key = collectionKey,
+                    data_id = dataId,
+                    child_id = childId
+                });
+        }
+
         public Task<bool> Delete(DeleteDataObjectRequest request)
         {
             if(request.ProjectId == null)

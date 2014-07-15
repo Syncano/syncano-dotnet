@@ -1076,6 +1076,404 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task AddChild_ByCollectionId()
+        {
+            //given
+            var newParentRequest = new NewDataObjectRequest();
+            newParentRequest.ProjectId = TestData.ProjectId;
+            newParentRequest.CollectionId = TestData.CollectionId;
+            var parentObject = await _client.DataObjects.New(newParentRequest);
+
+            var newChildRequest = new NewDataObjectRequest();
+            newChildRequest.ProjectId = TestData.ProjectId;
+            newChildRequest.CollectionId = TestData.CollectionId;
+            var childObject = await _client.DataObjects.New(newChildRequest);
+
+            //when
+            var result =
+                await
+                    _client.DataObjects.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id,
+                        TestData.CollectionId);
+
+            var getResult =
+                await
+                    _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentObject.Id,
+                        includeChildren: true);
+
+            //then
+            result.ShouldBeTrue();
+            getResult.Children.ShouldNotBeEmpty();
+            getResult.Children[0].Id.ShouldEqual(childObject.Id);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task AddChild_ByCollectionKey()
+        {
+            //given
+            var newParentRequest = new NewDataObjectRequest();
+            newParentRequest.ProjectId = TestData.ProjectId;
+            newParentRequest.CollectionId = TestData.CollectionId;
+            var parentObject = await _client.DataObjects.New(newParentRequest);
+
+            var newChildRequest = new NewDataObjectRequest();
+            newChildRequest.ProjectId = TestData.ProjectId;
+            newChildRequest.CollectionId = TestData.CollectionId;
+            var childObject = await _client.DataObjects.New(newChildRequest);
+
+            //when
+            var result =
+                await
+                    _client.DataObjects.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id,
+                        collectionKey: TestData.CollectionKey);
+
+            var getResult =
+                await
+                    _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentObject.Id,
+                        includeChildren: true);
+
+            //then
+            result.ShouldBeTrue();
+            getResult.Children.ShouldNotBeEmpty();
+            getResult.Children[0].Id.ShouldEqual(childObject.Id);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task AddChild_ByCollectionKey_WithRemoveOther()
+        {
+            //given
+            var newParentRequest = new NewDataObjectRequest();
+            newParentRequest.ProjectId = TestData.ProjectId;
+            newParentRequest.CollectionId = TestData.CollectionId;
+            var parentObject = await _client.DataObjects.New(newParentRequest);
+
+            var newOtherRequest = new NewDataObjectRequest();
+            newOtherRequest.ProjectId = TestData.ProjectId;
+            newOtherRequest.CollectionId = TestData.CollectionId;
+            newOtherRequest.ParentId = parentObject.Id;
+            var otherObject = await _client.DataObjects.New(newOtherRequest);
+
+            var newChildRequest = new NewDataObjectRequest();
+            newChildRequest.ProjectId = TestData.ProjectId;
+            newChildRequest.CollectionId = TestData.CollectionId;
+            var childObject = await _client.DataObjects.New(newChildRequest);
+
+            //when
+            var result =
+                await
+                    _client.DataObjects.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId,
+                        removeOther: true);
+
+            var getResult =
+                await
+                    _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentObject.Id,
+                        includeChildren: true);
+
+            //then
+            result.ShouldBeTrue();
+            getResult.Children.ShouldNotBeEmpty();
+            getResult.Children[0].Id.ShouldEqual(childObject.Id);
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task AddChild_ByCollectionKey_WithOtherChildren()
+        {
+            //given
+            var newParentRequest = new NewDataObjectRequest();
+            newParentRequest.ProjectId = TestData.ProjectId;
+            newParentRequest.CollectionId = TestData.CollectionId;
+            var parentObject = await _client.DataObjects.New(newParentRequest);
+
+            var newOtherRequest = new NewDataObjectRequest();
+            newOtherRequest.ProjectId = TestData.ProjectId;
+            newOtherRequest.CollectionId = TestData.CollectionId;
+            newOtherRequest.ParentId = parentObject.Id;
+            var otherObject = await _client.DataObjects.New(newOtherRequest);
+
+            var newChildRequest = new NewDataObjectRequest();
+            newChildRequest.ProjectId = TestData.ProjectId;
+            newChildRequest.CollectionId = TestData.CollectionId;
+            var childObject = await _client.DataObjects.New(newChildRequest);
+
+            //when
+            var result =
+                await
+                    _client.DataObjects.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
+
+            var getResult =
+                await
+                    _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentObject.Id,
+                        includeChildren: true);
+
+            //then
+            result.ShouldBeTrue();
+            getResult.Children.ShouldNotBeEmpty();
+            getResult.Children.Count.ShouldEqual(2);
+            getResult.Children.Any( d => d.Id == otherObject.Id).ShouldBeTrue();
+            getResult.Children.Any(d => d.Id == childObject.Id).ShouldBeTrue();
+
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task AddChild_WithInvalidProjectId_ThrowsException()
+        {
+            //given
+            var newParentRequest = new NewDataObjectRequest();
+            newParentRequest.ProjectId = TestData.ProjectId;
+            newParentRequest.CollectionId = TestData.CollectionId;
+            var parentObject = await _client.DataObjects.New(newParentRequest);
+
+            var newChildRequest = new NewDataObjectRequest();
+            newChildRequest.ProjectId = TestData.ProjectId;
+            newChildRequest.CollectionId = TestData.CollectionId;
+            var childObject = await _client.DataObjects.New(newChildRequest);
+
+            try
+            {
+                //then
+                await
+                    _client.DataObjects.AddChild("abc", parentObject.Id, childObject.Id,
+                        TestData.CollectionId);
+                throw new Exception("AddChild should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task AddChild_WithNullProjectId_ThrowsException()
+        {
+            //given
+            var newParentRequest = new NewDataObjectRequest();
+            newParentRequest.ProjectId = TestData.ProjectId;
+            newParentRequest.CollectionId = TestData.CollectionId;
+            var parentObject = await _client.DataObjects.New(newParentRequest);
+
+            var newChildRequest = new NewDataObjectRequest();
+            newChildRequest.ProjectId = TestData.ProjectId;
+            newChildRequest.CollectionId = TestData.CollectionId;
+            var childObject = await _client.DataObjects.New(newChildRequest);
+
+            try
+            {
+                //then
+                await
+                    _client.DataObjects.AddChild(null, parentObject.Id, childObject.Id,
+                        TestData.CollectionId);
+                throw new Exception("AddChild should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task AddChild_WithNullCollectionIdAndCollectionKey_ThrowsException()
+        {
+            //given
+            var newParentRequest = new NewDataObjectRequest();
+            newParentRequest.ProjectId = TestData.ProjectId;
+            newParentRequest.CollectionId = TestData.CollectionId;
+            var parentObject = await _client.DataObjects.New(newParentRequest);
+
+            var newChildRequest = new NewDataObjectRequest();
+            newChildRequest.ProjectId = TestData.ProjectId;
+            newChildRequest.CollectionId = TestData.CollectionId;
+            var childObject = await _client.DataObjects.New(newChildRequest);
+
+            try
+            {
+                //then
+                await
+                    _client.DataObjects.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id);
+                throw new Exception("AddChild should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task AddChild_WithNullParentId_ThrowsException()
+        {
+            //given
+            var newParentRequest = new NewDataObjectRequest();
+            newParentRequest.ProjectId = TestData.ProjectId;
+            newParentRequest.CollectionId = TestData.CollectionId;
+            var parentObject = await _client.DataObjects.New(newParentRequest);
+
+            var newChildRequest = new NewDataObjectRequest();
+            newChildRequest.ProjectId = TestData.ProjectId;
+            newChildRequest.CollectionId = TestData.CollectionId;
+            var childObject = await _client.DataObjects.New(newChildRequest);
+
+            try
+            {
+                //then
+                await
+                    _client.DataObjects.AddChild(TestData.ProjectId, null, childObject.Id,
+                        TestData.CollectionId);
+                throw new Exception("AddChild should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task AddChild_WithNullChildId_ThrowsException()
+        {
+            //given
+            var newParentRequest = new NewDataObjectRequest();
+            newParentRequest.ProjectId = TestData.ProjectId;
+            newParentRequest.CollectionId = TestData.CollectionId;
+            var parentObject = await _client.DataObjects.New(newParentRequest);
+
+            var newChildRequest = new NewDataObjectRequest();
+            newChildRequest.ProjectId = TestData.ProjectId;
+            newChildRequest.CollectionId = TestData.CollectionId;
+            var childObject = await _client.DataObjects.New(newChildRequest);
+
+            try
+            {
+                //then
+                await
+                    _client.DataObjects.AddChild(TestData.ProjectId, parentObject.Id, null,
+                        TestData.CollectionId);
+                throw new Exception("AddChild should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task AddChild_WithInvalidParentId_ThrowsException()
+        {
+            //given
+            var newParentRequest = new NewDataObjectRequest();
+            newParentRequest.ProjectId = TestData.ProjectId;
+            newParentRequest.CollectionId = TestData.CollectionId;
+            var parentObject = await _client.DataObjects.New(newParentRequest);
+
+            var newChildRequest = new NewDataObjectRequest();
+            newChildRequest.ProjectId = TestData.ProjectId;
+            newChildRequest.CollectionId = TestData.CollectionId;
+            var childObject = await _client.DataObjects.New(newChildRequest);
+
+            try
+            {
+                //then
+                await
+                    _client.DataObjects.AddChild(TestData.ProjectId, "abc", childObject.Id,
+                        TestData.CollectionId);
+                throw new Exception("AddChild should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task AddChild_WithInvalidChildId_ThrowsException()
+        {
+            //given
+            var newParentRequest = new NewDataObjectRequest();
+            newParentRequest.ProjectId = TestData.ProjectId;
+            newParentRequest.CollectionId = TestData.CollectionId;
+            var parentObject = await _client.DataObjects.New(newParentRequest);
+
+            var newChildRequest = new NewDataObjectRequest();
+            newChildRequest.ProjectId = TestData.ProjectId;
+            newChildRequest.CollectionId = TestData.CollectionId;
+            var childObject = await _client.DataObjects.New(newChildRequest);
+
+            try
+            {
+                //then
+                await
+                    _client.DataObjects.AddChild(TestData.ProjectId, parentObject.Id, "abc",
+                        TestData.CollectionId);
+                throw new Exception("AddChild should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+            //cleanup
+            var deleteRequest = new DeleteDataObjectRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
         public async Task Delete_ByCollectionId()
         {
             //given
