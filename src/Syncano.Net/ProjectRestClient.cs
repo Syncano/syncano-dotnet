@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,6 +15,9 @@ namespace Syncano.Net
 
         public Task<Project> New(string name, string description = null)
         {
+            if(name == null)
+                throw new ArgumentNullException();
+
             return _restClient.GetAsync("project.new", new { name = name, description = description }, "project",
                 t => t.ToObject<Project>());
         }
@@ -25,11 +29,17 @@ namespace Syncano.Net
 
         public Task<Project> GetOne(string projectId)
         {
+            if(projectId == null)
+                throw new ArgumentNullException();
+
             return _restClient.GetAsync("project.get_one", new { project_id = projectId }, "project", t => t.ToObject<Project>());
         }
 
         public Task<Project> Update(string projectId, string name = null, string description = null)
         {
+            if(projectId == null)
+                throw new ArgumentNullException();
+
             return _restClient.GetAsync("project.update", new { project_id = projectId, name = name, description = description },
                 "project", t => t.ToObject<Project>());
         }

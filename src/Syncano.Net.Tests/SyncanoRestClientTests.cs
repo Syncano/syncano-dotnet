@@ -15,9 +15,9 @@ namespace Syncano.Net.Tests
         public const string BackendAdminApiKey = "f020f3a62b2ea236100a732adcf60cb98683e2e5";
 
         public const string ProjectName = "Default";
-        public const string ProjectId = "1288";
+        public const string ProjectId = "1625";
 
-        public const string CollectionId = "4995";
+        public const string CollectionId = "6490";
         public const string CollectionKey = "default";
 
         public const string FolderName = "Default";
