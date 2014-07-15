@@ -370,7 +370,39 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
-        public async Task Deauthorize()
+        public async Task Authorize_WithNoUserApiKey_ThrowsException()
+        {
+            try
+            {
+                //when
+                var result = await _client.Projects.Authorize(null, Permissions.CreateData, TestData.ProjectId);
+                throw new Exception("Update should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Authorize_WithInvalidUserApiKey_ThrowsException()
+        {
+            try
+            {
+                //when
+                var result = await _client.Projects.Authorize("abcde", Permissions.CreateData, TestData.ProjectId);
+                throw new Exception("Update should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task Deauthorize_WithReadDataPermissions()
         {
             //given
             string projectName = "Deauthorize Test " + DateTime.Now.ToLongTimeString() + " " +
@@ -387,6 +419,38 @@ namespace Syncano.Net.Tests
 
             //cleanup
             await _client.Projects.Delete(project.Id);
+        }
+
+        [Fact]
+        public async Task Deauthorize_WithNoUserApiKey_ThrowsException()
+        {
+            try
+            {
+                //when
+                var result = await _client.Projects.Deauthorize(null, Permissions.CreateData, TestData.ProjectId);
+                throw new Exception("Update should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Deauthorize_WithInvalidUserApiKey_ThrowsException()
+        {
+            try
+            {
+                //when
+                var result = await _client.Projects.Deauthorize("abcde", Permissions.CreateData, TestData.ProjectId);
+                throw new Exception("Update should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
         }
 
         [Fact]

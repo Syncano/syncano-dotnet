@@ -46,6 +46,9 @@ namespace Syncano.Net
 
         public Task<bool> Authorize(string apiClientId, Permissions permission, string projectId)
         {
+            if(apiClientId == null)
+                throw new ArgumentNullException();
+
             string permissionString = PermissionsParser.GetString(permission);
             return _restClient.GetAsync("project.authorize",
                 new {api_client_id = apiClientId, permission = permissionString, project_id = projectId});
@@ -53,6 +56,9 @@ namespace Syncano.Net
 
         public Task<bool> Deauthorize(string apiClientId, Permissions permission, string projectId)
         {
+            if(apiClientId == null)
+                throw new ArgumentNullException();
+
             string permissionString = PermissionsParser.GetString(permission);
             return _restClient.GetAsync("project.deauthorize",
                 new { api_client_id = apiClientId, permission = permissionString, project_id = projectId });
@@ -60,6 +66,9 @@ namespace Syncano.Net
 
         public Task<bool> Delete(string projectId)
         {
+            if(projectId == null)
+                throw new ArgumentNullException();
+
             return _restClient.GetAsync("project.delete", new { project_id = projectId });
         }
     }

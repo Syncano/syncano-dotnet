@@ -31,7 +31,6 @@ namespace Syncano.Net.Tests
 
             using (var f = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-
                 using (MemoryStream ms = new MemoryStream())
                 {
 

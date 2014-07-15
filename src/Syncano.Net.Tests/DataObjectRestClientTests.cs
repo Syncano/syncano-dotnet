@@ -153,7 +153,7 @@ namespace Syncano.Net.Tests
             await _client.DataObjects.Delete(deleteRequest);
         }
 
-        [Fact]
+        [Fact(Skip = "Syncano bug - children limit parameter not working")]
         public async Task GetOne_ChildrenLimit_CreatesNewDataObject()
         {
             //given
@@ -175,6 +175,7 @@ namespace Syncano.Net.Tests
             result.ShouldNotBeNull();
             result.Folder.ShouldEqual(newRequest.Folder);
             result.Id.ShouldEqual(dataObject.Id);
+            result.Children.Count.ShouldEqual(limit);
 
             //cleanup
             var deleteRequest = new DeleteDataObjectRequest();
