@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="CollectionRestClientTests.cs" />
     <Compile Include="DataObjectRestClientAddChildRemoveChildTests.cs" />
+    <Compile Include="DataObjectRestClientAddParentRemoveParentTests.cs" />
     <Compile Include="DataObjectRestClientNewDeleteTests.cs" />
     <Compile Include="DataObjectRestClientTests.cs" />
     <Compile Include="FolderRestClientTests.cs" />

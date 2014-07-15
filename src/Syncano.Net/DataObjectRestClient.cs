@@ -102,6 +102,53 @@ namespace Syncano.Net
             }, "data", t => t.ToObject<List<DataObject>>());
         }
 
+        public Task<bool> AddParent(string projectId, string dataId, string parentId, string collectionId = null,
+            string collectionKey = null, bool removeOther = false)
+        {
+            if (projectId == null)
+                throw new ArgumentNullException();
+
+            if (collectionId == null && collectionKey == null)
+                throw new ArgumentNullException();
+
+            if (dataId == null || parentId == null)
+                throw new ArgumentNullException();
+
+            return _restClient.GetAsync("data.add_parent",
+                new
+                {
+                    project_id = projectId,
+                    collection_id = collectionId,
+                    collection_key = collectionKey,
+                    data_id = dataId,
+                    parent_id = parentId,
+                    remove_other = removeOther
+                });
+        }
+
+        public Task<bool> RemoveParent(string projectId, string dataId, string parentId = null, string collectionId = null,
+            string collectionKey = null)
+        {
+            if (projectId == null)
+                throw new ArgumentNullException();
+
+            if (collectionId == null && collectionKey == null)
+                throw new ArgumentNullException();
+
+            if (dataId == null)
+                throw new ArgumentNullException();
+
+            return _restClient.GetAsync("data.remove_parent",
+                new
+                {
+                    project_id = projectId,
+                    collection_id = collectionId,
+                    collection_key = collectionKey,
+                    data_id = dataId,
+                    parent_id = parentId
+                });
+        }
+
         public Task<bool> AddChild(string projectId, string dataId, string childId, string collectionId = null,
             string collectionKey = null, bool removeOther = false)
         {
