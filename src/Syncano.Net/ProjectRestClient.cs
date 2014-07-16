@@ -18,7 +18,7 @@ namespace Syncano.Net
             if(name == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("project.new", new { name = name, description = description }, "project",
+            return _restClient.PostAsync("project.new", new { name, description }, "project",
                 t => t.ToObject<Project>());
         }
         
@@ -40,7 +40,7 @@ namespace Syncano.Net
             if(projectId == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("project.update", new { project_id = projectId, name = name, description = description },
+            return _restClient.PostAsync("project.update", new { project_id = projectId, name, description },
                 "project", t => t.ToObject<Project>());
         }
 
@@ -56,7 +56,7 @@ namespace Syncano.Net
 
         public Task<bool> Deauthorize(string apiClientId, Permissions permission, string projectId)
         {
-            if(apiClientId == null)
+            if(apiClientId == null || projectId == null)
                 throw new ArgumentNullException();
 
             string permissionString = PermissionsParser.GetString(permission);

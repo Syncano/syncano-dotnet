@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Should;
@@ -9,7 +8,7 @@ namespace Syncano.Net.Tests
 {
     public class ProjectRestClientTests : IDisposable
     {
-        private Syncano _client;
+        private readonly Syncano _client;
 
         public ProjectRestClientTests()
         {
@@ -42,7 +41,7 @@ namespace Syncano.Net.Tests
             //given
             string projectName = "NewProject test " + DateTime.Now.ToLongTimeString() + " " +
                                  DateTime.Now.ToShortDateString();
-            string projectDescription = "qwerty";
+            const string projectDescription = "qwerty";
 
             //when
             var project = await _client.Projects.New(projectName, projectDescription);
@@ -63,7 +62,7 @@ namespace Syncano.Net.Tests
             try
             {
                 //when
-                var project = await _client.Projects.New(null);
+                await _client.Projects.New(null);
                 throw new Exception("New should throw an exception");
             }
             catch (Exception e)
@@ -88,7 +87,7 @@ namespace Syncano.Net.Tests
         public async Task Get_CreatesProjectsList_MultipleProjects()
         {
             //given
-            var count = 10;
+            const int count = 10;
             for (int i = 0; i < count; ++i)
                 await _client.Projects.New("Test project " + i);
 
@@ -126,8 +125,8 @@ namespace Syncano.Net.Tests
             try
             {
                 //when
-                var result = await _client.Projects.GetOne(null);
-                throw new Exception("New should throw an exception");
+                await _client.Projects.GetOne(null);
+                throw new Exception("GetOne should throw an exception");
             }
             catch (Exception e)
             {
@@ -142,8 +141,8 @@ namespace Syncano.Net.Tests
             try
             {
                 //when
-                var result = await _client.Projects.GetOne("abcde");
-                throw new Exception("New should throw an exception");
+                await _client.Projects.GetOne("abcde");
+                throw new Exception("GetOne should throw an exception");
             }
             catch (Exception e)
             {
@@ -160,8 +159,8 @@ namespace Syncano.Net.Tests
                                  DateTime.Now.ToShortDateString();
             string projectNewName = "UpdateProject test new name" + DateTime.Now.ToLongTimeString() + " " +
                                  DateTime.Now.ToShortDateString();
-            string projectOldDescription = "qwerty";
-            string projectNewDescription = "abc";
+            const string projectOldDescription = "qwerty";
+            const string projectNewDescription = "abc";
             var project = await _client.Projects.New(projectName, projectOldDescription);
 
             //when
@@ -203,7 +202,7 @@ namespace Syncano.Net.Tests
             try
             {
                 //when
-                var result = await _client.Projects.Update("abc");
+                await _client.Projects.Update("abc");
                 throw new Exception("Update should throw an exception");
             }
             catch (Exception e)
@@ -219,7 +218,7 @@ namespace Syncano.Net.Tests
             try
             {
                 //when
-                var result = await _client.Projects.Update(null);
+                await _client.Projects.Update(null);
                 throw new Exception("Update should throw an exception");
             }
             catch (Exception e)
@@ -375,8 +374,8 @@ namespace Syncano.Net.Tests
             try
             {
                 //when
-                var result = await _client.Projects.Authorize(null, Permissions.CreateData, TestData.ProjectId);
-                throw new Exception("Update should throw an exception");
+                await _client.Projects.Authorize(null, Permissions.CreateData, TestData.ProjectId);
+                throw new Exception("Authorize should throw an exception");
             }
             catch (Exception e)
             {
@@ -391,8 +390,8 @@ namespace Syncano.Net.Tests
             try
             {
                 //when
-                var result = await _client.Projects.Authorize("abcde", Permissions.CreateData, TestData.ProjectId);
-                throw new Exception("Update should throw an exception");
+                await _client.Projects.Authorize("abcde", Permissions.CreateData, TestData.ProjectId);
+                throw new Exception("Authorize should throw an exception");
             }
             catch (Exception e)
             {
@@ -427,7 +426,7 @@ namespace Syncano.Net.Tests
             try
             {
                 //when
-                var result = await _client.Projects.Deauthorize(null, Permissions.CreateData, TestData.ProjectId);
+                await _client.Projects.Deauthorize(null, Permissions.CreateData, TestData.ProjectId);
                 throw new Exception("Update should throw an exception");
             }
             catch (Exception e)
@@ -443,8 +442,40 @@ namespace Syncano.Net.Tests
             try
             {
                 //when
-                var result = await _client.Projects.Deauthorize("abcde", Permissions.CreateData, TestData.ProjectId);
+                await _client.Projects.Deauthorize("abcde", Permissions.CreateData, TestData.ProjectId);
+                throw new Exception("Deauthorize should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task Deauthorize_WithNoProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Projects.Deauthorize(TestData.UserApiClientId, Permissions.CreateData, null);
                 throw new Exception("Update should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Deauthorize_WithInvalidProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Projects.Deauthorize(TestData.UserApiClientId, Permissions.CreateData, "abcde");
+                throw new Exception("Deauthorize should throw an exception");
             }
             catch (Exception e)
             {
@@ -459,7 +490,7 @@ namespace Syncano.Net.Tests
             //given
             string projectName = "NewProject test " + DateTime.Now.ToLongTimeString() + " " +
                                  DateTime.Now.ToShortDateString();
-            string projectDescription = "qwerty";
+            const string projectDescription = "qwerty";
             var project = await _client.Projects.New(projectName, projectDescription);
 
             //when
@@ -467,6 +498,38 @@ namespace Syncano.Net.Tests
 
             //then
             result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task Delete_WithNoProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Projects.Delete(null);
+                throw new Exception("Delete should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Delete_WithInvalidProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Projects.Delete("abcde");
+                throw new Exception("Delete should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
         }
 
         public void Dispose()
