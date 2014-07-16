@@ -17,6 +17,278 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task Get_ByCollectionId()
+        {
+            //given
+            var newRequest = new DataObjectDefinitionRequest();
+            newRequest.ProjectId = TestData.ProjectId;
+            newRequest.CollectionId = TestData.CollectionId;
+            var dataObject = await _client.DataObjects.New(newRequest);
+
+            var getRequest = new DataObjectRichQueryRequest();
+            getRequest.ProjectId = TestData.ProjectId;
+            getRequest.CollectionId = TestData.CollectionId;
+
+            //when
+            var result =
+                await _client.DataObjects.Get(getRequest);
+
+            //then
+            result.ShouldNotBeNull();
+            result.Any( d => d.Id == dataObject.Id).ShouldBeTrue();
+
+            //cleanup
+            var deleteRequest = new DataObjectSimpleQueryRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Get_ByCollectionKey()
+        {
+            //given
+            var newRequest = new DataObjectDefinitionRequest();
+            newRequest.ProjectId = TestData.ProjectId;
+            newRequest.CollectionKey = TestData.CollectionKey;
+            var dataObject = await _client.DataObjects.New(newRequest);
+
+            var getRequest = new DataObjectRichQueryRequest();
+            getRequest.ProjectId = TestData.ProjectId;
+            getRequest.CollectionKey = TestData.CollectionKey;
+
+            //when
+            var result =
+                await _client.DataObjects.Get(getRequest);
+
+            //then
+            result.ShouldNotBeNull();
+            result.Any(d => d.Id == dataObject.Id).ShouldBeTrue();
+
+            //cleanup
+            var deleteRequest = new DataObjectSimpleQueryRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Get_ByCollectionId_WithStateModerated()
+        {
+            //given
+            var newRequest = new DataObjectDefinitionRequest();
+            newRequest.ProjectId = TestData.ProjectId;
+            newRequest.CollectionId = TestData.CollectionId;
+            newRequest.State = DataObjectState.Moderated;
+            var dataObject = await _client.DataObjects.New(newRequest);
+
+            var getRequest = new DataObjectRichQueryRequest();
+            getRequest.ProjectId = TestData.ProjectId;
+            getRequest.CollectionId = TestData.CollectionId;
+            getRequest.State = DataObjectState.Moderated;
+
+            //when
+            var result =
+                await _client.DataObjects.Get(getRequest);
+
+            //then
+            result.ShouldNotBeNull();
+            result.Any(d => d.Id == dataObject.Id).ShouldBeTrue();
+
+            //cleanup
+            var deleteRequest = new DataObjectSimpleQueryRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Get_ByCollectionId_WithStateRejected()
+        {
+            //given
+            var newRequest = new DataObjectDefinitionRequest();
+            newRequest.ProjectId = TestData.ProjectId;
+            newRequest.CollectionId = TestData.CollectionId;
+            newRequest.State = DataObjectState.Rejected;
+            var dataObject = await _client.DataObjects.New(newRequest);
+
+            var getRequest = new DataObjectRichQueryRequest();
+            getRequest.ProjectId = TestData.ProjectId;
+            getRequest.CollectionId = TestData.CollectionId;
+            getRequest.State = DataObjectState.Rejected;
+
+            //when
+            var result =
+                await _client.DataObjects.Get(getRequest);
+
+            //then
+            result.ShouldNotBeNull();
+            result.Any(d => d.Id == dataObject.Id).ShouldBeTrue();
+
+            //cleanup
+            var deleteRequest = new DataObjectSimpleQueryRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Get_WithNullProjectId_ThrowsException()
+        {
+            //given
+            var request = new DataObjectRichQueryRequest();
+            request.ProjectId = null;
+            request.CollectionId = TestData.CollectionId;
+
+            try
+            {
+                //when
+                await _client.DataObjects.Get(request);
+                throw new Exception("Get should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Get_WithInvalidProjectId_ThrowsException()
+        {
+            //given
+            var request = new DataObjectRichQueryRequest();
+            request.ProjectId = "abc";
+            request.CollectionId = TestData.CollectionId;
+
+            try
+            {
+                //when
+                await _client.DataObjects.Get(request);
+                throw new Exception("Get should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task Get_WithNullCollectionIdAndCollectionKey_ThrowsException()
+        {
+            //given
+            var request = new DataObjectRichQueryRequest();
+            request.ProjectId = TestData.ProjectId;
+
+            try
+            {
+                //when
+                await _client.DataObjects.Get(request);
+                throw new Exception("Get should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Get_WithNegativeLimit_ThrowsException()
+        {
+            //given
+            var request = new DataObjectRichQueryRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.Limit = -1;
+
+            try
+            {
+                //when
+                await _client.DataObjects.Get(request);
+                throw new Exception("Get should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Fact]
+        public async Task Get_WithToBigLimit_ThrowsException()
+        {
+            //given
+            var request = new DataObjectRichQueryRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.Limit = DataObjectRestClient.MaxVauluesPerRequest + 1;
+
+            try
+            {
+                //when
+                await _client.DataObjects.Get(request);
+                throw new Exception("Get should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Fact]
+        public async Task Get_WithToMuchIds_ThrowsException()
+        {
+            //given
+            var request = new DataObjectRichQueryRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.DataIds = new List<string>();
+            for (int i = 0; i < DataObjectRestClient.MaxVauluesPerRequest; ++i)
+                request.DataIds.Add("abc");
+            request.DataId = "abc";
+
+            try
+            {
+                //when
+                await _client.DataObjects.Get(request);
+                throw new Exception("Get should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Fact]
+        public async Task Get_WithToMuchFolders_ThrowsException()
+        {
+            //given
+            var request = new DataObjectRichQueryRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.Folders = new List<string>();
+            for (int i = 0; i < DataObjectRestClient.MaxVauluesPerRequest; ++i)
+                request.Folders.Add("abc");
+            request.Folder = "abc";
+
+            try
+            {
+                //when
+                await _client.DataObjects.Get(request);
+                throw new Exception("Get should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Fact]
         public async Task GetOne_ByCollectionId_CreatesNewDataObject()
         {
             //given

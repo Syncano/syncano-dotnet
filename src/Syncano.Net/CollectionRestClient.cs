@@ -56,7 +56,7 @@ namespace Syncano.Net
         public Task<bool> Activate(string projectId, string collectionId, bool force = false)
         {
             return _restClient.GetAsync("collection.activate",
-                new {project_id = projectId, collection_id = collectionId, force = force});
+                new {project_id = projectId, collection_id = collectionId, force});
         }
 
         public Task<bool> Deactivate(string projectId, string collectionId = null, string collectionKey = null)
@@ -80,8 +80,8 @@ namespace Syncano.Net
                     project_id = projectId,
                     collection_id = collectionId,
                     collection_key = collectionKey,
-                    name = name,
-                    description = description
+                    name,
+                    description
                 }, "collection", t => t.ToObject<Collection>());
         }
 

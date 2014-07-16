@@ -2,7 +2,7 @@
 {
     public class Syncano
     {
-        private SyncanoRestClient _restClient;
+        private readonly SyncanoRestClient _restClient;
 
         public Syncano(string instanceName, string apiKey)
         {
