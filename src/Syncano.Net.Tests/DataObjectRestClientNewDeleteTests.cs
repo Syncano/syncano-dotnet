@@ -31,7 +31,7 @@ namespace Syncano.Net.Tests
             result.Folder.ShouldEqual(request.Folder);
 
             //cleanup
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
@@ -54,7 +54,7 @@ namespace Syncano.Net.Tests
             result.Folder.ShouldEqual(request.Folder);
 
             //cleanup
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
@@ -79,7 +79,7 @@ namespace Syncano.Net.Tests
             result.User.Name.ShouldEqual(request.UserName);
 
             //cleanup
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
@@ -104,7 +104,7 @@ namespace Syncano.Net.Tests
             result.SourceUrl.ShouldEqual(request.SourceUrl);
 
             //cleanup
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
@@ -129,7 +129,7 @@ namespace Syncano.Net.Tests
             result.Title.ShouldEqual(request.Title);
 
             //cleanup
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
@@ -154,7 +154,7 @@ namespace Syncano.Net.Tests
             result.Text.ShouldEqual(request.Text);
 
             //cleanup
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
@@ -179,7 +179,7 @@ namespace Syncano.Net.Tests
             result.Link.ShouldEqual(request.Link);
 
             //cleanup
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
@@ -206,7 +206,7 @@ namespace Syncano.Net.Tests
             result.Folder.ShouldEqual(request.Folder);
 
             //cleanup
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
@@ -235,7 +235,7 @@ namespace Syncano.Net.Tests
             result.DataThree.ShouldEqual(request.DataThree);
 
             //cleanup
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
@@ -261,7 +261,7 @@ namespace Syncano.Net.Tests
             result.Folder.ShouldEqual(folder.Name);
 
             //cleanup
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
@@ -287,7 +287,7 @@ namespace Syncano.Net.Tests
             result.State.ShouldEqual(request.State);
 
             //cleanup
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
@@ -312,7 +312,7 @@ namespace Syncano.Net.Tests
             result.State.ShouldEqual(request.State);
 
             //cleanup
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
@@ -342,13 +342,13 @@ namespace Syncano.Net.Tests
             result.Folder.ShouldEqual(request.Folder);
 
             //cleanup
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
             await _client.DataObjects.Delete(deleteRequest);
 
-            var parentDeleteRequest = new DeleteDataObjectRequest();
+            var parentDeleteRequest = new DataObjectSimpleQueryRequest();
             parentDeleteRequest.ProjectId = TestData.ProjectId;
             parentDeleteRequest.CollectionId = TestData.CollectionId;
             parentDeleteRequest.DataId = parentResult.Id;
@@ -446,7 +446,7 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             var dataObject = await _client.DataObjects.New(request);
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = dataObject.Id;
@@ -466,7 +466,7 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionKey = TestData.CollectionKey;
             var dataObject = await _client.DataObjects.New(request);
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = dataObject.Id;
@@ -487,7 +487,7 @@ namespace Syncano.Net.Tests
             request.CollectionId = TestData.CollectionId;
             request.State = DataObjectState.Moderated;
             var dataObject = await _client.DataObjects.New(request);
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = dataObject.Id;
@@ -520,7 +520,7 @@ namespace Syncano.Net.Tests
             request.CollectionId = TestData.CollectionId;
             request.State = DataObjectState.Pending;
             var dataObject = await _client.DataObjects.New(request);
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = dataObject.Id;
@@ -556,7 +556,7 @@ namespace Syncano.Net.Tests
             var dataObjectThree = await _client.DataObjects.New(request);
 
             var dataIds = new List<string>() { dataObjectTwo.Id, dataObjectThree.Id };
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = dataObjectOne.Id;
@@ -615,7 +615,7 @@ namespace Syncano.Net.Tests
             var dataObjectThree = await _client.DataObjects.New(request);
 
             var dataIds = new List<string>() { dataObjectTwo.Id, dataObjectThree.Id };
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = dataObjectOne.Id;
@@ -685,7 +685,7 @@ namespace Syncano.Net.Tests
             request.CollectionId = TestData.CollectionId;
             request.UserName = TestData.UserName;
             var dataObject = await _client.DataObjects.New(request);
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.ByUser = TestData.UserName;
@@ -706,7 +706,7 @@ namespace Syncano.Net.Tests
             request.CollectionId = TestData.CollectionId;
             request.Text = "text content";
             var dataObject = await _client.DataObjects.New(request);
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = dataObject.Id;
@@ -739,7 +739,7 @@ namespace Syncano.Net.Tests
             request.CollectionId = TestData.CollectionId;
             request.ImageBase64 = TestData.ImageToBase64("sampleImage.jpg");
             var dataObject = await _client.DataObjects.New(request);
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = dataObject.Id;
@@ -767,7 +767,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_WithNullProjectId_ThrowsException()
         {
             //given
-            var request = new DeleteDataObjectRequest();
+            var request = new DataObjectSimpleQueryRequest();
             request.ProjectId = null;
             request.CollectionId = TestData.CollectionId;
 
@@ -788,7 +788,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_WithInvalidProjectId_ThrowsException()
         {
             //given
-            var request = new DeleteDataObjectRequest();
+            var request = new DataObjectSimpleQueryRequest();
             request.ProjectId = "abc";
             request.CollectionId = TestData.CollectionId;
 
@@ -809,7 +809,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_WithNullCollectionIdAndCollectionKey_ThrowsException()
         {
             //given
-            var request = new DeleteDataObjectRequest();
+            var request = new DataObjectSimpleQueryRequest();
             request.ProjectId = TestData.ProjectId;
 
             try
@@ -829,7 +829,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_WithNegativeLimit_ThrowsException()
         {
             //given
-            var request = new DeleteDataObjectRequest();
+            var request = new DataObjectSimpleQueryRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Limit = -1;
@@ -851,7 +851,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_WithToBigLimit_ThrowsException()
         {
             //given
-            var request = new DeleteDataObjectRequest();
+            var request = new DataObjectSimpleQueryRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Limit = DataObjectRestClient.MaxVauluesPerRequest + 1;
@@ -873,7 +873,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_WithToMuchIds_ThrowsException()
         {
             //given
-            var request = new DeleteDataObjectRequest();
+            var request = new DataObjectSimpleQueryRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.DataIds = new List<string>();
@@ -898,7 +898,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_WithToMuchFolders_ThrowsException()
         {
             //given
-            var request = new DeleteDataObjectRequest();
+            var request = new DataObjectSimpleQueryRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Folders = new List<string>();
@@ -932,7 +932,7 @@ namespace Syncano.Net.Tests
             request.State = DataObjectState.Rejected;
             var dataObjectThree = await _client.DataObjects.New(request);
 
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.State = DataObjectState.All;
@@ -995,7 +995,7 @@ namespace Syncano.Net.Tests
             var dataObjectThree = await _client.DataObjects.New(request);
 
             var folders = new List<string>() { folderOne.Name, folderTwo.Name };
-            var deleteRequest = new DeleteDataObjectRequest();
+            var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.Folders = folders;

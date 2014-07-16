@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Syncano.Net
 {
-    public class DeleteDataObjectRequest
+    public class DataObjectSimpleQueryRequest
     {
-        public DeleteDataObjectRequest()
+        public DataObjectSimpleQueryRequest()
         {
             State = DataObjectState.All;
             Limit = DataObjectRestClient.MaxVauluesPerRequest;

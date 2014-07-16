@@ -142,6 +142,49 @@ namespace Syncano.Net
                 }, "data", t => t.ToObject<DataObject>());
         }
 
+        public Task<bool> Move(DataObjectSimpleQueryRequest request, string newFolder = null,
+            DataObjectState? newState = null)
+        {
+            if (request.ProjectId == null)
+                throw new ArgumentNullException();
+
+            if (request.CollectionId == null && request.CollectionKey == null)
+                throw new ArgumentNullException();
+
+            if (request.Limit > MaxVauluesPerRequest || request.Limit < 0)
+                throw new ArgumentException();
+
+            var dataIds = request.DataIds == null ? new List<string>() : new List<string>(request.DataIds);
+            if (dataIds.Count + (request.DataId != null ? 1 : 0) > MaxVauluesPerRequest)
+                throw new ArgumentException();
+            if (request.DataId != null)
+                dataIds.Add(request.DataId);
+
+            var folders = request.Folders == null ? new List<string>() : new List<string>(request.Folders);
+            if (folders.Count + (request.Folder != null ? 1 : 0) >
+                MaxVauluesPerRequest)
+                throw new ArgumentException();
+            if (request.Folder != null)
+                folders.Add(request.Folder);
+
+            return _restClient.PostAsync("data.move",
+                new
+                {
+                    project_id = request.ProjectId,
+                    collection_id = request.CollectionId,
+                    collection_key = request.CollectionKey,
+                    data_ids = dataIds.ToArray(),
+                    folders = folders.ToArray(),
+                    state = request.State,
+                    filter = request.Filter,
+                    by_user = request.ByUser,
+                    limit = request.Limit,
+                    new_folder = newFolder,
+                    new_state = newState
+                });
+        }
+
+
         public async Task<List<DataObject>> Copy(CopyDataObjectRequest request)
         {
             if (request.ProjectId == null)
@@ -262,7 +305,7 @@ namespace Syncano.Net
                 });
         }
 
-        public Task<bool> Delete(DeleteDataObjectRequest request)
+        public Task<bool> Delete(DataObjectSimpleQueryRequest request)
         {
             if(request.ProjectId == null)
                 throw new ArgumentNullException();
