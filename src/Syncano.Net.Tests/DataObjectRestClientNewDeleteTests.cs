@@ -499,8 +499,7 @@ namespace Syncano.Net.Tests
             //then
             try
             {
-                var getDataObject =
-                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObject.Id);
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObject.Id);
                 throw new Exception("GetOne should throw an exception");
             }
             catch (Exception e)
@@ -532,8 +531,7 @@ namespace Syncano.Net.Tests
             //then
             try
             {
-                var getDataObject =
-                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObject.Id);
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObject.Id);
                 throw new Exception("GetOne should throw an exception");
             }
             catch (Exception e)
@@ -555,7 +553,7 @@ namespace Syncano.Net.Tests
             var dataObjectTwo = await _client.DataObjects.New(request);
             var dataObjectThree = await _client.DataObjects.New(request);
 
-            var dataIds = new List<string>() { dataObjectTwo.Id, dataObjectThree.Id };
+            var dataIds = new List<string> { dataObjectTwo.Id, dataObjectThree.Id };
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
@@ -568,8 +566,7 @@ namespace Syncano.Net.Tests
             //then
             try
             {
-                var getDataObject =
-                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectOne.Id);
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectOne.Id);
                 throw new Exception("GetOne should throw an exception");
             }
             catch (Exception e)
@@ -579,8 +576,7 @@ namespace Syncano.Net.Tests
 
             try
             {
-                var getDataObject =
-                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectTwo.Id);
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectTwo.Id);
                 throw new Exception("GetOne should throw an exception");
             }
             catch (Exception e)
@@ -590,8 +586,7 @@ namespace Syncano.Net.Tests
 
             try
             {
-                var getDataObject =
-                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectThree.Id);
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectThree.Id);
                 throw new Exception("GetOne should throw an exception");
             }
             catch (Exception e)
@@ -614,7 +609,7 @@ namespace Syncano.Net.Tests
             var dataObjectTwo = await _client.DataObjects.New(request);
             var dataObjectThree = await _client.DataObjects.New(request);
 
-            var dataIds = new List<string>() { dataObjectTwo.Id, dataObjectThree.Id };
+            var dataIds = new List<string> { dataObjectTwo.Id, dataObjectThree.Id };
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
@@ -628,8 +623,7 @@ namespace Syncano.Net.Tests
             //then
             try
             {
-                var getDataObject =
-                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectOne.Id);
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectOne.Id);
                 throw new Exception("GetOne should throw an exception");
             }
             catch (Exception e)
@@ -642,8 +636,7 @@ namespace Syncano.Net.Tests
 
             try
             {
-                var getDataObject =
-                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectTwo.Id);
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectTwo.Id);
                 throw new Exception("GetOne should throw an exception");
             }
             catch (Exception e)
@@ -656,8 +649,7 @@ namespace Syncano.Net.Tests
 
             try
             {
-                var getDataObject =
-                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectThree.Id);
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectThree.Id);
                 throw new Exception("GetOne should throw an exception");
             }
             catch (Exception e)
@@ -684,7 +676,7 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.UserName = TestData.UserName;
-            var dataObject = await _client.DataObjects.New(request);
+            await _client.DataObjects.New(request);
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
@@ -718,8 +710,7 @@ namespace Syncano.Net.Tests
             //then
             try
             {
-                var getDataObject =
-                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObject.Id);
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObject.Id);
                 throw new Exception("GetOne should throw an exception");
             }
             catch (Exception e)
@@ -751,8 +742,7 @@ namespace Syncano.Net.Tests
             //then
             try
             {
-                var getDataObject =
-                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObject.Id);
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObject.Id);
                 throw new Exception("GetOne should throw an exception");
             }
             catch (Exception e)
@@ -943,8 +933,7 @@ namespace Syncano.Net.Tests
             //then
             try
             {
-                var getDataObject =
-                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectOne.Id);
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectOne.Id);
                 throw new Exception("GetOne should throw an exception");
             }
             catch (Exception e)
@@ -954,8 +943,7 @@ namespace Syncano.Net.Tests
 
             try
             {
-                var getDataObject =
-                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectTwo.Id);
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectTwo.Id);
                 throw new Exception("GetOne should throw an exception");
             }
             catch (Exception e)
@@ -965,8 +953,7 @@ namespace Syncano.Net.Tests
 
             try
             {
-                var getDataObject =
-                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectThree.Id);
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectThree.Id);
                 throw new Exception("GetOne should throw an exception");
             }
             catch (Exception e)
@@ -994,7 +981,7 @@ namespace Syncano.Net.Tests
             request.Folder = folderThree.Name;
             var dataObjectThree = await _client.DataObjects.New(request);
 
-            var folders = new List<string>() { folderOne.Name, folderTwo.Name };
+            var folders = new List<string> { folderOne.Name, folderTwo.Name };
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
@@ -1007,8 +994,7 @@ namespace Syncano.Net.Tests
             //then
             try
             {
-                var getDataObject =
-                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectOne.Id);
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectOne.Id);
                 throw new Exception("GetOne should throw an exception");
             }
             catch (Exception e)
@@ -1018,8 +1004,7 @@ namespace Syncano.Net.Tests
 
             try
             {
-                var getDataObject =
-                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectTwo.Id);
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectTwo.Id);
                 throw new Exception("GetOne should throw an exception");
             }
             catch (Exception e)
@@ -1029,8 +1014,7 @@ namespace Syncano.Net.Tests
 
             try
             {
-                var getDataObject =
-                    await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectThree.Id);
+                await _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: dataObjectThree.Id);
                 throw new Exception("GetOne should throw an exception");
             }
             catch (Exception e)

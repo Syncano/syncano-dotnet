@@ -205,7 +205,7 @@ namespace Syncano.Net.Tests
         public async Task Get_MultipleTagVersion_WithTagsWithoutStatus()
         {
             //given
-            var tags = new List<string>() { "abc", "def", "ghi" };
+            var tags = new List<string> { "abc", "def", "ghi" };
             var collection = await _client.Collections.New(TestData.ProjectId, "Get test");
             await _client.Collections.AddTag(TestData.ProjectId, tags, collection.Id);
             var request = new GetCollectionRequest();
@@ -226,7 +226,7 @@ namespace Syncano.Net.Tests
         public async Task Get_MultipleTagVersion_WithTagsAndStatus()
         {
             //given
-            var tags = new List<string>() { "abc", "def", "ghi" };
+            var tags = new List<string> { "abc", "def", "ghi" };
             var collection = await _client.Collections.New(TestData.ProjectId, "Get test");
             await _client.Collections.AddTag(TestData.ProjectId, tags, collection.Id);
             var request = new GetCollectionRequest();
@@ -248,12 +248,12 @@ namespace Syncano.Net.Tests
         public async Task Get_MultipleTagVersion_WithTagsAndTag()
         {
             //given
-            var tags = new List<string>() { "abc", "def", "ghi", "jkl" };
+            var tags = new List<string> { "abc", "def", "ghi", "jkl" };
             var collection = await _client.Collections.New(TestData.ProjectId, "Get test");
             await _client.Collections.AddTag(TestData.ProjectId, tags, collection.Id);
             var request = new GetCollectionRequest();
             request.ProjectId = TestData.ProjectId;
-            request.Tags = new List<string>() {tags[0], tags[1], tags[2]};
+            request.Tags = new List<string> {tags[0], tags[1], tags[2]};
             request.Tag = tags[3];
             request.Status = CollectionStatus.Inactive;
 
@@ -427,7 +427,7 @@ namespace Syncano.Net.Tests
                 await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
 
             //when
-            var result = await _client.Collections.Activate(TestData.ProjectId, collection.Id, false);
+            var result = await _client.Collections.Activate(TestData.ProjectId, collection.Id);
 
             //then
             result.ShouldBeTrue();
@@ -894,7 +894,7 @@ namespace Syncano.Net.Tests
             string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
                                     DateTime.Now.ToShortDateString();
             string collectionKey = "qwert";
-            string[] tags = new[] {"abc", "def", "ghi"};
+            var tags = new [] {"abc", "def", "ghi"};
 
             var collection =
                 await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
@@ -922,7 +922,7 @@ namespace Syncano.Net.Tests
             string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
                                     DateTime.Now.ToShortDateString();
             string collectionKey = "qwert";
-            string[] tags = new[] { "abc", "def", "ghi" };
+            var tags = new [] { "abc", "def", "ghi" };
 
             var collection =
                 await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
@@ -950,7 +950,7 @@ namespace Syncano.Net.Tests
             string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
                                     DateTime.Now.ToShortDateString();
             string collectionKey = "qwert";
-            string[] tags = new[] { "abc", "def", "ghi" };
+            var tags = new[] { "abc", "def", "ghi" };
 
             var collection =
                 await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
@@ -979,7 +979,7 @@ namespace Syncano.Net.Tests
             string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
                                     DateTime.Now.ToShortDateString();
             string collectionKey = "qwert";
-            string[] tags = new[] { "abc", "def", "ghi" };
+            var tags = new[] { "abc", "def", "ghi" };
 
             var collection =
                 await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
@@ -1005,7 +1005,7 @@ namespace Syncano.Net.Tests
         public async Task AddTag_MultipleTagVersion_WithInvalidKeyAndId_ThrowsException()
         {
             //given
-            string[] tags = new[] {"abc", "def", "ghi"};
+            var tags = new[] {"abc", "def", "ghi"};
 
             try
             {
@@ -1169,13 +1169,10 @@ namespace Syncano.Net.Tests
         [Fact]
         public async Task DeleteTag_SingleTagVersion_WithInvalidTags_ThrowsException()
         {
-            //given
-            string tag = null;
-
             try
             {
                 //when
-                await _client.Collections.DeleteTag(TestData.ProjectId, tag, TestData.CollectionId);
+                await _client.Collections.DeleteTag(TestData.ProjectId, (string)null, TestData.CollectionId);
                 throw new Exception("AddTag should throw an exception");
             }
             catch (Exception e)
@@ -1192,7 +1189,7 @@ namespace Syncano.Net.Tests
             string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
                                     DateTime.Now.ToShortDateString();
             string collectionKey = "qwert";
-            string[] tags = new[] { "abc", "def", "ghi" };
+            var tags = new[] { "abc", "def", "ghi" };
 
             var collection =
                 await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
@@ -1221,7 +1218,7 @@ namespace Syncano.Net.Tests
             string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
                                     DateTime.Now.ToShortDateString();
             string collectionKey = "qwert";
-            string[] tags = new[] { "abc", "def", "ghi" };
+            var tags = new[] { "abc", "def", "ghi" };
 
             var collection =
                 await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
@@ -1250,7 +1247,7 @@ namespace Syncano.Net.Tests
             string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
                                     DateTime.Now.ToShortDateString();
             string collectionKey = "qwert";
-            string[] tags = new[] { "abc", "def", "ghi" };
+            var tags = new[] { "abc", "def", "ghi" };
 
             var collection =
                 await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
@@ -1280,7 +1277,7 @@ namespace Syncano.Net.Tests
             string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
                                     DateTime.Now.ToShortDateString();
             string collectionKey = "qwert";
-            string[] tags = new[] { "abc", "def", "ghi" };
+            var tags = new[] { "abc", "def", "ghi" };
 
             var collection =
                 await _client.Collections.New(TestData.ProjectId, collectionName, collectionKey);
@@ -1307,7 +1304,7 @@ namespace Syncano.Net.Tests
         public async Task DeleteTag_MultipleTagVersion_WithInvalidKeyAndId_ThrowsException()
         {
             //given
-            string[] tags = new[] { "abc", "def", "ghi" };
+            var tags = new[] { "abc", "def", "ghi" };
 
             try
             {
@@ -1325,13 +1322,10 @@ namespace Syncano.Net.Tests
         [Fact]
         public async Task DeleteTag_MultipleTagVersion_WithInvalidTags_ThrowsException()
         {
-            //given
-            string[] tags = null;
-
             try
             {
                 //when
-                await _client.Collections.DeleteTag(TestData.ProjectId, tags, TestData.CollectionId);
+                await _client.Collections.DeleteTag(TestData.ProjectId, (string[])null, TestData.CollectionId);
                 throw new Exception("AddTag should throw an exception");
             }
             catch (Exception e)

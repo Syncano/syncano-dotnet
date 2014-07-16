@@ -284,7 +284,7 @@ namespace Syncano.Net.Tests
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            await _client.DataObjects.New(newParentRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
@@ -323,7 +323,7 @@ namespace Syncano.Net.Tests
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            await _client.DataObjects.New(newChildRequest);
 
             try
             {
@@ -352,7 +352,7 @@ namespace Syncano.Net.Tests
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            await _client.DataObjects.New(newParentRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
@@ -391,7 +391,7 @@ namespace Syncano.Net.Tests
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            await _client.DataObjects.New(newChildRequest);
 
             try
             {
