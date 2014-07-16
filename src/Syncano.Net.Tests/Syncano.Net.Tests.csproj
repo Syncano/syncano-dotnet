@@ -66,6 +66,7 @@
     <Compile Include="DataObjectRestClientAddParentRemoveParentTests.cs" />
     <Compile Include="DataObjectRestClientNewDeleteTests.cs" />
     <Compile Include="DataObjectRestClientTests.cs" />
+    <Compile Include="DataObjectUpdateMergeTests.cs" />
     <Compile Include="FolderRestClientTests.cs" />
     <Compile Include="ProjectRestClientTests.cs" />
     <Compile Include="SyncanoRestClientTests.cs" />

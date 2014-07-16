@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Should;
 using Xunit;
-using System.IO;
 
 namespace Syncano.Net.Tests
 {
     public class DataObjectRestClientNewDeleteTests : IDisposable
     {
-        private Syncano _client;
+        private readonly Syncano _client;
 
         public DataObjectRestClientNewDeleteTests()
         {
