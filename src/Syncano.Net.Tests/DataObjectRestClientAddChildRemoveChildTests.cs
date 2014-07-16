@@ -21,12 +21,12 @@ namespace Syncano.Net.Tests
         public async Task AddChild_ByCollectionId()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);
@@ -58,12 +58,12 @@ namespace Syncano.Net.Tests
         public async Task AddChild_ByCollectionKey()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);
@@ -95,18 +95,18 @@ namespace Syncano.Net.Tests
         public async Task AddChild_ByCollectionKey_WithRemoveOther()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newOtherRequest = new NewDataObjectRequest();
+            var newOtherRequest = new DataObjectDefinitionRequest();
             newOtherRequest.ProjectId = TestData.ProjectId;
             newOtherRequest.CollectionId = TestData.CollectionId;
             newOtherRequest.ParentId = parentObject.Id;
             var otherObject = await _client.DataObjects.New(newOtherRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);
@@ -138,18 +138,18 @@ namespace Syncano.Net.Tests
         public async Task AddChild_ByCollectionKey_WithOtherChildren()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newOtherRequest = new NewDataObjectRequest();
+            var newOtherRequest = new DataObjectDefinitionRequest();
             newOtherRequest.ProjectId = TestData.ProjectId;
             newOtherRequest.CollectionId = TestData.CollectionId;
             newOtherRequest.ParentId = parentObject.Id;
             var otherObject = await _client.DataObjects.New(newOtherRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);
@@ -182,12 +182,12 @@ namespace Syncano.Net.Tests
         public async Task AddChild_WithInvalidProjectId_ThrowsException()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);
@@ -216,12 +216,12 @@ namespace Syncano.Net.Tests
         public async Task AddChild_WithNullProjectId_ThrowsException()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);
@@ -250,12 +250,12 @@ namespace Syncano.Net.Tests
         public async Task AddChild_WithNullCollectionIdAndCollectionKey_ThrowsException()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);
@@ -283,12 +283,12 @@ namespace Syncano.Net.Tests
         public async Task AddChild_WithNullParentId_ThrowsException()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);
@@ -317,12 +317,12 @@ namespace Syncano.Net.Tests
         public async Task AddChild_WithNullChildId_ThrowsException()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);
@@ -351,12 +351,12 @@ namespace Syncano.Net.Tests
         public async Task AddChild_WithInvalidParentId_ThrowsException()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);
@@ -385,12 +385,12 @@ namespace Syncano.Net.Tests
         public async Task AddChild_WithInvalidChildId_ThrowsException()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);
@@ -419,12 +419,12 @@ namespace Syncano.Net.Tests
         public async Task RemoveChild_ByCollectionId()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);
@@ -457,12 +457,12 @@ namespace Syncano.Net.Tests
         public async Task RemoveChild_ByCollectionKey()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);
@@ -495,18 +495,18 @@ namespace Syncano.Net.Tests
         public async Task RemoveChild_ByCollectionKey_WithOtherChildren()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newOtherRequest = new NewDataObjectRequest();
+            var newOtherRequest = new DataObjectDefinitionRequest();
             newOtherRequest.ProjectId = TestData.ProjectId;
             newOtherRequest.CollectionId = TestData.CollectionId;
             newOtherRequest.ParentId = parentObject.Id;
             var otherObject = await _client.DataObjects.New(newOtherRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);
@@ -542,12 +542,12 @@ namespace Syncano.Net.Tests
         public async Task RemoveChild_WithInvalidProjectId_ThrowsException()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);
@@ -577,12 +577,12 @@ namespace Syncano.Net.Tests
         public async Task RemoveChild_WithNullProjectId_ThrowsException()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);
@@ -612,12 +612,12 @@ namespace Syncano.Net.Tests
         public async Task RemoveChild_WithNullCollectionIdAndCollectionKey_ThrowsException()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);
@@ -647,12 +647,12 @@ namespace Syncano.Net.Tests
         public async Task RemoveChild_WithNullParentId_ThrowsException()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);
@@ -683,12 +683,12 @@ namespace Syncano.Net.Tests
         public async Task RemoveChild_WithNullChildId_ThrowsException()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);
@@ -717,12 +717,12 @@ namespace Syncano.Net.Tests
         public async Task RemoveChild_WithInvalidParentId_ThrowsException()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);
@@ -751,12 +751,12 @@ namespace Syncano.Net.Tests
         public async Task RemoveChild_WithInvalidChildId_ThrowsException()
         {
             //given
-            var newParentRequest = new NewDataObjectRequest();
+            var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
             var parentObject = await _client.DataObjects.New(newParentRequest);
 
-            var newChildRequest = new NewDataObjectRequest();
+            var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
             var childObject = await _client.DataObjects.New(newChildRequest);

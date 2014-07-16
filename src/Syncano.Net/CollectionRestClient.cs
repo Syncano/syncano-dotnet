@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Syncano.Net
 {
@@ -21,35 +18,29 @@ namespace Syncano.Net
         public Task<Collection> New(string projectId, string name, string key = null,
             string description = null)
         {
-            return _restClient.GetAsync("collection.new",
-                new { project_id = projectId, name = name, key = key, description = description }, "collection",
+            if(projectId == null || name == null)
+                throw new ArgumentNullException();
+
+            return _restClient.PostAsync("collection.new",
+                new { project_id = projectId, name, key,  description }, "collection",
                 t => t.ToObject<Collection>());
         }
 
-        public async Task<List<Collection>> Get(string projectId, CollectionStatus status = CollectionStatus.All)
+        public async Task<List<Collection>> Get(GetCollectionRequest request)
         {
-            return await _restClient.GetAsync("collection.get",
-                new { project_id = projectId, status = status }, "collection",
-                t => t.ToObject<List<Collection>>());
-        }
-
-        public async Task<List<Collection>> Get(string projectId, string withTag, CollectionStatus status = CollectionStatus.All)
-        {
-            if(withTag == null)
+            if(request.ProjectId == null)
                 throw new ArgumentNullException();
 
-            return await _restClient.GetAsync("collection.get",
-                new {project_id = projectId, status = status, with_tags = withTag}, "collection",
-                t => t.ToObject<List<Collection>>());
-        }
+            var withTags = request.Tags == null ? new List<string>() : new List<string>(request.Tags);
+            if(request.Tag != null)
+                withTags.Add(request.Tag);
+            var withTagsArray = withTags.Count == 0 ? null : withTags.ToArray();
 
-        public async Task<List<Collection>> Get(string projectId, IEnumerable<string> withTags, CollectionStatus status = CollectionStatus.All)
-        {
-            if(withTags == null)
-                throw new ArgumentNullException();
-
-            return await _restClient.GetAsync("collection.get",
-                        new {project_id = projectId, status = status, with_tags = withTags.ToArray()}, "collection", t => t.ToObject<List<Collection>>());
+            return
+                await
+                    _restClient.PostAsync("collection.get",
+                        new {project_id = request.ProjectId, status = request.Status, with_tags = withTagsArray},
+                        "collection", t => t.ToObject<List<Collection>>());
         }
 
         public Task<Collection> GetOne(string projectId, string collectionId = null, string collectionKey = null)

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Should;
@@ -9,7 +9,7 @@ namespace Syncano.Net.Tests
 {
     public class CollectionRestClientTests : IDisposable
     {
-        private Syncano _client;
+        private readonly Syncano _client;
 
         public CollectionRestClientTests()
         {
@@ -22,8 +22,8 @@ namespace Syncano.Net.Tests
             //given
             string collectionName = "NewCollection test " + DateTime.Now.ToLongTimeString() + " " +
                                     DateTime.Now.ToShortDateString();
-            string collectionKey = "qwert";
-            string collectionDescription = "abcde";
+            const string collectionKey = "qwert";
+            const string collectionDescription = "abcde";
 
             //when
             var collection =
@@ -61,10 +61,62 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task New_WithNullProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Collections.New(null, "New collection name");
+                throw new Exception("New should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task New_WithInvalidProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Collections.New("abcde", "New collection name");
+                throw new Exception("New should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task New_WithNullCollectionName_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Collections.New(TestData.ProjectId, null);
+                throw new Exception("New should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
         public async Task Get_NoTagVersion_WithoutStatus()
         {
+            //given
+            var request = new GetCollectionRequest();
+            request.ProjectId = TestData.ProjectId;
+
             //when
-            var result = await _client.Collections.Get(TestData.ProjectId);
+            var result = await _client.Collections.Get(request);
 
             //then
             result.ShouldNotBeEmpty();
@@ -73,8 +125,13 @@ namespace Syncano.Net.Tests
         [Fact]
         public async Task Get_NoTagVersion_WitActiveStatus()
         {
+            //given
+            var request = new GetCollectionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.Status = CollectionStatus.Active;
+
             //when
-            var result = await _client.Collections.Get(TestData.ProjectId, CollectionStatus.Active);
+            var result = await _client.Collections.Get(request);
 
             //then
             result.ShouldNotBeEmpty();
@@ -86,9 +143,12 @@ namespace Syncano.Net.Tests
         {
             //given
             var collection = await _client.Collections.New(TestData.ProjectId, "Get test");
+            var request = new GetCollectionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.Status = CollectionStatus.Inactive;
 
             //when
-            var result = await _client.Collections.Get(TestData.ProjectId, CollectionStatus.Inactive);
+            var result = await _client.Collections.Get(request);
 
             //then
             result.ShouldNotBeEmpty();
@@ -105,9 +165,12 @@ namespace Syncano.Net.Tests
             string tag = "qwert";
             var collection = await _client.Collections.New(TestData.ProjectId, "Get test");
             await _client.Collections.AddTag(TestData.ProjectId, tag, collection.Id);
+            var request = new GetCollectionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.Tag = tag;
 
             //when
-            var result = await _client.Collections.Get(TestData.ProjectId, withTag: tag);
+            var result = await _client.Collections.Get(request);
 
             //then
             result.ShouldNotBeEmpty();
@@ -123,9 +186,13 @@ namespace Syncano.Net.Tests
             string tag = "qwert";
             var collection = await _client.Collections.New(TestData.ProjectId, "Get test");
             await _client.Collections.AddTag(TestData.ProjectId, tag, collection.Id);
+            var request = new GetCollectionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.Tag = tag;
+            request.Status = CollectionStatus.Inactive;
 
             //when
-            var result = await _client.Collections.Get(TestData.ProjectId, tag, CollectionStatus.Inactive);
+            var result = await _client.Collections.Get(request);
 
             //then
             result.ShouldNotBeEmpty();
@@ -135,34 +202,18 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
-        public async Task Get_OneTagVersion_WithInvalidTags_ThrowsException()
-        {
-            //given
-            string tag = null;
-
-            try
-            {
-                //when
-                await _client.Collections.Get(TestData.ProjectId, tag, CollectionStatus.All);
-                throw new Exception("Get should throw an exception");
-            }
-            catch (Exception e)
-            {
-                //then
-                e.ShouldBeType<ArgumentNullException>();
-            }
-        }
-
-        [Fact]
         public async Task Get_MultipleTagVersion_WithTagsWithoutStatus()
         {
             //given
-            string tags = "qwert";
+            var tags = new List<string>() { "abc", "def", "ghi" };
             var collection = await _client.Collections.New(TestData.ProjectId, "Get test");
             await _client.Collections.AddTag(TestData.ProjectId, tags, collection.Id);
+            var request = new GetCollectionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.Tags = tags;
 
             //when
-            var result = await _client.Collections.Get(TestData.ProjectId, withTag: tags);
+            var result = await _client.Collections.Get(request);
 
             //then
             result.ShouldNotBeEmpty();
@@ -175,12 +226,39 @@ namespace Syncano.Net.Tests
         public async Task Get_MultipleTagVersion_WithTagsAndStatus()
         {
             //given
-            var tags = new []{ "abc", "def", "ghi"};
+            var tags = new List<string>() { "abc", "def", "ghi" };
             var collection = await _client.Collections.New(TestData.ProjectId, "Get test");
             await _client.Collections.AddTag(TestData.ProjectId, tags, collection.Id);
+            var request = new GetCollectionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.Tags = tags;
+            request.Status = CollectionStatus.Inactive;
 
             //when
-            var result = await _client.Collections.Get(TestData.ProjectId, tags, CollectionStatus.Inactive);
+            var result = await _client.Collections.Get(request);
+
+            //then
+            result.ShouldNotBeEmpty();
+
+            //cleanup
+            await _client.Collections.Delete(TestData.ProjectId, collection.Id);
+        }
+
+        [Fact]
+        public async Task Get_MultipleTagVersion_WithTagsAndTag()
+        {
+            //given
+            var tags = new List<string>() { "abc", "def", "ghi", "jkl" };
+            var collection = await _client.Collections.New(TestData.ProjectId, "Get test");
+            await _client.Collections.AddTag(TestData.ProjectId, tags, collection.Id);
+            var request = new GetCollectionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.Tags = new List<string>() {tags[0], tags[1], tags[2]};
+            request.Tag = tags[3];
+            request.Status = CollectionStatus.Inactive;
+
+            //when
+            var result = await _client.Collections.Get(request);
 
             //then
             result.ShouldNotBeEmpty();
@@ -193,11 +271,15 @@ namespace Syncano.Net.Tests
         public async Task Get_MultipleTagVersion_WithEmptyTags()
         {
             //given
-            var tags = new string[0];
+            //given
+            var tags = new List<string>();
             var collection = await _client.Collections.New(TestData.ProjectId, "Get test");
+            var request = new GetCollectionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.Tags = tags;
             
             //when
-            var result = await _client.Collections.Get(TestData.ProjectId, tags, CollectionStatus.All);
+            var result = await _client.Collections.Get(request);
             
             //then
             result.ShouldNotBeEmpty();
@@ -209,15 +291,36 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
-        public async Task Get_MultipleTagVersion_WithInvalidTags_ThrowsException()
+        public async Task Get_WithInvalidProjectId_ThrowsException()
         {
             //given
-            string [] tags = null;
+            var request = new GetCollectionRequest();
+            request.ProjectId = "abcde";
 
             try
             {
                 //when
-                await _client.Collections.Get(TestData.ProjectId, tags, CollectionStatus.All);
+                await _client.Collections.Get(request);
+                throw new Exception("Get should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task Get_WithNullProjectId_ThrowsException()
+        {
+            //given
+            var request = new GetCollectionRequest();
+            request.ProjectId = null;
+
+            try
+            {
+                //when
+                await _client.Collections.Get(request);
                 throw new Exception("Get should throw an exception");
             }
             catch (Exception e)
@@ -798,7 +901,10 @@ namespace Syncano.Net.Tests
 
             //when
             var result = await _client.Collections.AddTag(TestData.ProjectId, tags, collection.Id);
-            var array = await _client.Collections.Get(TestData.ProjectId, tags[0], CollectionStatus.All);
+            var request = new GetCollectionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.Tag = tags[0];
+            var array = await _client.Collections.Get(request);
             
             //then
             result.ShouldBeTrue();
@@ -823,7 +929,10 @@ namespace Syncano.Net.Tests
 
             //when
             var result = await _client.Collections.AddTag(TestData.ProjectId, tags, collection.Id, weight: 10.84, removeOther: true);
-            var array = await _client.Collections.Get(TestData.ProjectId, tags[0], CollectionStatus.All);
+            var request = new GetCollectionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.Tag = tags[0];
+            var array = await _client.Collections.Get(request); 
             
             //then
             result.ShouldBeTrue();
@@ -849,7 +958,10 @@ namespace Syncano.Net.Tests
 
             //when
             var result = await _client.Collections.AddTag(TestData.ProjectId, tags, collectionKey: collectionKey);
-            var array = await _client.Collections.Get(TestData.ProjectId, tags[0], CollectionStatus.All);         
+            var request = new GetCollectionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.Tag = tags[0];
+            var array = await _client.Collections.Get(request);         
 
             //then
             result.ShouldBeTrue();
@@ -875,7 +987,10 @@ namespace Syncano.Net.Tests
 
             //when
             var result = await _client.Collections.AddTag(TestData.ProjectId, tags, collectionKey: collectionKey, weight: 10.84, removeOther: true);
-            var array = await _client.Collections.Get(TestData.ProjectId, tags[0], CollectionStatus.All);
+            var request = new GetCollectionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.Tag = tags[0];
+            var array = await _client.Collections.Get(request); 
             
             //then
             result.ShouldBeTrue();
@@ -1086,7 +1201,10 @@ namespace Syncano.Net.Tests
 
             //when
             var result = await _client.Collections.DeleteTag(TestData.ProjectId, tags, collection.Id);
-            var array = await _client.Collections.Get(TestData.ProjectId, tags[0], CollectionStatus.All);
+            var request = new GetCollectionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.Tag = tags[0];
+            var array = await _client.Collections.Get(request); 
             
             //then
             result.ShouldBeTrue();
@@ -1112,7 +1230,10 @@ namespace Syncano.Net.Tests
 
             //when
             var result = await _client.Collections.DeleteTag(TestData.ProjectId, tags, collection.Id);
-            var array = await _client.Collections.Get(TestData.ProjectId, tags[0], CollectionStatus.All);
+            var request = new GetCollectionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.Tag = tags[0];
+            var array = await _client.Collections.Get(request); 
             
             //then
             result.ShouldBeTrue();
@@ -1139,7 +1260,10 @@ namespace Syncano.Net.Tests
 
             //when
             var result = await _client.Collections.DeleteTag(TestData.ProjectId, tags, collectionKey: collectionKey);
-            var array = await _client.Collections.Get(TestData.ProjectId, tags[0], CollectionStatus.All);
+            var request = new GetCollectionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.Tag = tags[0];
+            var array = await _client.Collections.Get(request); 
             
             //then
             result.ShouldBeTrue();
@@ -1166,7 +1290,10 @@ namespace Syncano.Net.Tests
 
             //when
             var result = await _client.Collections.DeleteTag(TestData.ProjectId, tags, collectionKey: collectionKey);
-            var array = await _client.Collections.Get(TestData.ProjectId, tags[0], CollectionStatus.All);
+            var request = new GetCollectionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.Tag = tags[0];
+            var array = await _client.Collections.Get(request); 
             
             //then
             result.ShouldBeTrue();

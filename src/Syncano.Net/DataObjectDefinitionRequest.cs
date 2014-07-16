@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Syncano.Net
 {
-    public class NewDataObjectRequest
+    public class DataObjectDefinitionRequest
     {
-        public NewDataObjectRequest()
+        public DataObjectDefinitionRequest()
         {
             Folder = "Default";
             State = DataObjectState.Pending;

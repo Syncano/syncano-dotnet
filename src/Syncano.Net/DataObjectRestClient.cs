@@ -18,7 +18,7 @@ namespace Syncano.Net
         }
 
 
-        public Task<DataObject> New(NewDataObjectRequest request)
+        public Task<DataObject> New(DataObjectDefinitionRequest request)
         {
             if(request.ProjectId == null)
                 throw new ArgumentNullException();
@@ -73,6 +73,72 @@ namespace Syncano.Net
                     include_children = includeChildren,
                     depth = depth,
                     children_limit = childrenLimit
+                }, "data", t => t.ToObject<DataObject>());
+        }
+
+        public Task<DataObject> Update(DataObjectDefinitionRequest request, string dataId = null)
+        {
+            if (request.ProjectId == null)
+                throw new ArgumentNullException();
+
+            if (request.CollectionId == null && request.CollectionKey == null)
+                throw new ArgumentNullException();
+
+            return _restClient.PostAsync("data.update",
+                new
+                {
+                    project_id = request.ProjectId,
+                    collection_id = request.CollectionId,
+                    collection_key = request.CollectionKey,
+                    data_id = dataId,
+                    data_key = request.DataKey,
+                    update_method = "replace",
+                    user_name = request.UserName,
+                    source_url = request.SourceUrl,
+                    title = request.Title,
+                    text = request.Text,
+                    link = request.Link,
+                    image = request.ImageBase64,
+                    image_url = request.ImageUrl,
+                    data1 = request.DataOne,
+                    data2 = request.DataTwo,
+                    data3 = request.DataThree,
+                    folder = request.Folder,
+                    state = request.State,
+                    parent_id = request.ParentId
+                }, "data", t => t.ToObject<DataObject>());
+        }
+
+        public Task<DataObject> Merge(DataObjectDefinitionRequest request, string dataId = null)
+        {
+            if (request.ProjectId == null)
+                throw new ArgumentNullException();
+
+            if (request.CollectionId == null && request.CollectionKey == null)
+                throw new ArgumentNullException();
+
+            return _restClient.PostAsync("data.update",
+                new
+                {
+                    project_id = request.ProjectId,
+                    collection_id = request.CollectionId,
+                    collection_key = request.CollectionKey,
+                    data_id = dataId,
+                    data_key = request.DataKey,
+                    update_method = "merge",
+                    user_name = request.UserName,
+                    source_url = request.SourceUrl,
+                    title = request.Title,
+                    text = request.Text,
+                    link = request.Link,
+                    image = request.ImageBase64,
+                    image_url = request.ImageUrl,
+                    data1 = request.DataOne,
+                    data2 = request.DataTwo,
+                    data3 = request.DataThree,
+                    folder = request.Folder,
+                    state = request.State,
+                    parent_id = request.ParentId
                 }, "data", t => t.ToObject<DataObject>());
         }
 

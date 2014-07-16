@@ -20,7 +20,7 @@ namespace Syncano.Net.Tests
         public async Task New_ByCollectionId_CreatesNewDataObject()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
 
@@ -43,7 +43,7 @@ namespace Syncano.Net.Tests
         public async Task New_ByCollectionKey_CreatesNewDataObject()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionKey = TestData.CollectionKey;
 
@@ -66,7 +66,7 @@ namespace Syncano.Net.Tests
         public async Task New_ByCollectionId_WithUserName_CreatesNewDataObject()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.UserName = TestData.UserName;
@@ -91,7 +91,7 @@ namespace Syncano.Net.Tests
         public async Task New_ByCollectionId_WithSourceUrl_CreatesNewDataObject()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.SourceUrl = "sourceUrl";
@@ -116,7 +116,7 @@ namespace Syncano.Net.Tests
         public async Task New_ByCollectionId_WithTitle_CreatesNewDataObject()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Title = "title";
@@ -141,7 +141,7 @@ namespace Syncano.Net.Tests
         public async Task New_ByCollectionId_WithText_CreatesNewDataObject()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Text = "text";
@@ -166,7 +166,7 @@ namespace Syncano.Net.Tests
         public async Task New_ByCollectionId_WithLink_CreatesNewDataObject()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Link = "link";
@@ -191,7 +191,7 @@ namespace Syncano.Net.Tests
         public async Task New_ByCollectionId_WithImage_CreatesNewDataObject()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
 
@@ -218,7 +218,7 @@ namespace Syncano.Net.Tests
         public async Task New_ByCollectionId_WithDataOneTwoThree_CreatesNewDataObject()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.DataOne = -1;
@@ -247,7 +247,7 @@ namespace Syncano.Net.Tests
         public async Task New_ByCollectionId_WithFolder_CreatesNewDataObject()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             var folder = await _client.Folders.New(TestData.ProjectId, "testFolder", TestData.CollectionId);
@@ -274,7 +274,7 @@ namespace Syncano.Net.Tests
         public async Task New_ByCollectionId_WithModeratedState_CreatesNewDataObject()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.State = DataObjectState.Moderated;
@@ -299,7 +299,7 @@ namespace Syncano.Net.Tests
         public async Task New_ByCollectionId_WithRejectedState_CreatesNewDataObject()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.State = DataObjectState.Rejected;
@@ -324,11 +324,11 @@ namespace Syncano.Net.Tests
         public async Task New_ByCollectionId_WithParent_CreatesNewDataObject()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
 
-            var parentRequest = new NewDataObjectRequest();
+            var parentRequest = new DataObjectDefinitionRequest();
             parentRequest.ProjectId = TestData.ProjectId;
             parentRequest.CollectionId = TestData.CollectionId;
             var parentResult = await _client.DataObjects.New(parentRequest);
@@ -360,7 +360,7 @@ namespace Syncano.Net.Tests
         public async Task New_WithInvalidProjectId_ThrowsException()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = "abc";
             request.CollectionId = TestData.CollectionId;
 
@@ -381,7 +381,7 @@ namespace Syncano.Net.Tests
         public async Task New_WithNullProjectId_ThrowsException()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = null;
             request.CollectionId = TestData.CollectionId;
 
@@ -402,7 +402,7 @@ namespace Syncano.Net.Tests
         public async Task New_WithInvalidCollectionId_ThrowsException()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = "abc";
 
@@ -423,7 +423,7 @@ namespace Syncano.Net.Tests
         public async Task New_WithNullCollectionIdAndCollectionKey_ThrowsException()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
 
             try
@@ -443,7 +443,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_ByCollectionId()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             var dataObject = await _client.DataObjects.New(request);
@@ -463,7 +463,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_ByCollectionKey()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionKey = TestData.CollectionKey;
             var dataObject = await _client.DataObjects.New(request);
@@ -483,7 +483,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_FilterByStateModerated()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.State = DataObjectState.Moderated;
@@ -516,7 +516,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_FilterByStatePending()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.State = DataObjectState.Pending;
@@ -549,7 +549,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_MultipleDataIds()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             var dataObjectOne = await _client.DataObjects.New(request);
@@ -608,7 +608,7 @@ namespace Syncano.Net.Tests
         {
             //given
             int counter = 0;
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             var dataObjectOne = await _client.DataObjects.New(request);
@@ -681,7 +681,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_FilterByUserName()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.UserName = TestData.UserName;
@@ -702,7 +702,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_FilterByTextContent()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Text = "text content";
@@ -735,7 +735,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_FilterByImageContent()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.ImageBase64 = TestData.ImageToBase64("sampleImage.jpg");
@@ -924,7 +924,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_FilterWithStateAll()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             var dataObjectOne = await _client.DataObjects.New(request);
@@ -982,7 +982,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_MultipleFolders()
         {
             //given
-            var request = new NewDataObjectRequest();
+            var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             var folderOne = await _client.Folders.New(TestData.ProjectId, "folderOne", TestData.CollectionId);
