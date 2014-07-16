@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Should;
@@ -9,7 +8,7 @@ namespace Syncano.Net.Tests
 {
     public class FolderRestClientTests : IDisposable
     {
-        private Syncano _client;
+        private readonly Syncano _client;
 
         public FolderRestClientTests()
         {
@@ -52,13 +51,77 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task New_WithNullIdAndKey_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.New(TestData.ProjectId, TestData.FolderName);
+                throw new Exception("New should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
         public async Task New_WithInvalidIdAndKey_ThrowsException()
         {
             try
             {
                 //when
-                var response = await _client.Folders.New(TestData.ProjectId, TestData.FolderName, null, null);
-                throw new Exception("Get folders should throw an exception");
+                await _client.Folders.New(TestData.ProjectId, TestData.FolderName, "abcde", "abcde");
+                throw new Exception("New should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task New_WithNullProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.New(null, TestData.FolderName, TestData.CollectionId);
+                throw new Exception("New should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task New_WithInvalidProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.New("abcde", TestData.FolderName, TestData.CollectionId);
+                throw new Exception("New should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task New_WithNullName_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.New(TestData.ProjectId, null, TestData.CollectionId);
+                throw new Exception("New should throw an exception");
             }
             catch (Exception e)
             {
@@ -90,18 +153,66 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
-        public async Task Get_WithInvalidIdAndKey_ThrowsException()
+        public async Task Get_WithNullIdAndKey_ThrowsException()
         {
             try
             {
                 //when
-                var response = await _client.Folders.Get(TestData.ProjectId, null, null);
-                throw new Exception("Get folders should throw an exception");
+                await _client.Folders.Get(TestData.ProjectId);
+                throw new Exception("Get should throw an exception");
             }
             catch (Exception e)
             {
                 //then
                 e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Get_WithInvalidIdAndKey_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Get(TestData.ProjectId, "abcde", "abcde");
+                throw new Exception("Get should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task Get_WithNullProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Get(null, TestData.CollectionId);
+                throw new Exception("Get should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Get_WithInvalidProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Get("abcde", TestData.CollectionId);
+                throw new Exception("Get should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
             }
         }
 
@@ -128,18 +239,98 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
-        public async Task GetOne_WithInvalidIdAndKey_ThrowsException()
+        public async Task GetOne_WithNullIdAndKey_ThrowsException()
         {
             try
             {
                 //when
-                var response = await _client.Folders.GetOne(TestData.ProjectId, TestData.FolderName, null, null);
-                throw new Exception("GetFolders should throw an exception");
+                await _client.Folders.GetOne(TestData.ProjectId, TestData.FolderName);
+                throw new Exception("GetOne should throw an exception");
             }
             catch (Exception e)
             {
                 //then
                 e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetOne_WithInvalidIdAndKey_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.GetOne(TestData.ProjectId, TestData.FolderName, "abcde", "abcde");
+                throw new Exception("GetOne should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetOne_WithNullProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.GetOne(null, TestData.FolderName, TestData.CollectionId);
+                throw new Exception("GetOne should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetOne_WithInvalidProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.GetOne("abcde", TestData.FolderName, TestData.CollectionId);
+                throw new Exception("GetOne should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetOne_WithNullFolderName_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.GetOne(TestData.ProjectId, null, TestData.CollectionId);
+                throw new Exception("GetOne should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetOne_WithInvalidFolderName_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.GetOne(TestData.ProjectId, "abcde", TestData.CollectionId);
+                throw new Exception("GetOne should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
             }
         }
 
@@ -186,18 +377,98 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
-        public async Task Update_WithInvalidIdAndKey_ThrowsException()
+        public async Task Update_WithNullIdAndKey_ThrowsException()
         {
             try
             {
                 //when
-                await _client.Folders.Update(TestData.ProjectId, TestData.FolderName, null, null);
-                throw new Exception("GetFolders should throw an exception");
+                await _client.Folders.Update(TestData.ProjectId, TestData.FolderName);
+                throw new Exception("Update should throw an exception");
             }
             catch (Exception e)
             {
                 //then
                 e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Update_WithInvalidIdAndKey_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Update(TestData.ProjectId, TestData.FolderName, "abcde", "abcde");
+                throw new Exception("Update should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task Update_WithNullProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Update(null, TestData.FolderName, TestData.CollectionId);
+                throw new Exception("Update should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Update_WithInvalidProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Update("abcde", TestData.FolderName, TestData.CollectionId);
+                throw new Exception("Update should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task Update_WithNullFolderName_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Update(TestData.ProjectId, null, TestData.CollectionId);
+                throw new Exception("Update should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Update_WithInvalidFolderName_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Update(TestData.ProjectId, "abcde", TestData.CollectionId);
+                throw new Exception("Update should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
             }
         }
 
@@ -248,19 +519,138 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task Authorize_WithNullIdAndKey_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Authorize(TestData.UserApiClientId, Permissions.DeleteData, TestData.ProjectId,
+                        TestData.FolderName);
+                throw new Exception("Authorize should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
         public async Task Authorize_WithInvalidIdAndKey_ThrowsException()
         {
             try
             {
                 //when
                 await _client.Folders.Authorize(TestData.UserApiClientId, Permissions.DeleteData, TestData.ProjectId,
-                        TestData.FolderName, null, null);
-                throw new Exception("AuthorizeFolder should throw an exception");
+                        TestData.FolderName, "abcde", "abcde");
+                throw new Exception("Authorize should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task Authorize_WithNullProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Authorize(TestData.UserApiClientId, Permissions.DeleteData, null,
+                        TestData.FolderName, TestData.CollectionId);
+                throw new Exception("Authorize should throw an exception");
             }
             catch (Exception e)
             {
                 //then
                 e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Authorize_WithInvalidProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Authorize(TestData.UserApiClientId, Permissions.DeleteData, "abcde",
+                        TestData.FolderName, TestData.CollectionId);
+                throw new Exception("Authorize should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task Authorize_WithNullFolderName_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Authorize(TestData.UserApiClientId, Permissions.DeleteData, TestData.ProjectId,
+                        null, TestData.CollectionId);
+                throw new Exception("Authorize should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Authorize_WithInvalidFolderName_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Authorize(TestData.UserApiClientId, Permissions.DeleteData, TestData.ProjectId,
+                        "abcde", TestData.CollectionId);
+                throw new Exception("Authorize should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task Authorize_WithNullApiClientId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Authorize(null, Permissions.DeleteData, TestData.ProjectId,
+                        TestData.FolderName, TestData.CollectionId);
+                throw new Exception("Authorize should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Authorize_WithInvalidApiClientId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Authorize("abcde", Permissions.DeleteData, TestData.ProjectId,
+                        TestData.FolderName, TestData.CollectionId);
+                throw new Exception("Authorize should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
             }
         }
 
@@ -309,19 +699,138 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task Deauthorize_WithNullIdAndKey_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Deauthorize(TestData.UserApiClientId, Permissions.DeleteData, TestData.ProjectId,
+                        TestData.FolderName);
+                throw new Exception("Deauthorize should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
         public async Task Deauthorize_WithInvalidIdAndKey_ThrowsException()
         {
             try
             {
                 //when
                 await _client.Folders.Deauthorize(TestData.UserApiClientId, Permissions.DeleteData, TestData.ProjectId,
-                        TestData.FolderName, null, null);
-                throw new Exception("DeauthorizeFolder should throw an exception");
+                        TestData.FolderName, "abcde", "abcde");
+                throw new Exception("Deauthorize should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task Deauthorize_WithNullProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Deauthorize(TestData.UserApiClientId, Permissions.DeleteData, null,
+                        TestData.FolderName, TestData.CollectionId);
+                throw new Exception("Deauthorize should throw an exception");
             }
             catch (Exception e)
             {
                 //then
                 e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Deauthorize_WithInvalidProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Deauthorize(TestData.UserApiClientId, Permissions.DeleteData, "abcde",
+                        TestData.FolderName, TestData.CollectionId);
+                throw new Exception("Deauthorize should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task Deauthorize_WithNullFolderName_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Deauthorize(TestData.UserApiClientId, Permissions.DeleteData, TestData.ProjectId,
+                        null, TestData.CollectionId);
+                throw new Exception("Deauthorize should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Deauthorize_WithInvalidFolderName_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Deauthorize(TestData.UserApiClientId, Permissions.DeleteData, TestData.ProjectId,
+                        "abcde", TestData.CollectionId);
+                throw new Exception("Deauthorize should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task Deauthorize_WithNullUserApiKey_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Deauthorize(null, Permissions.DeleteData, TestData.ProjectId,
+                        TestData.FolderName, TestData.CollectionId);
+                throw new Exception("Deauthorize should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Deauthorize_WithInvalidUserApiKey_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Deauthorize("abcde", Permissions.DeleteData, TestData.ProjectId,
+                        TestData.FolderName, TestData.CollectionId);
+                throw new Exception("Deauthorize should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
             }
         }
 
@@ -356,18 +865,98 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
-        public async Task Delete_WithInvalidIdAndKey_ThrowsException()
+        public async Task Delete_WithNullIdAndKey_ThrowsException()
         {
             try
             {
                 //when
-                await _client.Folders.Delete(TestData.ProjectId, TestData.FolderName, null, null);
-                throw new Exception("GetFolders should throw an exception");
+                await _client.Folders.Delete(TestData.ProjectId, TestData.FolderName);
+                throw new Exception("Delete should throw an exception");
             }
             catch (Exception e)
             {
                 //then
                 e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Delete_WithInvalidIdAndKey_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Delete(TestData.ProjectId, TestData.FolderName, "abcde", "abcde");
+                throw new Exception("Delete should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task Delete_WithNullProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Delete(null, TestData.FolderName, TestData.CollectionId);
+                throw new Exception("Delete should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Delete_WithInvalidProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Delete("abcde", TestData.FolderName, TestData.CollectionId);
+                throw new Exception("Delete should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task Delete_WithNullFolderName_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Delete(TestData.ProjectId, null, TestData.CollectionId);
+                throw new Exception("Delete should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task Delete_WithInvalidFolderName_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _client.Folders.Delete(TestData.ProjectId, "abcde", TestData.CollectionId);
+                throw new Exception("Delete should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
             }
         }
 
