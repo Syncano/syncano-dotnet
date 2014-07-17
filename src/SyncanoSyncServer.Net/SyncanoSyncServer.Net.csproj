@@ -71,7 +71,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SyncServer.cs" />
     <Compile Include="SyncServerClient.cs" />
-    <Compile Include="SyncanoException.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -137,14 +137,17 @@ namespace SyncanoSyncServer.Net
                 throw new SyncanoException("Unexpected response: " + response);
 
             if (result == "NOK")
-                throw new SyncanoException("Error: " + json.SelectToken("error").Value<string>());
+                throw new SyncanoException("Error: " + json.SelectToken("data").SelectToken("error").Value<string>());
 
             return json;
         }
 
-        
+        private  Task<T> SendCommandAsync<T>(ApiCommandRequest request, string contentToken)
+        {
+            return SendCommandAsync<T>(request, jo => jo.SelectToken("data").SelectToken(contentToken).ToObject<T>());
+        }
 
-        private async Task<T> SendCommandAsync<T>(ApiCommandRequest request, string contentToken)
+        private async Task<T> SendCommandAsync<T>(ApiCommandRequest request, Func<JToken,T> getResult)
         {
             var t = _messagesObservable.Where(s => IsResponseToRequest(s, request))
                 .Select(m =>
@@ -152,7 +155,7 @@ namespace SyncanoSyncServer.Net
                     try
                     {
                         JObject jo = CheckResponseStatus(m);
-                        return jo.SelectToken("data").SelectToken(contentToken).ToObject<T>();
+                        return getResult(jo);
                     }
                     catch (Exception e)
                     {
@@ -258,7 +261,8 @@ namespace SyncanoSyncServer.Net
 
         public Task<bool> GetAsync(string methodName, object parameters)
         {
-            return GetAsync<bool>(methodName, parameters, "", token => token.ToObject<bool>());
+            var request = CreateCommandRequest(methodName, parameters);
+            return SendCommandAsync<bool>(request, jo => jo.SelectToken("result").Value<string>() == "OK");
         }
 
         public Task<T> GetAsync<T>(string methodName, string contentToken, Func<JToken, T> getResult)
