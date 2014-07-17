@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
+﻿using System.Threading.Tasks;
 
 namespace Syncano.Net
 {
@@ -8,8 +6,8 @@ namespace Syncano.Net
     {
         Task<bool> GetAsync(string methodName, object parameters);
 
-        Task<T> GetAsync<T>(string methodName, string contentToken, Func<JToken, T> getResult);
-        Task<T> GetAsync<T>(string methodName, object parameters, string contentToken, Func<JToken, T> getResult);
-        Task<T> PostAsync<T>(string projectNew, object parameters, string contentToken, Func<JToken, T> getResult);
+        Task<T> GetAsync<T>(string methodName, string contentToken);
+        Task<T> GetAsync<T>(string methodName, object parameters, string contentToken);
+        Task<T> PostAsync<T>(string projectNew, object parameters, string contentToken);
     }
 }

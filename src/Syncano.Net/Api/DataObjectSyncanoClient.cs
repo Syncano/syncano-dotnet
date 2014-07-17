@@ -26,7 +26,7 @@ namespace Syncano.Net.Api
             if(request.CollectionId == null && request.CollectionKey == null)
                 throw new ArgumentNullException();
 
-            return _httpClient.PostAsync("data.new",
+            return _httpClient.PostAsync<DataObject>("data.new",
                 new
                 {
                     project_id = request.ProjectId,
@@ -47,7 +47,7 @@ namespace Syncano.Net.Api
                     data2 = request.DataTwo,
                     data3 = request.DataThree,
                     additionals = request.Additional
-                }, "data", t => t.ToObject<DataObject>());
+                }, "data");
         }
 
         public async Task<List<DataObject>> Get(DataObjectRichQueryRequest request)
@@ -91,7 +91,7 @@ namespace Syncano.Net.Api
 
             return
                 await
-                    _httpClient.PostAsync("data.get",
+                    _httpClient.PostAsync<List<DataObject>>("data.get",
                         new
                         {
                             project_id = request.ProjectId,
@@ -112,7 +112,7 @@ namespace Syncano.Net.Api
                             parent_ids = parentIds.ToArray(),
                             child_ids = childIds.ToArray(),
                             by_user = request.ByUser
-                        }, "data", t => t.ToObject<List<DataObject>>());
+                        }, "data");
         }
 
         public Task<DataObject> GetOne(string projectId, string collectionId = null, string collectionKey = null,
@@ -128,7 +128,7 @@ namespace Syncano.Net.Api
             if(childrenLimit < 0 || childrenLimit > MaxVauluesPerRequest)
                 throw new ArgumentException();
 
-            return _httpClient.GetAsync("data.get_one",
+            return _httpClient.GetAsync<DataObject>("data.get_one",
                 new
                 {
                     project_id = projectId,
@@ -139,7 +139,7 @@ namespace Syncano.Net.Api
                     include_children = includeChildren,
                     depth,
                     children_limit = childrenLimit
-                }, "data", t => t.ToObject<DataObject>());
+                }, "data");
         }
 
         public Task<DataObject> Update(DataObjectDefinitionRequest request, string dataId = null)
@@ -150,7 +150,7 @@ namespace Syncano.Net.Api
             if (request.CollectionId == null && request.CollectionKey == null)
                 throw new ArgumentNullException();
 
-            return _httpClient.PostAsync("data.update",
+            return _httpClient.PostAsync<DataObject>("data.update",
                 new
                 {
                     project_id = request.ProjectId,
@@ -173,7 +173,7 @@ namespace Syncano.Net.Api
                     state = request.State,
                     parent_id = request.ParentId,
                     additionals = request.Additional
-                }, "data", t => t.ToObject<DataObject>());
+                }, "data");
         }
 
         public Task<DataObject> Merge(DataObjectDefinitionRequest request, string dataId = null)
@@ -184,7 +184,7 @@ namespace Syncano.Net.Api
             if (request.CollectionId == null && request.CollectionKey == null)
                 throw new ArgumentNullException();
 
-            return _httpClient.PostAsync("data.update",
+            return _httpClient.PostAsync<DataObject>("data.update",
                 new
                 {
                     project_id = request.ProjectId,
@@ -207,7 +207,7 @@ namespace Syncano.Net.Api
                     state = request.State,
                     parent_id = request.ParentId,
                     additionals = request.Additional
-                }, "data", t => t.ToObject<DataObject>());
+                }, "data");
         }
 
         public Task<bool> Move(DataObjectSimpleQueryRequest request, string newFolder = null,
@@ -270,13 +270,13 @@ namespace Syncano.Net.Api
             if(dataIds.Count < 1)
                 throw new ArgumentException();
 
-            return await _httpClient.GetAsync("data.copy", new
+            return await _httpClient.GetAsync<List<DataObject>>("data.copy", new
             {
                 project_id = request.ProjectId,
                 collection_id = request.CollectionId,
                 collection_key = request.CollectionKey,
                 data_ids = dataIds.ToArray()
-            }, "data", t => t.ToObject<List<DataObject>>());
+            }, "data");
         }
 
         public Task<bool> AddParent(string projectId, string dataId, string parentId, string collectionId = null,
@@ -427,7 +427,7 @@ namespace Syncano.Net.Api
             if (request.Folder != null)
                 folders.Add(request.Folder);
 
-            return _httpClient.GetAsync("data.count",
+            return _httpClient.GetAsync<int>("data.count",
                 new
                 {
                     project_id = request.ProjectId,
@@ -437,7 +437,7 @@ namespace Syncano.Net.Api
                     folders = folders.ToArray(),
                     filter = request.Filter,
                     by_user = request.ByUser
-                }, "count", t => t.ToObject<int>());
+                }, "count");
         }
     }
 }

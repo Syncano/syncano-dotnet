@@ -23,9 +23,8 @@ namespace Syncano.Net.Api
             if(projectId == null || name == null)
                 throw new ArgumentNullException();
 
-            return _httpClient.PostAsync("collection.new",
-                new { project_id = projectId, name, key,  description }, "collection",
-                t => t.ToObject<Collection>());
+            return _httpClient.PostAsync<Collection>("collection.new",
+                new { project_id = projectId, name, key,  description }, "collection");
         }
 
         public async Task<List<Collection>> Get(GetCollectionRequest request)
@@ -40,9 +39,9 @@ namespace Syncano.Net.Api
 
             return
                 await
-                    _httpClient.PostAsync("collection.get",
+                    _httpClient.PostAsync<List<Collection>>("collection.get",
                         new {project_id = request.ProjectId, status = request.Status, with_tags = withTagsArray},
-                        "collection", t => t.ToObject<List<Collection>>());
+                        "collection");
         }
 
         public Task<Collection> GetOne(string projectId, string collectionId = null, string collectionKey = null)
@@ -50,9 +49,8 @@ namespace Syncano.Net.Api
             if(collectionId == null && collectionKey == null)
                 throw  new ArgumentNullException();
 
-            return _httpClient.GetAsync("collection.get_one",
-                new {project_id = projectId, collection_id = collectionId, collection_key = collectionKey}, "collection",
-                t => t.ToObject<Collection>());
+            return _httpClient.GetAsync<Collection>("collection.get_one",
+                new {project_id = projectId, collection_id = collectionId, collection_key = collectionKey}, "collection");
         }
 
         public Task<bool> Activate(string projectId, string collectionId, bool force = false)
@@ -76,7 +74,7 @@ namespace Syncano.Net.Api
             if(collectionId == null && collectionKey == null)
                 throw new ArgumentNullException();
 
-            return _httpClient.GetAsync("collection.update",
+            return _httpClient.GetAsync<Collection>("collection.update",
                 new
                 {
                     project_id = projectId,
@@ -84,7 +82,7 @@ namespace Syncano.Net.Api
                     collection_key = collectionKey,
                     name,
                     description
-                }, "collection", t => t.ToObject<Collection>());
+                }, "collection");
         }
 
         public Task<bool> Authorize(string apiClientId, Permissions permission, string projectId,

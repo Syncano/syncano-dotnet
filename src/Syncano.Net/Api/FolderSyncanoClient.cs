@@ -24,8 +24,8 @@ namespace Syncano.Net.Api
             if(projectId == null || name == null)
                 throw new ArgumentNullException();
 
-            return _httpClient.PostAsync("folder.new", new { project_id = projectId, collection_id = collectionId, collection_key = collectionKey, name },
-                "folder", t => t.ToObject<Folder>());
+            return _httpClient.PostAsync<Folder>("folder.new", new { project_id = projectId, collection_id = collectionId, collection_key = collectionKey, name },
+                "folder");
         }
 
         public async Task<List<Folder>> Get(string projectId, string collectionId = null,
@@ -37,8 +37,7 @@ namespace Syncano.Net.Api
             if(projectId == null)
                 throw new ArgumentNullException();
 
-            return await _httpClient.GetAsync("folder.get", new { project_id = projectId, collection_id = collectionId, collection_key = collectionKey }, "folder",
-                        t => t.ToObject<List<Folder>>());
+            return await _httpClient.GetAsync<List<Folder>>("folder.get", new { project_id = projectId, collection_id = collectionId, collection_key = collectionKey }, "folder");
         }
 
         public Task<Folder> GetOne(string projectId, string folderName, string collectionId = null,
@@ -50,8 +49,7 @@ namespace Syncano.Net.Api
             if(projectId == null || folderName == null)
                 throw new ArgumentNullException();
 
-            return _httpClient.GetAsync("folder.get_one", new { project_id = projectId, collection_id = collectionId, collection_key = collectionKey, folder_name = folderName }, "folder",
-                t => t.ToObject<Folder>());
+            return _httpClient.GetAsync<Folder>("folder.get_one", new { project_id = projectId, collection_id = collectionId, collection_key = collectionKey, folder_name = folderName }, "folder");
         }
 
         public Task<bool> Update(string projectId, string name, string collectionId = null,

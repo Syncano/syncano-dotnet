@@ -37,13 +37,12 @@ namespace Syncano.Net.Api
 
         public async Task<List<Role>> GetRoles()
         {
-            return await _httpClient.GetAsync("role.get", "role", t => t.ToObject<List<Role>>());
+            return await _httpClient.GetAsync<List<Role>>("role.get", "role");
         }
 
         public Task<string> StartSession(TimeZoneInfo timeZone = null)
         {
-            return _httpClient.PostAsync("apikey.start_session", new {timezone = WindowsTzToIanaTz(timeZone)}, "session_id",
-                t => t.ToObject<string>());
+            return _httpClient.PostAsync<string>("apikey.start_session", new {timezone = WindowsTzToIanaTz(timeZone)}, "session_id");
         }
 
         public Task<ApiKey> New(string description, ApiKeyType type = ApiKeyType.Backend, string roleId = null)
@@ -54,19 +53,17 @@ namespace Syncano.Net.Api
             if(type == ApiKeyType.User && roleId != null)
                 throw new ArgumentException();
 
-            return _httpClient.PostAsync("apikey.new", new {description, type, role_id = roleId}, "apikey",
-                t => t.ToObject<ApiKey>());
+            return _httpClient.PostAsync<ApiKey>("apikey.new", new {description, type, role_id = roleId}, "apikey");
         }
 
         public async Task<List<ApiKey>> Get()
         {
-            return await _httpClient.GetAsync("apikey.get", "apikey", t => t.ToObject<List<ApiKey>>());
+            return await _httpClient.GetAsync<List<ApiKey>>("apikey.get", "apikey");
         }
 
         public Task<ApiKey> GetOne(string apiClientId = null)
         {
-            return _httpClient.GetAsync("apikey.get_one", new {api_client_id = apiClientId}, "apikey",
-                t => t.ToObject<ApiKey>());
+            return _httpClient.GetAsync<ApiKey>("apikey.get_one", new {api_client_id = apiClientId}, "apikey");
         }
 
         public Task<ApiKey> UpdateDescription(string description, string apiClientId = null)
@@ -74,8 +71,8 @@ namespace Syncano.Net.Api
             if(description == null)
                 throw new ArgumentNullException();
 
-            return _httpClient.GetAsync("apikey.update_description", new {description, api_client_id = apiClientId},
-                "apikey", t => t.ToObject<ApiKey>());
+            return _httpClient.GetAsync<ApiKey>("apikey.update_description", new {description, api_client_id = apiClientId},
+                "apikey");
         }
 
         public Task<bool> Authorize(string apiClientId, ApiKeyPermission permission)

@@ -19,13 +19,12 @@ namespace Syncano.Net.Api
             if(name == null)
                 throw new ArgumentNullException();
 
-            return _syncanoClient.PostAsync("project.new", new { name, description }, "project",
-                t => t.ToObject<Project>());
+            return _syncanoClient.PostAsync<Project>("project.new", new { name, description }, "project");
         }
         
         public Task<List<Project>> Get()
         {
-            return _syncanoClient.GetAsync("project.get", "project", t => t.ToObject<List<Project>>());
+            return _syncanoClient.GetAsync<List<Project>>("project.get", "project");
         }
 
         public Task<Project> GetOne(string projectId)
@@ -33,7 +32,7 @@ namespace Syncano.Net.Api
             if(projectId == null)
                 throw new ArgumentNullException();
 
-            return _syncanoClient.GetAsync("project.get_one", new { project_id = projectId }, "project", t => t.ToObject<Project>());
+            return _syncanoClient.GetAsync<Project>("project.get_one", new { project_id = projectId }, "project");
         }
 
         public Task<Project> Update(string projectId, string name = null, string description = null)
@@ -41,8 +40,8 @@ namespace Syncano.Net.Api
             if(projectId == null)
                 throw new ArgumentNullException();
 
-            return _syncanoClient.PostAsync("project.update", new { project_id = projectId, name, description },
-                "project", t => t.ToObject<Project>());
+            return _syncanoClient.PostAsync<Project>("project.update", new { project_id = projectId, name, description },
+                "project");
         }
 
         public Task<bool> Authorize(string apiClientId, Permissions permission, string projectId)

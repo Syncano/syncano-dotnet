@@ -83,26 +83,26 @@ namespace Syncano.Net.Http
             return json;
         }
 
-        public async Task<T> GetAsync<T>(string methodName, string contentToken, Func<JToken, T> getResult)
+        public async Task<T> GetAsync<T>(string methodName, string contentToken)
         {
-            return await GetAsync<T>(methodName, null, contentToken, getResult);
+            return await GetAsync<T>(methodName, null, contentToken);
         }
 
-        public async Task<T> GetAsync<T>(string methodName, object parameters, string contentToken, Func<JToken, T> getResult)
+        public async Task<T> GetAsync<T>(string methodName, object parameters, string contentToken)
         {
             var response = await _client.GetStringAsync(CreateGetUri(methodName, parameters));
             var json = CheckResponseStatus(response);
 
-            return getResult(json.SelectToken(contentToken));
+            return json.SelectToken(contentToken).ToObject<T>();
         }
 
-        public async Task<T> PostAsync<T>(string methodName, object parameters, string contentToken, Func<JToken, T> getResult)
+        public async Task<T> PostAsync<T>(string methodName, object parameters, string contentToken)
         {
             var content = CreatePostContent(parameters);
             var response = await _client.PostAsync(CreateBaseUri(methodName), content);
             var json = CheckResponseStatus(await response.Content.ReadAsStringAsync());
 
-            return getResult(json.SelectToken(contentToken));
+            return json.SelectToken(contentToken).ToObject<T>();
         }
 
         private HttpContent CreatePostContent(object query)
@@ -165,7 +165,7 @@ namespace Syncano.Net.Http
 
         public Task<string> StartSession()
         {
-            return GetAsync("apikey.start_session", "session_id", t => t.Value<string>());
+            return GetAsync<string>("apikey.start_session", "session_id");
         }
 
         

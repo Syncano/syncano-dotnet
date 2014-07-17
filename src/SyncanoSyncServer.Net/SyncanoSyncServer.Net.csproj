@@ -67,7 +67,6 @@
     <Compile Include="LoginRequest.cs" />
     <Compile Include="LoginResponse.cs" />
     <Compile Include="LoginResult.cs" />
-    <Compile Include="ProjectSyncClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SyncServer.cs" />
     <Compile Include="SyncServerClient.cs" />

@@ -17,7 +17,7 @@ namespace Syncano.Net.Api
 
         public async Task<List<Role>> GetRoles()
         {
-            return await _httpClient.GetAsync("role.get", "role", t => t.ToObject<List<Role>>());
+            return await _httpClient.GetAsync<List<Role>>("role.get", "role");
         }
 
         public Task<bool> New(string adminEmail, string roleId, string message)
@@ -35,7 +35,7 @@ namespace Syncano.Net.Api
 
         public async Task<List<Administrator>> Get()
         {
-            return await _httpClient.GetAsync("admin.get", "admin", t => t.ToObject<List<Administrator>>());
+            return await _httpClient.GetAsync<List<Administrator>>("admin.get", "admin");
         }
 
         public Task<Administrator> GetOne(string adminId = null, string adminEmail = null)
@@ -43,8 +43,7 @@ namespace Syncano.Net.Api
             if(adminId == null && adminEmail == null)
                 throw new ArgumentNullException();
 
-            return _httpClient.GetAsync("admin.get_one", new {admin_id = adminId, admin_email = adminEmail}, "admin",
-                t => t.ToObject<Administrator>());
+            return _httpClient.GetAsync<Administrator>("admin.get_one", new {admin_id = adminId, admin_email = adminEmail}, "admin");
         }
 
         public Task<Administrator> Update(string roleId, string adminId = null, string adminEmail = null)
@@ -55,9 +54,8 @@ namespace Syncano.Net.Api
             if(roleId == null)
                 throw new ArgumentNullException();
 
-            return _httpClient.PostAsync("admin.update",
-                new {admin_id = adminId, admin_email = adminEmail, role_id = roleId}, "admin",
-                t => t.ToObject<Administrator>());
+            return _httpClient.PostAsync<Administrator>("admin.update",
+                new {admin_id = adminId, admin_email = adminEmail, role_id = roleId}, "admin");
         }
 
         public Task<bool> Delete(string adminId = null, string adminEmail = null)
