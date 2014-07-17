@@ -38,6 +38,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Administrator.cs" />
+    <Compile Include="AdministratorRestClient.cs" />
+    <Compile Include="Role.cs" />
     <Compile Include="Avatar.cs" />
     <Compile Include="Collection.cs" />
     <Compile Include="CollectionRestClient.cs" />

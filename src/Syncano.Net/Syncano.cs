@@ -17,5 +17,7 @@
 
         public DataObjectRestClient DataObjects { get { return new DataObjectRestClient(_restClient);} }
 
+        public AdministratorRestClient Administrators { get { return new AdministratorRestClient(_restClient);} }
+
     }
 }
