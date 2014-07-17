@@ -62,6 +62,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="AdministratorRestClientTests.cs" />
+    <Compile Include="ApiKeyRestClientTests.cs" />
     <Compile Include="CollectionRestClientTests.cs" />
     <Compile Include="DataObjectRestClientAddChildRemoveChildTests.cs" />
     <Compile Include="DataObjectRestClientAddParentRemoveParentTests.cs" />

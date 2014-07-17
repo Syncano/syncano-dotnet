@@ -11,6 +11,7 @@ namespace Syncano.Net.Tests
         public const string InstanceName = "icy-brook-267066";
 
         public const string BackendAdminApiKey = "f020f3a62b2ea236100a732adcf60cb98683e2e5";
+        public const string BackendAdminApiId = "1033";
 
         public const string ProjectName = "Default";
         public const string ProjectId = "1625";

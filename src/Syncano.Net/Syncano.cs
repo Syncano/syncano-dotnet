@@ -19,5 +19,7 @@
 
         public AdministratorRestClient Administrators { get { return new AdministratorRestClient(_restClient);} }
 
+        public ApiKeyRestClient ApiKeys { get { return  new ApiKeyRestClient(_restClient);} }
+
     }
 }
