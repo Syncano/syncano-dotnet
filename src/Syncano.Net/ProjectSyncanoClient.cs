@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 
 namespace Syncano.Net
 {
-    public class ProjectRestClient
+    public class ProjectSyncanoClient
     {
-        private readonly SyncanoRestClient _restClient;
+        private readonly ISyncanoClient _syncanoClient;
 
-        public ProjectRestClient(SyncanoRestClient restClient)
+        public ProjectSyncanoClient(ISyncanoClient syncanoClient)
         {
-            _restClient = restClient;
+            _syncanoClient = syncanoClient;
         }
 
         public Task<Project> New(string name, string description = null)
@@ -18,13 +18,13 @@ namespace Syncano.Net
             if(name == null)
                 throw new ArgumentNullException();
 
-            return _restClient.PostAsync("project.new", new { name, description }, "project",
+            return _syncanoClient.PostAsync("project.new", new { name, description }, "project",
                 t => t.ToObject<Project>());
         }
         
         public Task<List<Project>> Get()
         {
-            return _restClient.GetAsync("project.get", "project", t => t.ToObject<List<Project>>());
+            return _syncanoClient.GetAsync("project.get", "project", t => t.ToObject<List<Project>>());
         }
 
         public Task<Project> GetOne(string projectId)
@@ -32,7 +32,7 @@ namespace Syncano.Net
             if(projectId == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("project.get_one", new { project_id = projectId }, "project", t => t.ToObject<Project>());
+            return _syncanoClient.GetAsync("project.get_one", new { project_id = projectId }, "project", t => t.ToObject<Project>());
         }
 
         public Task<Project> Update(string projectId, string name = null, string description = null)
@@ -40,7 +40,7 @@ namespace Syncano.Net
             if(projectId == null)
                 throw new ArgumentNullException();
 
-            return _restClient.PostAsync("project.update", new { project_id = projectId, name, description },
+            return _syncanoClient.PostAsync("project.update", new { project_id = projectId, name, description },
                 "project", t => t.ToObject<Project>());
         }
 
@@ -50,7 +50,7 @@ namespace Syncano.Net
                 throw new ArgumentNullException();
 
             string permissionString = PermissionsParser.GetString(permission);
-            return _restClient.GetAsync("project.authorize",
+            return _syncanoClient.GetAsync("project.authorize",
                 new {api_client_id = apiClientId, permission = permissionString, project_id = projectId});
         }
 
@@ -60,7 +60,7 @@ namespace Syncano.Net
                 throw new ArgumentNullException();
 
             string permissionString = PermissionsParser.GetString(permission);
-            return _restClient.GetAsync("project.deauthorize",
+            return _syncanoClient.GetAsync("project.deauthorize",
                 new { api_client_id = apiClientId, permission = permissionString, project_id = projectId });
         }
 
@@ -69,7 +69,7 @@ namespace Syncano.Net
             if(projectId == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("project.delete", new { project_id = projectId });
+            return _syncanoClient.GetAsync("project.delete", new { project_id = projectId });
         }
     }
 }

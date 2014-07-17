@@ -88,17 +88,17 @@ namespace Syncano.Net
             return await GetAsync<T>(methodName, null, contentToken, getResult);
         }
 
-        public async Task<T> GetAsync<T>(string methodName, object query, string contentToken, Func<JToken, T> getResult)
+        public async Task<T> GetAsync<T>(string methodName, object parameters, string contentToken, Func<JToken, T> getResult)
         {
-            var response = await _client.GetStringAsync(CreateGetUri(methodName, query));
+            var response = await _client.GetStringAsync(CreateGetUri(methodName, parameters));
             var json = CheckResponseStatus(response);
 
             return getResult(json.SelectToken(contentToken));
         }
 
-        public async Task<T> PostAsync<T>(string methodName, object query, string contentToken, Func<JToken, T> getResult)
+        public async Task<T> PostAsync<T>(string methodName, object parameters, string contentToken, Func<JToken, T> getResult)
         {
-            var content = CreatePostContent(query);
+            var content = CreatePostContent(parameters);
             var response = await _client.PostAsync(CreateBaseUri(methodName), content);
             var json = CheckResponseStatus(await response.Content.ReadAsStringAsync());
 
@@ -146,17 +146,17 @@ namespace Syncano.Net
             return content;
         }
 
-        public async Task<bool> GetAsync(string methodName, object query)
+        public async Task<bool> GetAsync(string methodName, object parameters)
         {
-            var response = await _client.GetStringAsync(CreateGetUri(methodName, query));
+            var response = await _client.GetStringAsync(CreateGetUri(methodName, parameters));
             var json = CheckResponseStatus(response);
 
             return true;
         }
 
-        public async Task<bool> PostAsync(string methodName, object query)
+        public async Task<bool> PostAsync(string methodName, object parameters)
         {
-            var content = CreatePostContent(query);
+            var content = CreatePostContent(parameters);
             var response = await _client.PostAsync(CreateBaseUri(methodName), content);
             var json = CheckResponseStatus(await response.Content.ReadAsStringAsync());
 

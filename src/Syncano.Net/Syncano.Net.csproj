@@ -65,7 +65,7 @@
     <Compile Include="ISyncanoClient.cs" />
     <Compile Include="Permissions.cs" />
     <Compile Include="Project.cs" />
-    <Compile Include="ProjectRestClient.cs" />
+    <Compile Include="ProjectSyncanoClient.cs" />
     <Compile Include="Syncano.cs" />
     <Compile Include="SyncanoException.cs" />
     <Compile Include="Image.cs" />

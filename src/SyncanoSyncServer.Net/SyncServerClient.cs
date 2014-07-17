@@ -256,15 +256,25 @@ namespace SyncanoSyncServer.Net
             }
         }
 
+        public Task<bool> GetAsync(string methodName, object parameters)
+        {
+            return GetAsync<bool>(methodName, parameters, "", token => token.ToObject<bool>());
+        }
+
         public Task<T> GetAsync<T>(string methodName, string contentToken, Func<JToken, T> getResult)
         {
             return GetAsync<T>(methodName, null, contentToken, getResult);
         }
 
-        public Task<T> GetAsync<T>(string methodName, object query, string contentToken, Func<JToken, T> getResult)
+        public Task<T> GetAsync<T>(string methodName, object parameters, string contentToken, Func<JToken, T> getResult)
         {
-            var request = CreateCommandRequest(methodName, query);
+            var request = CreateCommandRequest(methodName, parameters);
             return SendCommandAsync<T>(request, contentToken);
+        }
+
+        public Task<T> PostAsync<T>(string methodName, object parameters, string contentToken, Func<JToken, T> getResult)
+        {
+            return GetAsync<T>(methodName, parameters, contentToken, getResult);
         }
     }
 }

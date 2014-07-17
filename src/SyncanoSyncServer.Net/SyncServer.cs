@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Syncano.Net;
 
 namespace SyncanoSyncServer.Net
 {
@@ -22,6 +23,6 @@ namespace SyncanoSyncServer.Net
             return await _syncClient.Login(_api, _instanceName);
         }
 
-        public ProjectSyncClient Projects { get { return new ProjectSyncClient(_syncClient); } }
+        public ProjectSyncanoClient Projects { get { return new ProjectSyncanoClient(_syncClient); } }
     }
 }

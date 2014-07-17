@@ -9,7 +9,7 @@
             _restClient = new SyncanoRestClient(instanceName, apiKey);
         }
 
-        public ProjectRestClient Projects { get { return new ProjectRestClient(_restClient);} }
+        public ProjectSyncanoClient Projects { get { return new ProjectSyncanoClient(_restClient);} }
 
         public FolderRestClient Folders { get { return  new FolderRestClient(_restClient);} }
 
