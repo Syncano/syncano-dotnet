@@ -19,13 +19,13 @@ namespace SyncanoSyncServer.Net
             if(name == null)
                 throw new ArgumentNullException();
 
-            return _syncServerClient.SendAsync("project.new", new { name, description }, "project",
+            return _syncServerClient.GetAsync("project.new", new { name, description }, "project",
                 t => t.ToObject<Project>());
         }
         
         public Task<List<Project>> Get()
         {
-            return _syncServerClient.SendAsync("project.get", "project", t => t.ToObject<List<Project>>());
+            return _syncServerClient.GetAsync("project.get", "project", t => t.ToObject<List<Project>>());
         }
 
         public Task<Project> GetOne(string projectId)
@@ -33,7 +33,7 @@ namespace SyncanoSyncServer.Net
             if(projectId == null)
                 throw new ArgumentNullException();
 
-            return _syncServerClient.SendAsync("project.get_one", new { project_id = projectId }, "project", t => t.ToObject<Project>());
+            return _syncServerClient.GetAsync("project.get_one", new { project_id = projectId }, "project", t => t.ToObject<Project>());
         }
 
         public Task<Project> Update(string projectId, string name = null, string description = null)
@@ -41,7 +41,7 @@ namespace SyncanoSyncServer.Net
             if(projectId == null)
                 throw new ArgumentNullException();
 
-            return _syncServerClient.SendAsync("project.update", new { project_id = projectId, name, description },
+            return _syncServerClient.GetAsync("project.update", new { project_id = projectId, name, description },
                 "project", t => t.ToObject<Project>());
         }
 
@@ -51,7 +51,7 @@ namespace SyncanoSyncServer.Net
                 throw new ArgumentNullException();
 
             string permissionString = PermissionsParser.GetString(permission);
-            return _syncServerClient.SendAsync("project.authorize",
+            return _syncServerClient.GetAsync("project.authorize",
                 new {api_client_id = apiClientId, permission = permissionString, project_id = projectId});
         }*/
 
@@ -70,7 +70,7 @@ namespace SyncanoSyncServer.Net
             if(projectId == null)
                 throw new ArgumentNullException();
 
-            return _syncServerClient.SendAsync("project.delete", new { project_id = projectId });
+            return _syncServerClient.GetAsync("project.delete", new { project_id = projectId });
         }*/
     }
 }

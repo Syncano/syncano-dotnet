@@ -18,7 +18,7 @@ using Syncano.Net;
 
 namespace SyncanoSyncServer.Net
 {
-    public class SyncServerClient : IDisposable
+    public class SyncServerClient : IDisposable, ISyncanoClient
     {
         private ReactiveClient _client;
         private Subject<string> _messagesObservable = new Subject<string>();
@@ -53,10 +53,9 @@ namespace SyncanoSyncServer.Net
 
         private void OnNewMessage(string message)
         {
-           
         }
 
-    
+
         private bool _isAuthenticated;
         private IDisposable _newBytesSubscription;
 
@@ -142,7 +141,8 @@ namespace SyncanoSyncServer.Net
 
             return json;
         }
-      
+
+        
 
         private async Task<T> SendCommandAsync<T>(ApiCommandRequest request, string contentToken)
         {
@@ -194,7 +194,6 @@ namespace SyncanoSyncServer.Net
                     if (eachProperty.GetValue(parameters) != null)
                         request.Params.Add(eachProperty.Name, eachProperty.GetValue(parameters));
                 }
-
             }
             return request;
         }
@@ -211,7 +210,7 @@ namespace SyncanoSyncServer.Net
             await _semaphore.WaitAsync(TimeSpan.FromSeconds(30));
             try
             {
-              await _client.SendAsync(CreateRequest(request));
+                await _client.SendAsync(CreateRequest(request));
             }
 
 
@@ -257,23 +256,15 @@ namespace SyncanoSyncServer.Net
             }
         }
 
-        public Task<T> SendAsync<T>(string methodName, string contentToken, Func<JToken, T> getResult)
+        public Task<T> GetAsync<T>(string methodName, string contentToken, Func<JToken, T> getResult)
         {
-            return SendAsync<T>(methodName, null, contentToken, getResult);
+            return GetAsync<T>(methodName, null, contentToken, getResult);
         }
 
-        public Task<T> SendAsync<T>(string methodName, object query, string contentToken, Func<JToken, T> getResult)
+        public Task<T> GetAsync<T>(string methodName, object query, string contentToken, Func<JToken, T> getResult)
         {
             var request = CreateCommandRequest(methodName, query);
             return SendCommandAsync<T>(request, contentToken);
         }
-
-        /*      public Task<Response<SingleResult<Data>>> NewData(DataDefinitionRequest dataDefinitionRequest)
-        {
-            var parameters = GetParameters(dataDefinitionRequest);
-
-            var request = CreateCommandRequest("data.new", parameters);
-            return SendCommandAsync<SingleResult<Data>>(request);
-        }*/
     }
-    }
+}

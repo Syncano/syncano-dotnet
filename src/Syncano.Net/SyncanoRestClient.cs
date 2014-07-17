@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Syncano.Net
 {
-    public class SyncanoRestClient
+    public class SyncanoRestClient : ISyncanoClient
     {
         private readonly string _instanceName;
         private readonly string _apiKey;

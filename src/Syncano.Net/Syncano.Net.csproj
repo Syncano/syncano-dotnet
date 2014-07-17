@@ -55,6 +55,7 @@
     <Compile Include="FolderRestClient.cs" />
     <Compile Include="GetCollectionRequest.cs" />
     <Compile Include="DataObjectDefinitionRequest.cs" />
+    <Compile Include="ISyncanoClient.cs" />
     <Compile Include="Permissions.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="ProjectRestClient.cs" />
