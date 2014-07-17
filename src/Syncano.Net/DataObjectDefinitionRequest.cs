@@ -1,4 +1,6 @@
-﻿namespace Syncano.Net
+﻿using System.Collections.Generic;
+
+namespace Syncano.Net
 {
     public class DataObjectDefinitionRequest
     {
@@ -41,6 +43,8 @@
         public DataObjectState State { get; set; }
 
         public string ParentId { get; set; }
+
+        public Dictionary<string, string> Additional { get; set; } 
 
     }
 }

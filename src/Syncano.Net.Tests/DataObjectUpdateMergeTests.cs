@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Should;
 using Xunit;
@@ -368,6 +369,38 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task Update_ByCollectionId_WithAdditionals_CreatesNewDataObject()
+        {
+            //given
+            var additionals = new Dictionary<string, string>();
+            additionals.Add("param1", "value1");
+            additionals.Add("param2", "value2");
+            additionals.Add("param3", "value3");
+            var request = new DataObjectDefinitionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            var dataObject = await _client.DataObjects.New(request);
+
+            request.Additional = additionals;
+
+            //when
+            var result = await _client.DataObjects.Update(request, dataObject.Id);
+
+            //then
+            result.ShouldNotBeNull();
+            result.Folder.ShouldEqual(request.Folder);
+            result.Additional.ShouldNotBeNull();
+            result.Additional.Count.ShouldEqual(additionals.Count);
+
+            //cleanup
+            var deleteRequest = new DataObjectSimpleQueryRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            deleteRequest.DataId = result.Id;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
         public async Task Update_WithInvalidProjectId_ThrowsException()
         {
             //given
@@ -470,6 +503,42 @@ namespace Syncano.Net.Tests
             result.ShouldNotBeNull();
             result.Folder.ShouldEqual(request.Folder);
             result.Link.ShouldEqual(link);
+
+            //cleanup
+            var deleteRequest = new DataObjectSimpleQueryRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            deleteRequest.DataId = result.Id;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task Merge_ByCollectionId_WithAdditionals_CreatesNewDataObject()
+        {
+            //given
+            var additionals = new Dictionary<string, string>();
+            additionals.Add("param1", "value1");
+            additionals.Add("param2", "value2");
+            additionals.Add("param3", "value3");
+            var link = "custom link";
+            var request = new DataObjectDefinitionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.Link = link;
+            var dataObject = await _client.DataObjects.New(request);
+
+            request.Link = null;
+            request.Additional = additionals;
+
+            //when
+            var result = await _client.DataObjects.Merge(request, dataObject.Id);
+
+            //then
+            result.ShouldNotBeNull();
+            result.Folder.ShouldEqual(request.Folder);
+            result.Link.ShouldEqual(link);
+            result.Additional.ShouldNotBeNull();
+            result.Additional.Count.ShouldEqual(additionals.Count);
 
             //cleanup
             var deleteRequest = new DataObjectSimpleQueryRequest();

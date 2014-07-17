@@ -43,7 +43,8 @@ namespace Syncano.Net
                     parent_id = request.ParentId,
                     data1 = request.DataOne,
                     data2 = request.DataTwo,
-                    data3 = request.DataThree
+                    data3 = request.DataThree,
+                    additionals = request.Additional
                 }, "data", t => t.ToObject<DataObject>());
         }
 
@@ -168,7 +169,8 @@ namespace Syncano.Net
                     data3 = request.DataThree,
                     folder = request.Folder,
                     state = request.State,
-                    parent_id = request.ParentId
+                    parent_id = request.ParentId,
+                    additionals = request.Additional
                 }, "data", t => t.ToObject<DataObject>());
         }
 
@@ -201,7 +203,8 @@ namespace Syncano.Net
                     data3 = request.DataThree,
                     folder = request.Folder,
                     state = request.State,
-                    parent_id = request.ParentId
+                    parent_id = request.ParentId,
+                    additionals = request.Additional
                 }, "data", t => t.ToObject<DataObject>());
         }
 

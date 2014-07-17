@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
@@ -121,6 +122,14 @@ namespace Syncano.Net
                             foreach (var item in array)
                             {
                                 content.Add( new StringContent(item.ToString()),each.Name);
+                            }
+                        }
+                        else if (each.GetValue(query).GetType().IsConstructedGenericType && each.GetValue(query).GetType().GetGenericTypeDefinition() == typeof(Dictionary<,>))
+                        {
+                            var dictionary = (Dictionary<string,string>)each.GetValue(query);
+                            foreach (var item in dictionary)
+                            {
+                                content.Add(new StringContent(item.Value), item.Key);
                             }
                         }
                         else

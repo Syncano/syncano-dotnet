@@ -356,6 +356,36 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task New_ByCollectionId_WithAdditionals_CreatesNewDataObject()
+        {
+            //given
+            var additionals = new Dictionary<string, string>();
+            additionals.Add("param1", "value1");
+            additionals.Add("param2", "value2");
+            additionals.Add("param3", "value3");
+            var request = new DataObjectDefinitionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.Additional = additionals;
+
+            //when
+            var result = await _client.DataObjects.New(request);
+
+            //then
+            result.ShouldNotBeNull();
+            result.Folder.ShouldEqual(request.Folder);
+            result.Additional.ShouldNotBeNull();
+            result.Additional.Count.ShouldEqual(additionals.Count);
+
+            //cleanup
+            var deleteRequest = new DataObjectSimpleQueryRequest();
+            deleteRequest.ProjectId = TestData.ProjectId;
+            deleteRequest.CollectionId = TestData.CollectionId;
+            deleteRequest.DataId = result.Id;
+            await _client.DataObjects.Delete(deleteRequest);
+        }
+
+        [Fact]
         public async Task New_WithInvalidProjectId_ThrowsException()
         {
             //given
