@@ -1,4 +1,4 @@
-﻿namespace Syncano.Net
+﻿namespace Syncano.Net.Data
 {
     public enum Permissions
     {

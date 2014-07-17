@@ -7,16 +7,16 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
-namespace Syncano.Net
+namespace Syncano.Net.Http
 {
-    public class SyncanoRestClient : ISyncanoClient
+    public class SyncanoHttpClient : ISyncanoClient
     {
         private readonly string _instanceName;
         private readonly string _apiKey;
         private HttpClient _client;
         private string _baseUrl;
 
-        public SyncanoRestClient(string instanceName, string apiKey)
+        public SyncanoHttpClient(string instanceName, string apiKey)
         {
             _instanceName = instanceName;
             _apiKey = apiKey;

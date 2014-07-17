@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Should;
+using Syncano.Net.Access;
 using Xunit;
 
 namespace Syncano.Net.Tests

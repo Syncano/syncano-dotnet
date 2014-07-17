@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Syncano.Net.Data;
+using Syncano.Net.Http;
 
-namespace Syncano.Net
+namespace Syncano.Net.Api
 {
-    public class CollectionRestClient
+    public class CollectionSyncanoClient
     {
-        private readonly SyncanoRestClient _restClient;
+        private readonly SyncanoHttpClient _httpClient;
 
-        public CollectionRestClient(SyncanoRestClient restClient)
+        public CollectionSyncanoClient(SyncanoHttpClient httpClient)
         {
-            _restClient = restClient;
+            _httpClient = httpClient;
         }
 
         public Task<Collection> New(string projectId, string name, string key = null,
@@ -21,7 +23,7 @@ namespace Syncano.Net
             if(projectId == null || name == null)
                 throw new ArgumentNullException();
 
-            return _restClient.PostAsync("collection.new",
+            return _httpClient.PostAsync("collection.new",
                 new { project_id = projectId, name, key,  description }, "collection",
                 t => t.ToObject<Collection>());
         }
@@ -38,7 +40,7 @@ namespace Syncano.Net
 
             return
                 await
-                    _restClient.PostAsync("collection.get",
+                    _httpClient.PostAsync("collection.get",
                         new {project_id = request.ProjectId, status = request.Status, with_tags = withTagsArray},
                         "collection", t => t.ToObject<List<Collection>>());
         }
@@ -48,14 +50,14 @@ namespace Syncano.Net
             if(collectionId == null && collectionKey == null)
                 throw  new ArgumentNullException();
 
-            return _restClient.GetAsync("collection.get_one",
+            return _httpClient.GetAsync("collection.get_one",
                 new {project_id = projectId, collection_id = collectionId, collection_key = collectionKey}, "collection",
                 t => t.ToObject<Collection>());
         }
 
         public Task<bool> Activate(string projectId, string collectionId, bool force = false)
         {
-            return _restClient.GetAsync("collection.activate",
+            return _httpClient.GetAsync("collection.activate",
                 new {project_id = projectId, collection_id = collectionId, force});
         }
 
@@ -64,7 +66,7 @@ namespace Syncano.Net
             if(collectionId == null && collectionKey == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("collection.deactivate",
+            return _httpClient.GetAsync("collection.deactivate",
                 new {project_id = projectId, collection_id = collectionId, collection_key = collectionKey});
         }
 
@@ -74,7 +76,7 @@ namespace Syncano.Net
             if(collectionId == null && collectionKey == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("collection.update",
+            return _httpClient.GetAsync("collection.update",
                 new
                 {
                     project_id = projectId,
@@ -93,7 +95,7 @@ namespace Syncano.Net
 
             string permissionString = PermissionsParser.GetString(permission);
 
-            return _restClient.GetAsync("collection.authorize",
+            return _httpClient.GetAsync("collection.authorize",
                 new
                 {
                     api_client_id = apiClientId,
@@ -112,7 +114,7 @@ namespace Syncano.Net
 
             string permissionString = PermissionsParser.GetString(permission);
 
-            return _restClient.GetAsync("collection.deauthorize",
+            return _httpClient.GetAsync("collection.deauthorize",
                 new
                 {
                     api_client_id = apiClientId,
@@ -128,7 +130,7 @@ namespace Syncano.Net
             if(collectionId == null && collectionKey == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("collection.delete",
+            return _httpClient.GetAsync("collection.delete",
                 new {project_id = projectId, collection_id = collectionId, collection_key = collectionKey});
         }
 
@@ -138,7 +140,7 @@ namespace Syncano.Net
             if(collectionId == null && collectionKey == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("collection.add_tag",
+            return _httpClient.GetAsync("collection.add_tag",
                 new
                 {
                     project_id = projectId,
@@ -156,7 +158,7 @@ namespace Syncano.Net
             if (collectionId == null && collectionKey == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("collection.add_tag",
+            return _httpClient.GetAsync("collection.add_tag",
                 new
                 {
                     project_id = projectId,
@@ -173,7 +175,7 @@ namespace Syncano.Net
             if (collectionId == null && collectionKey == null || tag == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("collection.delete_tag",
+            return _httpClient.GetAsync("collection.delete_tag",
                 new
                 {
                     project_id = projectId,
@@ -188,7 +190,7 @@ namespace Syncano.Net
             if (collectionId == null && collectionKey == null || tags == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("collection.delete_tag",
+            return _httpClient.GetAsync("collection.delete_tag",
                 new
                 {
                     project_id = projectId,

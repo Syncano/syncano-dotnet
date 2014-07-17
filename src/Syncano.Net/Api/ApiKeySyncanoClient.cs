@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Syncano.Net.Access;
+using Syncano.Net.Http;
 
-namespace Syncano.Net
+namespace Syncano.Net.Api
 {
-    public class ApiKeyRestClient
+    public class ApiKeySyncanoClient
     {
-        private readonly SyncanoRestClient _restClient;
+        private readonly SyncanoHttpClient _httpClient;
 
-        public ApiKeyRestClient(SyncanoRestClient restClient)
+        public ApiKeySyncanoClient(SyncanoHttpClient httpClient)
         {
-            _restClient = restClient;
+            _httpClient = httpClient;
         }
 
         private string WindowsTzToIanaTz(TimeZoneInfo timeZoneInfo)
@@ -35,12 +37,12 @@ namespace Syncano.Net
 
         public async Task<List<Role>> GetRoles()
         {
-            return await _restClient.GetAsync("role.get", "role", t => t.ToObject<List<Role>>());
+            return await _httpClient.GetAsync("role.get", "role", t => t.ToObject<List<Role>>());
         }
 
         public Task<string> StartSession(TimeZoneInfo timeZone = null)
         {
-            return _restClient.PostAsync("apikey.start_session", new {timezone = WindowsTzToIanaTz(timeZone)}, "session_id",
+            return _httpClient.PostAsync("apikey.start_session", new {timezone = WindowsTzToIanaTz(timeZone)}, "session_id",
                 t => t.ToObject<string>());
         }
 
@@ -52,18 +54,18 @@ namespace Syncano.Net
             if(type == ApiKeyType.User && roleId != null)
                 throw new ArgumentException();
 
-            return _restClient.PostAsync("apikey.new", new {description, type, role_id = roleId}, "apikey",
+            return _httpClient.PostAsync("apikey.new", new {description, type, role_id = roleId}, "apikey",
                 t => t.ToObject<ApiKey>());
         }
 
         public async Task<List<ApiKey>> Get()
         {
-            return await _restClient.GetAsync("apikey.get", "apikey", t => t.ToObject<List<ApiKey>>());
+            return await _httpClient.GetAsync("apikey.get", "apikey", t => t.ToObject<List<ApiKey>>());
         }
 
         public Task<ApiKey> GetOne(string apiClientId = null)
         {
-            return _restClient.GetAsync("apikey.get_one", new {api_client_id = apiClientId}, "apikey",
+            return _httpClient.GetAsync("apikey.get_one", new {api_client_id = apiClientId}, "apikey",
                 t => t.ToObject<ApiKey>());
         }
 
@@ -72,7 +74,7 @@ namespace Syncano.Net
             if(description == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("apikey.update_description", new {description, api_client_id = apiClientId},
+            return _httpClient.GetAsync("apikey.update_description", new {description, api_client_id = apiClientId},
                 "apikey", t => t.ToObject<ApiKey>());
         }
 
@@ -81,7 +83,7 @@ namespace Syncano.Net
             if(apiClientId == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("apikey.authorize",
+            return _httpClient.GetAsync("apikey.authorize",
                 new {api_client_id = apiClientId, permission = ApiKeyPermissionByStringConverter.GetString(permission)});
         }
 
@@ -90,7 +92,7 @@ namespace Syncano.Net
             if (apiClientId == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("apikey.deauthorize",
+            return _httpClient.GetAsync("apikey.deauthorize",
                 new { api_client_id = apiClientId, permission = ApiKeyPermissionByStringConverter.GetString(permission) });
         }
 
@@ -99,7 +101,7 @@ namespace Syncano.Net
             if(apiClientId == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("apikey.delete", new {api_client_id = apiClientId});
+            return _httpClient.GetAsync("apikey.delete", new {api_client_id = apiClientId});
         }
     }
 }

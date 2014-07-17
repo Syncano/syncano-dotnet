@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Syncano.Net.Data;
 
 namespace Syncano.Net
 {

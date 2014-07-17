@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Syncano.Net
+namespace Syncano.Net.Access
 {
     public class ApiKey
     {

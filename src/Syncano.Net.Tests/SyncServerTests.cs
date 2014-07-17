@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Threading.Tasks;
 using Should;
+using Syncano.Net.Api;
+using Syncano.Net.Http;
 using SyncanoSyncServer.Net;
 using Xunit;
 using Xunit.Extensions;
@@ -29,7 +31,7 @@ namespace Syncano.Net.Tests
         {
             get
             {
-                yield return new object[] { new SyncanoRestClient(TestData.InstanceName, TestData.BackendAdminApiKey) };
+                yield return new object[] { new SyncanoHttpClient(TestData.InstanceName, TestData.BackendAdminApiKey) };
 
                 yield return new object[] { _syncServerClient };
             }
@@ -77,7 +79,7 @@ namespace Syncano.Net.Tests
 
         public IEnumerator<object[]> GetEnumerator()
         {
-            yield return new object[] {new SyncanoRestClient(TestData.InstanceName, TestData.BackendAdminApiKey)};
+            yield return new object[] {new SyncanoHttpClient(TestData.InstanceName, TestData.BackendAdminApiKey)};
 
             if (_syncServerClient == null)
                 PrepareSyncClient().Wait(10000);

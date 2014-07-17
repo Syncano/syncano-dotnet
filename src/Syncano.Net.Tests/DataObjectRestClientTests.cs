@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Should;
+using Syncano.Net.Api;
+using Syncano.Net.Data;
 using Xunit;
 
 namespace Syncano.Net.Tests
@@ -223,7 +225,7 @@ namespace Syncano.Net.Tests
             var request = new DataObjectRichQueryRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
-            request.Limit = DataObjectRestClient.MaxVauluesPerRequest + 1;
+            request.Limit = DataObjectSyncanoClient.MaxVauluesPerRequest + 1;
 
             try
             {
@@ -246,7 +248,7 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.DataIds = new List<string>();
-            for (int i = 0; i < DataObjectRestClient.MaxVauluesPerRequest; ++i)
+            for (int i = 0; i < DataObjectSyncanoClient.MaxVauluesPerRequest; ++i)
                 request.DataIds.Add("abc");
             request.DataId = "abc";
 
@@ -271,7 +273,7 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Folders = new List<string>();
-            for (int i = 0; i < DataObjectRestClient.MaxVauluesPerRequest; ++i)
+            for (int i = 0; i < DataObjectSyncanoClient.MaxVauluesPerRequest; ++i)
                 request.Folders.Add("abc");
             request.Folder = "abc";
 
@@ -403,7 +405,7 @@ namespace Syncano.Net.Tests
             var dataObject = await _client.DataObjects.New(newRequest);
             newRequest.ParentId = dataObject.Id;
 
-            for (int i = 0; i < DataObjectRestClient.MaxVauluesPerRequest + 10; ++i)
+            for (int i = 0; i < DataObjectSyncanoClient.MaxVauluesPerRequest + 10; ++i)
                 await _client.DataObjects.New(newRequest);
 
             //when
@@ -414,7 +416,7 @@ namespace Syncano.Net.Tests
             result.ShouldNotBeNull();
             result.Folder.ShouldEqual(newRequest.Folder);
             result.Id.ShouldEqual(dataObject.Id);
-            result.Children.Count.ShouldEqual(DataObjectRestClient.MaxVauluesPerRequest);
+            result.Children.Count.ShouldEqual(DataObjectSyncanoClient.MaxVauluesPerRequest);
 
             //cleanup
             var deleteRequest = new DataObjectSimpleQueryRequest();
@@ -671,7 +673,7 @@ namespace Syncano.Net.Tests
             try
             {
                 //when
-                await _client.DataObjects.GetOne(TestData.ProjectId, collectionId: TestData.CollectionId, childrenLimit: DataObjectRestClient.MaxVauluesPerRequest + 1);
+                await _client.DataObjects.GetOne(TestData.ProjectId, collectionId: TestData.CollectionId, childrenLimit: DataObjectSyncanoClient.MaxVauluesPerRequest + 1);
                 throw new Exception("New should throw an exception");
             }
             catch (Exception e)
@@ -838,7 +840,7 @@ namespace Syncano.Net.Tests
             var request = new DataObjectSimpleQueryRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
-            request.Limit = DataObjectRestClient.MaxVauluesPerRequest + 1;
+            request.Limit = DataObjectSyncanoClient.MaxVauluesPerRequest + 1;
 
             try
             {
@@ -861,7 +863,7 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.DataIds = new List<string>();
-            for (int i = 0; i < DataObjectRestClient.MaxVauluesPerRequest; ++i)
+            for (int i = 0; i < DataObjectSyncanoClient.MaxVauluesPerRequest; ++i)
                 request.DataIds.Add("abc");
             request.DataId = "abc";
 
@@ -886,7 +888,7 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Folders = new List<string>();
-            for (int i = 0; i < DataObjectRestClient.MaxVauluesPerRequest; ++i)
+            for (int i = 0; i < DataObjectSyncanoClient.MaxVauluesPerRequest; ++i)
                 request.Folders.Add("abc");
             request.Folder = "abc";
 
@@ -1682,7 +1684,7 @@ namespace Syncano.Net.Tests
             countRequest.CollectionId = TestData.CollectionId;
             countRequest.Folders = new List<string>();
 
-            for(int i = 0; i < DataObjectRestClient.MaxVauluesPerRequest + 10; ++i)
+            for(int i = 0; i < DataObjectSyncanoClient.MaxVauluesPerRequest + 10; ++i)
                 countRequest.Folders.Add("folder");
 
             try
@@ -1717,7 +1719,7 @@ namespace Syncano.Net.Tests
             countRequest.CollectionId = TestData.CollectionId;
             countRequest.Folders = new List<string>();
 
-            for (int i = 0; i < DataObjectRestClient.MaxVauluesPerRequest; ++i)
+            for (int i = 0; i < DataObjectSyncanoClient.MaxVauluesPerRequest; ++i)
                 countRequest.Folders.Add("folder");
 
             countRequest.Folder = "folder";

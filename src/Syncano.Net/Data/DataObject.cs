@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Syncano.Net
+namespace Syncano.Net.Data
 {
     public class DataObject
     {

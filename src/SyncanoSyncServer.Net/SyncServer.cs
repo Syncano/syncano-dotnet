@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Syncano.Net;
+using Syncano.Net.Api;
 
 namespace SyncanoSyncServer.Net
 {

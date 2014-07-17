@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using Should;
+using Syncano.Net.Http;
 using Xunit;
 
 namespace Syncano.Net.Tests
@@ -52,12 +53,12 @@ namespace Syncano.Net.Tests
 
     public class SyncanoRestClientTests : IDisposable
     {
-        private SyncanoRestClient _client;
+        private SyncanoHttpClient _client;
 
 
         public SyncanoRestClientTests()
         {
-            _client = new SyncanoRestClient(TestData.InstanceName, TestData.BackendAdminApiKey);
+            _client = new SyncanoHttpClient(TestData.InstanceName, TestData.BackendAdminApiKey);
         }
 
         [Fact]
@@ -76,7 +77,7 @@ namespace Syncano.Net.Tests
         {
             try
             {
-                var session = await new SyncanoRestClient(TestData.InstanceName, "2123").StartSession();
+                var session = await new SyncanoHttpClient(TestData.InstanceName, "2123").StartSession();
 
                 throw new Exception("StartSession should throw exception");
                 

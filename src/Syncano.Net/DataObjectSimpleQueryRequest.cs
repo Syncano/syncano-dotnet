@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using Syncano.Net.Api;
+using Syncano.Net.Data;
+
 namespace Syncano.Net
 {
     public class DataObjectSimpleQueryRequest
@@ -6,7 +9,7 @@ namespace Syncano.Net
         public DataObjectSimpleQueryRequest()
         {
             State = DataObjectState.All;
-            Limit = DataObjectRestClient.MaxVauluesPerRequest;
+            Limit = DataObjectSyncanoClient.MaxVauluesPerRequest;
             Filter = null;
         }
 

@@ -1,21 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Syncano.Net.Access;
+using Syncano.Net.Http;
 
-namespace Syncano.Net
+namespace Syncano.Net.Api
 {
-    public class AdministratorRestClient
+    public class AdministratorSyncanoClient
     {
-        private readonly SyncanoRestClient _restClient;
+        private readonly SyncanoHttpClient _httpClient;
 
-        public AdministratorRestClient(SyncanoRestClient restClient)
+        public AdministratorSyncanoClient(SyncanoHttpClient httpClient)
         {
-            _restClient = restClient;
+            _httpClient = httpClient;
         }
 
         public async Task<List<Role>> GetRoles()
         {
-            return await _restClient.GetAsync("role.get", "role", t => t.ToObject<List<Role>>());
+            return await _httpClient.GetAsync("role.get", "role", t => t.ToObject<List<Role>>());
         }
 
         public Task<bool> New(string adminEmail, string roleId, string message)
@@ -23,7 +25,7 @@ namespace Syncano.Net
             if(adminEmail == null || roleId == null || message == null)
                 throw new ArgumentNullException();
 
-            return _restClient.PostAsync("admin.new", new
+            return _httpClient.PostAsync("admin.new", new
             {
                 admin_email = adminEmail,
                 role_id = roleId,
@@ -33,7 +35,7 @@ namespace Syncano.Net
 
         public async Task<List<Administrator>> Get()
         {
-            return await _restClient.GetAsync("admin.get", "admin", t => t.ToObject<List<Administrator>>());
+            return await _httpClient.GetAsync("admin.get", "admin", t => t.ToObject<List<Administrator>>());
         }
 
         public Task<Administrator> GetOne(string adminId = null, string adminEmail = null)
@@ -41,7 +43,7 @@ namespace Syncano.Net
             if(adminId == null && adminEmail == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("admin.get_one", new {admin_id = adminId, admin_email = adminEmail}, "admin",
+            return _httpClient.GetAsync("admin.get_one", new {admin_id = adminId, admin_email = adminEmail}, "admin",
                 t => t.ToObject<Administrator>());
         }
 
@@ -53,7 +55,7 @@ namespace Syncano.Net
             if(roleId == null)
                 throw new ArgumentNullException();
 
-            return _restClient.PostAsync("admin.update",
+            return _httpClient.PostAsync("admin.update",
                 new {admin_id = adminId, admin_email = adminEmail, role_id = roleId}, "admin",
                 t => t.ToObject<Administrator>());
         }
@@ -63,7 +65,7 @@ namespace Syncano.Net
             if(adminId == null && adminEmail == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("admin.delete", new {admin_id = adminId, admin_email = adminEmail});
+            return _httpClient.GetAsync("admin.delete", new {admin_id = adminId, admin_email = adminEmail});
         }
     }
 }

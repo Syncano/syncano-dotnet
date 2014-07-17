@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Syncano.Net.Data;
+using Syncano.Net.Http;
 
-namespace Syncano.Net
+namespace Syncano.Net.Api
 {
-    public class FolderRestClient
+    public class FolderSyncanoClient
     {
-        private readonly SyncanoRestClient _restClient;
+        private readonly SyncanoHttpClient _httpClient;
 
-        public FolderRestClient(SyncanoRestClient restClient)
+        public FolderSyncanoClient(SyncanoHttpClient httpClient)
         {
-            _restClient = restClient;
+            _httpClient = httpClient;
         }
 
         public Task<Folder> New(string projectId, string name, string collectionId = null,
@@ -22,7 +24,7 @@ namespace Syncano.Net
             if(projectId == null || name == null)
                 throw new ArgumentNullException();
 
-            return _restClient.PostAsync("folder.new", new { project_id = projectId, collection_id = collectionId, collection_key = collectionKey, name },
+            return _httpClient.PostAsync("folder.new", new { project_id = projectId, collection_id = collectionId, collection_key = collectionKey, name },
                 "folder", t => t.ToObject<Folder>());
         }
 
@@ -35,7 +37,7 @@ namespace Syncano.Net
             if(projectId == null)
                 throw new ArgumentNullException();
 
-            return await _restClient.GetAsync("folder.get", new { project_id = projectId, collection_id = collectionId, collection_key = collectionKey }, "folder",
+            return await _httpClient.GetAsync("folder.get", new { project_id = projectId, collection_id = collectionId, collection_key = collectionKey }, "folder",
                         t => t.ToObject<List<Folder>>());
         }
 
@@ -48,7 +50,7 @@ namespace Syncano.Net
             if(projectId == null || folderName == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("folder.get_one", new { project_id = projectId, collection_id = collectionId, collection_key = collectionKey, folder_name = folderName }, "folder",
+            return _httpClient.GetAsync("folder.get_one", new { project_id = projectId, collection_id = collectionId, collection_key = collectionKey, folder_name = folderName }, "folder",
                 t => t.ToObject<Folder>());
         }
 
@@ -61,7 +63,7 @@ namespace Syncano.Net
             if (projectId == null || name == null)
                 throw new ArgumentNullException();
 
-            return _restClient.PostAsync("folder.update",
+            return _httpClient.PostAsync("folder.update",
                 new
                 {
                     project_id = projectId,
@@ -84,7 +86,7 @@ namespace Syncano.Net
 
             string permissionString = PermissionsParser.GetString(permission);
 
-            return _restClient.GetAsync("folder.authorize",
+            return _httpClient.GetAsync("folder.authorize",
                 new
                 {
                     api_client_id = apiClientId,
@@ -107,7 +109,7 @@ namespace Syncano.Net
 
             string permissionString = PermissionsParser.GetString(permission);
 
-            return _restClient.GetAsync("folder.deauthorize",
+            return _httpClient.GetAsync("folder.deauthorize",
                 new
                 {
                     api_client_id = apiClientId,
@@ -127,7 +129,7 @@ namespace Syncano.Net
             if (projectId == null || name == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("folder.delete", new { project_id = projectId, collection_id = collectionId, collection_key = collectionKey, name });
+            return _httpClient.GetAsync("folder.delete", new { project_id = projectId, collection_id = collectionId, collection_key = collectionKey, name });
         }
     }
 }

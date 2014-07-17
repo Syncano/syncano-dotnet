@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Should;
+using Syncano.Net.Api;
+using Syncano.Net.Data;
 using Xunit;
 
 namespace Syncano.Net.Tests
@@ -874,7 +876,7 @@ namespace Syncano.Net.Tests
             var request = new DataObjectSimpleQueryRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
-            request.Limit = DataObjectRestClient.MaxVauluesPerRequest + 1;
+            request.Limit = DataObjectSyncanoClient.MaxVauluesPerRequest + 1;
 
             try
             {
@@ -897,7 +899,7 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.DataIds = new List<string>();
-            for (int i = 0; i < DataObjectRestClient.MaxVauluesPerRequest; ++i)
+            for (int i = 0; i < DataObjectSyncanoClient.MaxVauluesPerRequest; ++i)
                 request.DataIds.Add("abc");
             request.DataId = "abc";
 
@@ -922,7 +924,7 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Folders = new List<string>();
-            for (int i = 0; i < DataObjectRestClient.MaxVauluesPerRequest; ++i)
+            for (int i = 0; i < DataObjectSyncanoClient.MaxVauluesPerRequest; ++i)
                 request.Folders.Add("abc");
             request.Folder = "abc";
 

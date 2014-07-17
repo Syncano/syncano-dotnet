@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Syncano.Net.Data;
 
-namespace Syncano.Net
+namespace Syncano.Net.Api
 {
     public class ProjectSyncanoClient
     {

@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using Newtonsoft.Json;
 
-namespace Syncano.Net
+namespace Syncano.Net.Data
 {
     public enum DataObjectState
     {

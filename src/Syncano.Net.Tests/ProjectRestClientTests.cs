@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Should;
+using Syncano.Net.Data;
 using Xunit;
 
 namespace Syncano.Net.Tests

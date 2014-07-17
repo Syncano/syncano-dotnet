@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Syncano.Net.Data;
+using Syncano.Net.Http;
 
-namespace Syncano.Net
+namespace Syncano.Net.Api
 {
-    public class DataObjectRestClient
+    public class DataObjectSyncanoClient
     {
         public static readonly int MaxVauluesPerRequest = 100;
 
-        private readonly SyncanoRestClient _restClient;
+        private readonly SyncanoHttpClient _httpClient;
 
-        public DataObjectRestClient(SyncanoRestClient restClient)
+        public DataObjectSyncanoClient(SyncanoHttpClient httpClient)
         {
-            _restClient = restClient;
+            _httpClient = httpClient;
         }
 
 
@@ -24,7 +26,7 @@ namespace Syncano.Net
             if(request.CollectionId == null && request.CollectionKey == null)
                 throw new ArgumentNullException();
 
-            return _restClient.PostAsync("data.new",
+            return _httpClient.PostAsync("data.new",
                 new
                 {
                     project_id = request.ProjectId,
@@ -89,7 +91,7 @@ namespace Syncano.Net
 
             return
                 await
-                    _restClient.PostAsync("data.get",
+                    _httpClient.PostAsync("data.get",
                         new
                         {
                             project_id = request.ProjectId,
@@ -126,7 +128,7 @@ namespace Syncano.Net
             if(childrenLimit < 0 || childrenLimit > MaxVauluesPerRequest)
                 throw new ArgumentException();
 
-            return _restClient.GetAsync("data.get_one",
+            return _httpClient.GetAsync("data.get_one",
                 new
                 {
                     project_id = projectId,
@@ -148,7 +150,7 @@ namespace Syncano.Net
             if (request.CollectionId == null && request.CollectionKey == null)
                 throw new ArgumentNullException();
 
-            return _restClient.PostAsync("data.update",
+            return _httpClient.PostAsync("data.update",
                 new
                 {
                     project_id = request.ProjectId,
@@ -182,7 +184,7 @@ namespace Syncano.Net
             if (request.CollectionId == null && request.CollectionKey == null)
                 throw new ArgumentNullException();
 
-            return _restClient.PostAsync("data.update",
+            return _httpClient.PostAsync("data.update",
                 new
                 {
                     project_id = request.ProjectId,
@@ -233,7 +235,7 @@ namespace Syncano.Net
             if (request.Folder != null)
                 folders.Add(request.Folder);
 
-            return _restClient.PostAsync("data.move",
+            return _httpClient.PostAsync("data.move",
                 new
                 {
                     project_id = request.ProjectId,
@@ -268,7 +270,7 @@ namespace Syncano.Net
             if(dataIds.Count < 1)
                 throw new ArgumentException();
 
-            return await _restClient.GetAsync("data.copy", new
+            return await _httpClient.GetAsync("data.copy", new
             {
                 project_id = request.ProjectId,
                 collection_id = request.CollectionId,
@@ -289,7 +291,7 @@ namespace Syncano.Net
             if (dataId == null || parentId == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("data.add_parent",
+            return _httpClient.GetAsync("data.add_parent",
                 new
                 {
                     project_id = projectId,
@@ -313,7 +315,7 @@ namespace Syncano.Net
             if (dataId == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("data.remove_parent",
+            return _httpClient.GetAsync("data.remove_parent",
                 new
                 {
                     project_id = projectId,
@@ -336,7 +338,7 @@ namespace Syncano.Net
             if(dataId == null || childId == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("data.add_child",
+            return _httpClient.GetAsync("data.add_child",
                 new
                 {
                     project_id = projectId,
@@ -360,7 +362,7 @@ namespace Syncano.Net
             if (dataId == null || childId == null)
                 throw new ArgumentNullException();
 
-            return _restClient.GetAsync("data.remove_child",
+            return _httpClient.GetAsync("data.remove_child",
                 new
                 {
                     project_id = projectId,
@@ -395,7 +397,7 @@ namespace Syncano.Net
             if (request.Folder != null)
                 folders.Add(request.Folder);
 
-            return _restClient.GetAsync("data.delete",
+            return _httpClient.GetAsync("data.delete",
                 new
                 {
                     project_id = request.ProjectId,
@@ -425,7 +427,7 @@ namespace Syncano.Net
             if (request.Folder != null)
                 folders.Add(request.Folder);
 
-            return _restClient.GetAsync("data.count",
+            return _httpClient.GetAsync("data.count",
                 new
                 {
                     project_id = request.ProjectId,

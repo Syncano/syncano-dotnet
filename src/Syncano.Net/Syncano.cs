@@ -1,25 +1,28 @@
-﻿namespace Syncano.Net
+﻿using Syncano.Net.Api;
+using Syncano.Net.Http;
+
+namespace Syncano.Net
 {
     public class Syncano
     {
-        private readonly SyncanoRestClient _restClient;
+        private readonly SyncanoHttpClient _httpClient;
 
         public Syncano(string instanceName, string apiKey)
         {
-            _restClient = new SyncanoRestClient(instanceName, apiKey);
+            _httpClient = new SyncanoHttpClient(instanceName, apiKey);
         }
 
-        public ProjectSyncanoClient Projects { get { return new ProjectSyncanoClient(_restClient);} }
+        public ProjectSyncanoClient Projects { get { return new ProjectSyncanoClient(_httpClient);} }
 
-        public FolderRestClient Folders { get { return  new FolderRestClient(_restClient);} }
+        public FolderSyncanoClient Folders { get { return  new FolderSyncanoClient(_httpClient);} }
 
-        public CollectionRestClient Collections { get { return new CollectionRestClient(_restClient);} }
+        public CollectionSyncanoClient Collections { get { return new CollectionSyncanoClient(_httpClient);} }
 
-        public DataObjectRestClient DataObjects { get { return new DataObjectRestClient(_restClient);} }
+        public DataObjectSyncanoClient DataObjects { get { return new DataObjectSyncanoClient(_httpClient);} }
 
-        public AdministratorRestClient Administrators { get { return new AdministratorRestClient(_restClient);} }
+        public AdministratorSyncanoClient Administrators { get { return new AdministratorSyncanoClient(_httpClient);} }
 
-        public ApiKeyRestClient ApiKeys { get { return  new ApiKeyRestClient(_restClient);} }
+        public ApiKeySyncanoClient ApiKeys { get { return  new ApiKeySyncanoClient(_httpClient);} }
 
     }
 }
