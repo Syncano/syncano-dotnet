@@ -72,7 +72,7 @@
     <Compile Include="DataObjectRestClientNewDeleteTests.cs" />
     <Compile Include="DataObjectRestClientTests.cs" />
     <Compile Include="DataObjectUpdateMergeTests.cs" />
-    <Compile Include="FolderRestClientTests.cs" />
+    <Compile Include="FolderSyncanoClientTests.cs" />
     <Compile Include="ProjectSyncanoClientTests.cs" />
     <Compile Include="SyncanoClientsProvider.cs" />
     <Compile Include="SyncanoRestClientTests.cs" />
