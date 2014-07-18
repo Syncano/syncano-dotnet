@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Should;
 using Syncano.Net.Api;
 using Syncano.Net.Data;
-using Xunit;
 using Xunit.Extensions;
 
 namespace Syncano.Net.Tests

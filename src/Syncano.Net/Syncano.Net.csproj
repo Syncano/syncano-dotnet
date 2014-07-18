@@ -45,6 +45,7 @@
     <Compile Include="Api\ApiKeySyncanoClient.cs" />
     <Compile Include="Access\ApiKeyType.cs" />
     <Compile Include="Access\Role.cs" />
+    <Compile Include="Api\UserSyncanoClient.cs" />
     <Compile Include="Data\Avatar.cs" />
     <Compile Include="Data\Collection.cs" />
     <Compile Include="Api\CollectionSyncanoClient.cs" />
