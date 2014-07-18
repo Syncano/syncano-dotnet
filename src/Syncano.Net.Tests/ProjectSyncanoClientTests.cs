@@ -69,6 +69,26 @@ namespace Syncano.Net.Tests
             }
         }
 
+        [Theory, PropertyData("ProjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task New_WithExistingName_ThrowsException(ProjectSyncanoClient client)
+        {
+            //given
+            const string projectName = TestData.ProjectName;
+            const string projectDescription = "qwerty";
+
+            //when
+            var project = await client.New(projectName, projectDescription);
+
+            //then
+            project.ShouldNotBeNull();
+            project.Id.ShouldNotBeNull();
+            project.Name.ShouldEqual(projectName);
+            project.Description.ShouldEqual(projectDescription);
+
+            //cleanup
+            await client.Delete(project.Id);
+        }
+
          [Theory, PropertyData("ProjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task Get_CreatesProjectsList(ProjectSyncanoClient client)
         {
@@ -105,7 +125,7 @@ namespace Syncano.Net.Tests
         }
 
          [Theory, PropertyData("ProjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
-        public async Task GetOne_CreatesNewProjectObject(ProjectSyncanoClient client)
+        public async Task GetOne_GetsProjectObject(ProjectSyncanoClient client)
         {
             //when
             var project = await client.GetOne(TestData.ProjectId);
@@ -152,9 +172,9 @@ namespace Syncano.Net.Tests
         public async Task Update_CreatesProjectObjectWithNewValues(ProjectSyncanoClient client)
         {
             //given
-            string projectName = "UpdateProject test " + DateTime.Now.ToLongTimeString() + " " +
+            var projectName = "UpdateProject test " + DateTime.Now.ToLongTimeString() + " " +
                                  DateTime.Now.ToShortDateString();
-            string projectNewName = "UpdateProject test new name" + DateTime.Now.ToLongTimeString() + " " +
+            var projectNewName = "UpdateProject test new name" + DateTime.Now.ToLongTimeString() + " " +
                                  DateTime.Now.ToShortDateString();
             const string projectOldDescription = "qwerty";
             const string projectNewDescription = "abc";
@@ -398,6 +418,38 @@ namespace Syncano.Net.Tests
         }
 
          [Theory, PropertyData("ProjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+         public async Task Authorize_WithNoProjectId_ThrowsException(ProjectSyncanoClient client)
+         {
+             try
+             {
+                 //when
+                 await client.Authorize(TestData.UserApiClientId, Permissions.CreateData, null);
+                 throw new Exception("Authorize should throw an exception");
+             }
+             catch (Exception e)
+             {
+                 //then
+                 e.ShouldBeType<ArgumentNullException>();
+             }
+         }
+
+         [Theory, PropertyData("ProjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+         public async Task Authorize_WithInvalidProjectId_ThrowsException(ProjectSyncanoClient client)
+         {
+             try
+             {
+                 //when
+                 await client.Authorize(TestData.UserApiClientId, Permissions.CreateData, "abcde");
+                 throw new Exception("Authorize should throw an exception");
+             }
+             catch (Exception e)
+             {
+                 //then
+                 e.ShouldBeType<SyncanoException>();
+             }
+         }
+
+         [Theory, PropertyData("ProjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task Deauthorize_WithReadDataPermissions(ProjectSyncanoClient client)
         {
             //given
@@ -424,7 +476,7 @@ namespace Syncano.Net.Tests
             {
                 //when
                 await client.Deauthorize(null, Permissions.CreateData, TestData.ProjectId);
-                throw new Exception("Update should throw an exception");
+                throw new Exception("Deauthorize should throw an exception");
             }
             catch (Exception e)
             {
@@ -456,7 +508,7 @@ namespace Syncano.Net.Tests
             {
                 //when
                 await client.Deauthorize(TestData.UserApiClientId, Permissions.CreateData, null);
-                throw new Exception("Update should throw an exception");
+                throw new Exception("Deauthorize should throw an exception");
             }
             catch (Exception e)
             {
@@ -482,7 +534,7 @@ namespace Syncano.Net.Tests
         }
 
          [Theory, PropertyData("ProjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
-         public async Task Delete(ProjectSyncanoClient client)
+         public async Task Delete_RemovesProject(ProjectSyncanoClient client)
         {
             //given
             string projectName = "NewProject test " + DateTime.Now.ToLongTimeString() + " " +
