@@ -68,6 +68,17 @@ namespace Syncano.Net.Tests
             }
         }
 
+        public static IEnumerable<object[]> CollectionSyncanoClients
+        {
+            get
+            {
+                foreach (var eachClient in new SyncanoClientsProvider())
+                {
+                    yield return new object[] { new CollectionSyncanoClient(eachClient) };
+                }
+            }
+        }
+
 
         IEnumerator IEnumerable.GetEnumerator()
         {

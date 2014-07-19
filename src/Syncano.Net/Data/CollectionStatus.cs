@@ -2,13 +2,30 @@
 
 namespace Syncano.Net.Data
 {
+    /// <summary>
+    /// Collection status.
+    /// </summary>
     public enum CollectionStatus
     {
+        /// <summary>
+        /// Active collection.
+        /// </summary>
         Active,
+
+        /// <summary>
+        /// Inactive collection.
+        /// </summary>
         Inactive,
+
+        /// <summary>
+        /// All collections.
+        /// </summary>
         All
     }
 
+    /// <summary>
+    /// Json converter of CollectionStatus enumeration.
+    /// </summary>
     public class CollectionStatusEnumConverter : JsonConverter
     {
         public override bool CanConvert(System.Type objectType)

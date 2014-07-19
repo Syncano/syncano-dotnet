@@ -67,6 +67,7 @@
     <Compile Include="Data\Permissions.cs" />
     <Compile Include="Data\Project.cs" />
     <Compile Include="Api\ProjectSyncanoClient.cs" />
+    <Compile Include="ManageCollactionTagsRequest.cs" />
     <Compile Include="Syncano.cs" />
     <Compile Include="SyncanoException.cs" />
     <Compile Include="Data\Image.cs" />
