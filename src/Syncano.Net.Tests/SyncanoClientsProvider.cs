@@ -79,6 +79,17 @@ namespace Syncano.Net.Tests
             }
         }
 
+        public static IEnumerable<object[]> AdministratorSyncanoClients
+        {
+            get
+            {
+                foreach (var eachClient in new SyncanoClientsProvider())
+                {
+                    yield return new object[] { new AdministratorSyncanoClient(eachClient) };
+                }
+            }
+        }
+
 
         IEnumerator IEnumerable.GetEnumerator()
         {

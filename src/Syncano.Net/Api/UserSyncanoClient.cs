@@ -112,7 +112,7 @@ namespace Syncano.Net.Api
         /// </summary>
         /// <param name="userId">User id. User_id is automatically filled when used with User API key.</param>
         /// <param name="userName">User name.</param>
-        /// <returns></returns>
+        /// <returns>User object.</returns>
         public Task<User> GetOne(string userId = null, string userName = null)
         {
             return _syncanoClient.GetAsync<User>("user.get_one", new {user_id = userId, user_name = userName}, "user");

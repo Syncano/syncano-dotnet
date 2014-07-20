@@ -64,7 +64,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="AdministratorRestClientTests.cs" />
+    <Compile Include="AdministratorSyncanoClientTests.cs" />
     <Compile Include="ApiKeyRestClientTests.cs" />
     <Compile Include="CollectionSyncanoClientTests.cs" />
     <Compile Include="DataObjectRestClientAddChildRemoveChildTests.cs" />
