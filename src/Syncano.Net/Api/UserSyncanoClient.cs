@@ -101,7 +101,7 @@ namespace Syncano.Net.Api
                     collection_key = request.CollectionKey,
                     state = request.State.ToString(),
                     folders = folders.ToArray(),
-                    filter = request.Filter.ToString()
+                    filter = request.Filter == null ? null : request.Filter.ToString()
                 }, "user");
         }
 
@@ -174,7 +174,7 @@ namespace Syncano.Net.Api
                     collection_key = request.CollectionKey,
                     state = request.State.ToString(),
                     folders = folders.ToArray(),
-                    filter = request.Filter.ToString()
+                    filter = request.Filter == null ? null : request.Filter.ToString()
                 }, "count");
         }
 

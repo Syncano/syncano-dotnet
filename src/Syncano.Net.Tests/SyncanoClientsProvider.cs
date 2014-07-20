@@ -28,7 +28,7 @@ namespace Syncano.Net.Tests
 
             if (_syncServerClient == null)
             {
-               if(!PrepareSyncClient().Wait(10000))
+               if(!PrepareSyncClient().Wait(50000))
                    throw new AssertException("Failed to initialize Syncano Sync Server client");
             }
 
