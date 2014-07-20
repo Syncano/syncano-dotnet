@@ -161,7 +161,7 @@ namespace Syncano.Net.Api
 
             var folders = request.Folders == null ? new List<string>() : new List<string>(request.Folders);
             if (folders.Count + (request.Folder != null ? 1 : 0) >
-                DataObjectSyncanoClient.MaxVauluesPerRequest)
+                MaxLimit)
                 throw new ArgumentException();
             if (request.Folder != null)
                 folders.Add(request.Folder);
