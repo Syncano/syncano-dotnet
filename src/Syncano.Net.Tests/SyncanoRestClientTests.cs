@@ -25,6 +25,9 @@ namespace Syncano.Net.Tests
 
         public const string UserApiClientId = "1086";
         public const string UserName = "UserName";
+        public const string UserPassword = "qwerty";
+        public const string UserId = "529";
+        public const string OldUserId = "524";
 
         public const string RoleId = "4";
         public const string RoleName = "Viewer";
@@ -37,7 +40,7 @@ namespace Syncano.Net.Tests
 
             using (var f = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                using (MemoryStream ms = new MemoryStream())
+                using (var ms = new MemoryStream())
                 {
 
                     f.CopyTo(ms);
