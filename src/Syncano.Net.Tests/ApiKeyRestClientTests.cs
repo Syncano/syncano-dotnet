@@ -1,44 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Should;
 using Syncano.Net.Access;
-using Xunit;
+using Syncano.Net.Api;
+using Xunit.Extensions;
 
 namespace Syncano.Net.Tests
 {
     public class ApiKeyRestClientTests
     {
-        private readonly Syncano _client;
-
-        public ApiKeyRestClientTests()
-        {
-            _client = new Syncano(TestData.InstanceName, TestData.BackendAdminApiKey);
-        }
-
-        [Fact]
-        public async Task StartSession_WithNoTimezone()
+        [Theory, PropertyData("AdministratorSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task GetRoles_GetsListOfRoles(AdministratorSyncanoClient client)
         {
             //when
-            var result = await _client.ApiKeys.StartSession();
+            var result = await client.GetRoles();
+
+            //then
+            result.ShouldNotBeEmpty();
+            result.Count.ShouldEqual(4);
+        }
+
+        [Theory(Skip = "Over tcp: Critical Error: Critical error occurred. Please inform administrator. Ok over http."), PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task StartSession_WithNoTimezone(ApiKeySyncanoClient client)
+        {
+            //when
+            var result = await client.StartSession();
 
             //then
             result.ShouldNotBeNull();
         }
 
-        [Fact]
-        public async Task StartSession_WithUtcTimezone()
+        [Theory(Skip = "Over tcp: Critical Error: Critical error occurred. Please inform administrator. Ok over http."), PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task StartSession_WithUtcTimezone(ApiKeySyncanoClient client)
         {
             //when
-            var result = await _client.ApiKeys.StartSession(TimeZoneInfo.Utc);
+            var result = await client.StartSession(TimeZoneInfo.Utc);
 
             //then
             result.ShouldNotBeNull();
         }
 
-        [Fact]
-        public async Task StartSession_WithAllTimeZones()
+        [Theory(Skip = "Over tcp: Critical Error: Critical error occurred. Please inform administrator. Ok over http."), PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task StartSession_WithAllTimeZones(ApiKeySyncanoClient client)
         {
             //given
             var timeZones = TimeZoneInfo.GetSystemTimeZones();
@@ -49,7 +55,7 @@ namespace Syncano.Net.Tests
             {
                 try
                 {
-                    sessionIds.Add(await _client.ApiKeys.StartSession(timeZoneInfo));
+                    sessionIds.Add(await client.StartSession(timeZoneInfo));
                 }
                 catch(ArgumentException)
                 { }
@@ -63,47 +69,47 @@ namespace Syncano.Net.Tests
             }
         }
 
-        [Fact]
-        public async Task New_BackendType_CreatesNewApiKey()
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task New_BackendType_CreatesNewApiKey(ApiKeySyncanoClient client)
         {
             //given
             var description = "apiKey description";
 
             //when
-            var apiKey = await _client.ApiKeys.New(description, ApiKeyType.Backend, TestData.RoleId);
+            var apiKey = await client.New(description, ApiKeyType.Backend, TestData.RoleId);
 
             //then
             apiKey.ShouldNotBeNull();
             apiKey.Description.ShouldEqual(description);
 
             //cleanup
-            await _client.ApiKeys.Delete(apiKey.Id);
+            await client.Delete(apiKey.Id);
         }
 
-        [Fact]
-        public async Task New_UserType_CreatesNewApiKey()
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task New_UserType_CreatesNewApiKey(ApiKeySyncanoClient client)
         {
             //given
             var description = "apiKey description";
 
             //when
-            var apiKey = await _client.ApiKeys.New(description, ApiKeyType.User);
+            var apiKey = await client.New(description, ApiKeyType.User);
 
             //then
             apiKey.ShouldNotBeNull();
             apiKey.Description.ShouldEqual(description);
 
             //cleanup
-            await _client.ApiKeys.Delete(apiKey.Id);
+            await client.Delete(apiKey.Id);
         }
 
-        [Fact]
-        public async Task New_WithNullDescription_ThrowsException()
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task New_WithNullDescription_ThrowsException(ApiKeySyncanoClient client)
         {
             try
             {
                 //when
-                await _client.ApiKeys.New(null, roleId: TestData.RoleId);
+                await client.New(null, roleId: TestData.RoleId);
                 throw new Exception("New should throw an exception");
             }
             catch (Exception e)
@@ -113,13 +119,13 @@ namespace Syncano.Net.Tests
             }
         }
 
-        [Fact]
-        public async Task New_WithRoleIdAndUserType_ThrowsException()
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task New_WithRoleIdAndUserType_ThrowsException(ApiKeySyncanoClient client)
         {
             try
             {
                 //when
-                await _client.ApiKeys.New("description", ApiKeyType.User, TestData.RoleId);
+                await client.New("description", ApiKeyType.User, TestData.RoleId);
                 throw new Exception("New should throw an exception");
             }
             catch (Exception e)
@@ -129,11 +135,27 @@ namespace Syncano.Net.Tests
             }
         }
 
-        [Fact]
-        public async Task Get_CreatesApiKeysList()
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task New_WithInvalidRoleId_ThrowsException(ApiKeySyncanoClient client)
+        {
+            try
+            {
+                //when
+                await client.New("description", ApiKeyType.Backend, "9999");
+                throw new Exception("New should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Get_GetsApiKeysList(ApiKeySyncanoClient client)
         {
             //when
-            var result = await _client.ApiKeys.Get();
+            var result = await client.Get();
 
             //then
             result.ShouldNotBeNull();
@@ -141,11 +163,11 @@ namespace Syncano.Net.Tests
             result.Any(a => a.ApiKeyValue == TestData.BackendAdminApiKey).ShouldBeTrue();
         }
 
-        [Fact]
-        public async Task GetOne_WithApiClientId_CreatesApiKeysList()
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task GetOne_WithApiClientId_CreatesApiKeysList(ApiKeySyncanoClient client)
         {
             //when
-            var result = await _client.ApiKeys.GetOne(TestData.BackendAdminApiId);
+            var result = await client.GetOne(TestData.BackendAdminApiId);
 
             //then
             result.ShouldNotBeNull();
@@ -153,11 +175,11 @@ namespace Syncano.Net.Tests
             result.Type.ShouldEqual(ApiKeyType.Backend);
         }
 
-        [Fact]
-        public async Task GetOne_WithoutApiClientId_CreatesApiKeysList()
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task GetOne_WithoutApiClientId_CreatesApiKeysList(ApiKeySyncanoClient client)
         {
             //when
-            var result = await _client.ApiKeys.GetOne();
+            var result = await client.GetOne();
 
             //then
             result.ShouldNotBeNull();
@@ -165,32 +187,48 @@ namespace Syncano.Net.Tests
             result.Type.ShouldEqual(ApiKeyType.Backend);
         }
 
-        [Fact]
-        public async Task Update_CreatesNewApiKey()
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task GetOne_WithInvalidApiKey_ThrowsException(ApiKeySyncanoClient client)
+        {
+            try
+            {
+                //when
+                await client.GetOne("abcde");
+                throw new Exception("GetOne should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_UpdatesApiKey(ApiKeySyncanoClient client)
         {
             //given
             var description = "apiKey description";
             var newDescription = "new apiKey description";
-            var apiKey = await _client.ApiKeys.New(description, ApiKeyType.Backend, TestData.RoleId);
+            var apiKey = await client.New(description, ApiKeyType.Backend, TestData.RoleId);
 
             //when
-            apiKey = await _client.ApiKeys.UpdateDescription(newDescription, apiKey.Id);
+            apiKey = await client.UpdateDescription(newDescription, apiKey.Id);
 
             //then
             apiKey.ShouldNotBeNull();
             apiKey.Description.ShouldEqual(newDescription);
 
             //cleanup
-            await _client.ApiKeys.Delete(apiKey.Id);
+            await client.Delete(apiKey.Id);
         }
 
-        [Fact]
-        public async Task Update_WithNullDescription_ThrowsException()
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_WithNullDescription_ThrowsException(ApiKeySyncanoClient client)
         {
             try
             {
                 //when
-                await _client.ApiKeys.UpdateDescription(null);
+                await client.UpdateDescription(null);
                 throw new Exception("UpdateDescription should throw an exception");
             }
             catch (Exception e)
@@ -200,81 +238,97 @@ namespace Syncano.Net.Tests
             }
         }
 
-        [Fact]
-        public async Task Authorize_WithSendNotificationPermission()
-        {
-            //given
-            var description = "apiKey description";
-            var apiKey = await _client.ApiKeys.New(description, ApiKeyType.User);
-
-            //when
-            var result = await _client.ApiKeys.Authorize(apiKey.Id, ApiKeyPermission.SendNotification);
-
-            //then
-            result.ShouldBeTrue();
-
-            //cleanup
-            await _client.ApiKeys.Delete(apiKey.Id);
-        }
-
-        [Fact]
-        public async Task Authorize_WithAddUserPermission()
-        {
-            //given
-            var description = "apiKey description";
-            var apiKey = await _client.ApiKeys.New(description, ApiKeyType.User);
-
-            //when
-            var result = await _client.ApiKeys.Authorize(apiKey.Id, ApiKeyPermission.AddUser);
-
-            //then
-            result.ShouldBeTrue();
-
-            //cleanup
-            await _client.ApiKeys.Delete(apiKey.Id);
-        }
-
-        [Fact]
-        public async Task Authorize_WithAccessSyncPermission()
-        {
-            //given
-            var description = "apiKey description";
-            var apiKey = await _client.ApiKeys.New(description, ApiKeyType.User);
-
-            //when
-            var result = await _client.ApiKeys.Authorize(apiKey.Id, ApiKeyPermission.AccessSync);
-
-            //then
-            result.ShouldBeTrue();
-
-            //cleanup
-            await _client.ApiKeys.Delete(apiKey.Id);
-        }
-
-        [Fact]
-        public async Task Authorize_WithSubscribePermission()
-        {
-            //given
-            var description = "apiKey description";
-            var apiKey = await _client.ApiKeys.New(description, ApiKeyType.User);
-
-            //when
-            var result = await _client.ApiKeys.Authorize(apiKey.Id, ApiKeyPermission.SendNotification);
-
-            //then
-            result.ShouldBeTrue();
-
-            //cleanup
-            await _client.ApiKeys.Delete(apiKey.Id);
-        }
-
-        [Fact]
-        public async Task Authorize_WithNullApiKeyId_ThrowsException()
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_WithInvalidApiKeyId_ThrowsException(ApiKeySyncanoClient client)
         {
             try
             {
                 //when
-                await _client.ApiKeys.Authorize(null, ApiKeyPermission.AccessSync);
+                await client.UpdateDescription("description", "abcde123");
+                throw new Exception("UpdateDescription should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Authorize_WithSendNotificationPermission(ApiKeySyncanoClient client)
+        {
+            //given
+            var description = "apiKey description";
+            var apiKey = await client.New(description, ApiKeyType.User);
+
+            //when
+            var result = await client.Authorize(apiKey.Id, ApiKeyPermission.SendNotification);
+
+            //then
+            result.ShouldBeTrue();
+
+            //cleanup
+            await client.Delete(apiKey.Id);
+        }
+
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Authorize_WithAddUserPermission(ApiKeySyncanoClient client)
+        {
+            //given
+            var description = "apiKey description";
+            var apiKey = await client.New(description, ApiKeyType.User);
+
+            //when
+            var result = await client.Authorize(apiKey.Id, ApiKeyPermission.AddUser);
+
+            //then
+            result.ShouldBeTrue();
+
+            //cleanup
+            await client.Delete(apiKey.Id);
+        }
+
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Authorize_WithAccessSyncPermission(ApiKeySyncanoClient client)
+        {
+            //given
+            var description = "apiKey description";
+            var apiKey = await client.New(description, ApiKeyType.User);
+
+            //when
+            var result = await client.Authorize(apiKey.Id, ApiKeyPermission.AccessSync);
+
+            //then
+            result.ShouldBeTrue();
+
+            //cleanup
+            await client.Delete(apiKey.Id);
+        }
+
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Authorize_WithSubscribePermission(ApiKeySyncanoClient client)
+        {
+            //given
+            var description = "apiKey description";
+            var apiKey = await client.New(description, ApiKeyType.User);
+
+            //when
+            var result = await client.Authorize(apiKey.Id, ApiKeyPermission.SendNotification);
+
+            //then
+            result.ShouldBeTrue();
+
+            //cleanup
+            await client.Delete(apiKey.Id);
+        }
+
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Authorize_WithNullApiKeyId_ThrowsException(ApiKeySyncanoClient client)
+        {
+            try
+            {
+                //when
+                await client.Authorize(null, ApiKeyPermission.AccessSync);
                 throw new Exception("Authorize should throw an exception");
             }
             catch (Exception e)
@@ -284,86 +338,86 @@ namespace Syncano.Net.Tests
             }
         }
 
-        [Fact]
-        public async Task Deauthorize_WithSendNotificationPermission()
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Deauthorize_WithSendNotificationPermission(ApiKeySyncanoClient client)
         {
             //given
             var description = "apiKey description";
-            var apiKey = await _client.ApiKeys.New(description, ApiKeyType.User);
-            await _client.ApiKeys.Authorize(apiKey.Id, ApiKeyPermission.SendNotification);
+            var apiKey = await client.New(description, ApiKeyType.User);
+            await client.Authorize(apiKey.Id, ApiKeyPermission.SendNotification);
 
             //when
-            var result = await _client.ApiKeys.Deauthorize(apiKey.Id, ApiKeyPermission.SendNotification);
+            var result = await client.Deauthorize(apiKey.Id, ApiKeyPermission.SendNotification);
 
             //then
             result.ShouldBeTrue();
 
             //cleanup
-            await _client.ApiKeys.Delete(apiKey.Id);
+            await client.Delete(apiKey.Id);
         }
 
-        [Fact]
-        public async Task Deauthorize_WithAddUserPermission()
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Deauthorize_WithAddUserPermission(ApiKeySyncanoClient client)
         {
             //given
             var description = "apiKey description";
-            var apiKey = await _client.ApiKeys.New(description, ApiKeyType.User);
-            await _client.ApiKeys.Authorize(apiKey.Id, ApiKeyPermission.AddUser);
+            var apiKey = await client.New(description, ApiKeyType.User);
+            await client.Authorize(apiKey.Id, ApiKeyPermission.AddUser);
 
             //when
-            var result = await _client.ApiKeys.Deauthorize(apiKey.Id, ApiKeyPermission.AddUser);
+            var result = await client.Deauthorize(apiKey.Id, ApiKeyPermission.AddUser);
 
             //then
             result.ShouldBeTrue();
 
             //cleanup
-            await _client.ApiKeys.Delete(apiKey.Id);
+            await client.Delete(apiKey.Id);
         }
 
-        [Fact]
-        public async Task Deauthorize_WithAccessSyncPermission()
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Deauthorize_WithAccessSyncPermission(ApiKeySyncanoClient client)
         {
             //given
             var description = "apiKey description";
-            var apiKey = await _client.ApiKeys.New(description, ApiKeyType.User);
-            await _client.ApiKeys.Authorize(apiKey.Id, ApiKeyPermission.AccessSync);
+            var apiKey = await client.New(description, ApiKeyType.User);
+            await client.Authorize(apiKey.Id, ApiKeyPermission.AccessSync);
 
             //when
-            var result = await _client.ApiKeys.Deauthorize(apiKey.Id, ApiKeyPermission.AccessSync);
+            var result = await client.Deauthorize(apiKey.Id, ApiKeyPermission.AccessSync);
 
             //then
             result.ShouldBeTrue();
 
             //cleanup
-            await _client.ApiKeys.Delete(apiKey.Id);
+            await client.Delete(apiKey.Id);
         }
 
-        [Fact]
-        public async Task Deauthorize_WithSubscribePermission()
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Deauthorize_WithSubscribePermission(ApiKeySyncanoClient client)
         {
             //given
             var description = "apiKey description";
-            var apiKey = await _client.ApiKeys.New(description, ApiKeyType.User);
-            await _client.ApiKeys.Authorize(apiKey.Id, ApiKeyPermission.SendNotification);
+            var apiKey = await client.New(description, ApiKeyType.User);
+            await client.Authorize(apiKey.Id, ApiKeyPermission.SendNotification);
 
             //when
-            var result = await _client.ApiKeys.Deauthorize(apiKey.Id, ApiKeyPermission.SendNotification);
+            var result = await client.Deauthorize(apiKey.Id, ApiKeyPermission.SendNotification);
 
             //then
             result.ShouldBeTrue();
 
             //cleanup
-            await _client.ApiKeys.Delete(apiKey.Id);
+            await client.Delete(apiKey.Id);
         }
 
-        [Fact]
-        public async Task Deauthorize_WithNullApiKeyId_ThrowsException()
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Deauthorize_WithNullApiKeyId_ThrowsException(ApiKeySyncanoClient client)
         {
             try
             {
                 //when
-                await _client.ApiKeys.Deauthorize(null, ApiKeyPermission.AccessSync);
-                throw new Exception("Authorize should throw an exception");
+                await client.Deauthorize(null, ApiKeyPermission.AccessSync);
+                throw new Exception("Deauthorize should throw an exception");
             }
             catch (Exception e)
             {
@@ -372,47 +426,64 @@ namespace Syncano.Net.Tests
             }
         }
 
-        [Fact]
-        public async Task Delete_BackendType_CreatesNewApiKey()
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Delete_BackendType_DeletesApiKey(ApiKeySyncanoClient client)
         {
             //given
             var description = "apiKey description";
-            var apiKey = await _client.ApiKeys.New(description, ApiKeyType.Backend, TestData.RoleId);
+            var apiKey = await client.New(description, ApiKeyType.Backend, TestData.RoleId);
 
             //when
-            var result = await _client.ApiKeys.Delete(apiKey.Id);
+            var result = await client.Delete(apiKey.Id);
 
             //then
             result.ShouldBeTrue();
         }
 
-        [Fact]
-        public async Task Delete_UserType_CreatesNewApiKey()
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Delete_UserType_DeletesApiKey(ApiKeySyncanoClient client)
         {
             //given
             var description = "apiKey description";
-            var apiKey = await _client.ApiKeys.New(description, ApiKeyType.User);
+            var apiKey = await client.New(description, ApiKeyType.User);
 
             //when
-            var result = await _client.ApiKeys.Delete(apiKey.Id);
+            var result = await client.Delete(apiKey.Id);
 
             //then
             result.ShouldBeTrue();
         }
 
-        [Fact]
-        public async Task Delete_WithNullApiKey_ThrowsException()
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Delete_WithNullApiKey_ThrowsException(ApiKeySyncanoClient client)
         {
             try
             {
                 //when
-                await _client.ApiKeys.Delete(null);
+                await client.Delete(null);
                 throw new Exception("Delete should throw an exception");
             }
             catch (Exception e)
             {
                 //then
                 e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Delete_WithInvalidApiKey_ThrowsException(ApiKeySyncanoClient client)
+        {
+            try
+            {
+                //when
+                await client.Delete("abcde123");
+                throw new Exception("Delete should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
             }
         }
     }

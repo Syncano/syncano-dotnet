@@ -1,10 +1,28 @@
 ﻿namespace Syncano.Net.Access
 {
+    /// <summary>
+    /// Permissions for api key.
+    /// </summary>
     public enum ApiKeyPermission
     {
+        /// <summary>
+        /// Can send notifications through notification.send().
+        /// </summary>
         SendNotification,
+
+        /// <summary>
+        /// Can create new users through user.new().
+        /// </summary>
         AddUser,
+
+        /// <summary>
+        /// Can access Sync Server.
+        /// </summary>
         AccessSync,
+
+        /// <summary>
+        /// Can subscribe to data through Sync Server.
+        /// </summary>
         Subscribe
     }
 

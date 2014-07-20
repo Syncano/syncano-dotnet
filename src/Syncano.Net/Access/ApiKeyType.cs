@@ -3,9 +3,19 @@ using Newtonsoft.Json;
 
 namespace Syncano.Net.Access
 {
+    /// <summary>
+    /// ApiKey types.
+    /// </summary>
     public enum ApiKeyType
     {
+        /// <summary>
+        /// API key that is not user-aware and has global permissions.
+        /// </summary>
         Backend,
+
+        /// <summary>
+        /// User-aware API key that can define per container permissions.
+        /// </summary>
         User
     }
 

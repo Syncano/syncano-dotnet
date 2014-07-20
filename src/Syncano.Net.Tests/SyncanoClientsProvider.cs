@@ -90,6 +90,16 @@ namespace Syncano.Net.Tests
             }
         }
 
+        public static IEnumerable<object[]> ApiKeySyncanoClients
+        {
+            get
+            {
+                foreach (var eachClient in new SyncanoClientsProvider())
+                {
+                    yield return new object[] { new ApiKeySyncanoClient(eachClient) };
+                }
+            }
+        }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
