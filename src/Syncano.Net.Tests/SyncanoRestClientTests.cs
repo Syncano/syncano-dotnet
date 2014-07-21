@@ -1,10 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Threading.Tasks;
-using Should;
-using Syncano.Net.Http;
-using Xunit;
-
 namespace Syncano.Net.Tests
 {
     public static class TestData
@@ -27,6 +22,7 @@ namespace Syncano.Net.Tests
         public const string UserName = "UserName";
         public const string UserPassword = "qwerty";
         public const string UserId = "529";
+        public const string UserApiKey = "2347b3ee5d7a9b13622e2812e34aaa7351dc7cbb";
         public const string OldUserId = "524";
 
         public const string RoleId = "4";
@@ -56,41 +52,6 @@ namespace Syncano.Net.Tests
 
     public class SyncanoRestClientTests : IDisposable
     {
-        private SyncanoHttpClient _client;
-
-
-        public SyncanoRestClientTests()
-        {
-            _client = new SyncanoHttpClient(TestData.InstanceName, TestData.BackendAdminApiKey);
-        }
-
-        [Fact]
-        public async Task StartSession_WhenValidInstanceAndKey_CreatesSessionId()
-        {
-            //when 
-            var sessionId = await _client.StartSession();
-
-            //then
-            sessionId.ShouldNotBeNull();
-        }
-
-
-        [Fact]
-        public async Task StartSession_WithInvalidKeys_ThrowsException()
-        {
-            try
-            {
-                var session = await new SyncanoHttpClient(TestData.InstanceName, "2123").StartSession();
-
-                throw new Exception("StartSession should throw exception");
-                
-            }
-            catch (Exception e)
-            {
-                e.ShouldBeType<SyncanoException>();
-            }
-        }
-
         public void Dispose()
         {
         }

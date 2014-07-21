@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 using Should;
 using Syncano.Net.Api;
 using Syncano.Net.Data;
+using Syncano.Net.Http;
+using SyncanoSyncServer.Net;
+using Xunit;
 using Xunit.Extensions;
 
 namespace Syncano.Net.Tests
@@ -732,10 +735,11 @@ namespace Syncano.Net.Tests
             await client.Delete(user.Id);
         }
 
-        [Theory(Skip = "Should work with UserApiKey, not Backedn key."), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
-        public async Task Update_UpdatesUserObject(UserSyncanoClient client)
+        [Fact(Skip = "Not authorized.")]
+        public async Task Update_NoUserId_UpdatesUserObject_OverHttp()
         {
             //given
+            var client = new UserSyncanoClient(new SyncanoHttpClient(TestData.InstanceName, TestData.UserApiKey));
             const string name = "newUserName";
             const string password = "abcde123";
             const string newName = "evenNewerUserName";

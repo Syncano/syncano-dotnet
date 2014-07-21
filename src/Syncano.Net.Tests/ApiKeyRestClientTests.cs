@@ -23,7 +23,7 @@ namespace Syncano.Net.Tests
             result.Count.ShouldEqual(4);
         }
 
-        [Theory(Skip = "Over tcp: Critical Error: Critical error occurred. Please inform administrator. Ok over http."), PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task StartSession_WithNoTimezone(ApiKeySyncanoClient client)
         {
             //when
@@ -33,7 +33,7 @@ namespace Syncano.Net.Tests
             result.ShouldNotBeNull();
         }
 
-        [Theory(Skip = "Over tcp: Critical Error: Critical error occurred. Please inform administrator. Ok over http."), PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task StartSession_WithUtcTimezone(ApiKeySyncanoClient client)
         {
             //when
@@ -43,7 +43,7 @@ namespace Syncano.Net.Tests
             result.ShouldNotBeNull();
         }
 
-        [Theory(Skip = "Over tcp: Critical Error: Critical error occurred. Please inform administrator. Ok over http."), PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory, PropertyData("ApiKeySyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task StartSession_WithAllTimeZones(ApiKeySyncanoClient client)
         {
             //given
