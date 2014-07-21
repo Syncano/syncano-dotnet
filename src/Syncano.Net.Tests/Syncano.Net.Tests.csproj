@@ -67,11 +67,11 @@
     <Compile Include="AdministratorSyncanoClientTests.cs" />
     <Compile Include="ApiKeyRestClientTests.cs" />
     <Compile Include="CollectionSyncanoClientTests.cs" />
-    <Compile Include="DataObjectRestClientAddChildRemoveChildTests.cs" />
-    <Compile Include="DataObjectRestClientAddParentRemoveParentTests.cs" />
-    <Compile Include="DataObjectRestClientNewDeleteTests.cs" />
-    <Compile Include="DataObjectRestClientTests.cs" />
-    <Compile Include="DataObjectUpdateMergeTests.cs" />
+    <Compile Include="DataObjectSyncanoClientAddChildRemoveChildTests.cs" />
+    <Compile Include="DataObjectSyncanoClientAddParentRemoveParentTests.cs" />
+    <Compile Include="DataObjectSyncanoClientNewDeleteTests.cs" />
+    <Compile Include="DataObjectSyncanoClientTests.cs" />
+    <Compile Include="DataObjectSyncanoClientUpdateMergeTests.cs" />
     <Compile Include="FolderSyncanoClientTests.cs" />
     <Compile Include="ProjectSyncanoClientTests.cs" />
     <Compile Include="SyncanoClientsProvider.cs" />

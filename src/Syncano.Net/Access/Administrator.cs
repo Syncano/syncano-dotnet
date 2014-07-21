@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 namespace Syncano.Net.Access
 {
     /// <summary>
-    /// Class reprezenting administrator.
+    /// Class representing administrator.
     /// </summary>
     public class Administrator
     {

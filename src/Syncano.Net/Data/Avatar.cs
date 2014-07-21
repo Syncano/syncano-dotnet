@@ -3,7 +3,7 @@
 namespace Syncano.Net.Data
 {
     /// <summary>
-    /// Class reprezenting avatar.
+    /// Class representing avatar.
     /// </summary>
     public class Avatar
     {

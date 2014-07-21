@@ -1,32 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using Should;
+using Syncano.Net.Api;
 using Syncano.Net.Data;
-using Xunit;
+using Syncano.Net.Http;
+using Xunit.Extensions;
 
 namespace Syncano.Net.Tests
 {
-    public class DataObjectUpdateMergeTests
+    public class DataObjectSyncanoClientUpdateMergeTests
     {
-        private readonly Syncano _client;
-
-        public DataObjectUpdateMergeTests()
-        {
-            _client = new Syncano(TestData.InstanceName, TestData.BackendAdminApiKey);
-        }
-
-        [Fact]
-        public async Task Update_ByCollectionId_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_ByCollectionId_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             //when
-            var result = await _client.DataObjects.Update(request, dataObject.Id);
+            var result = await client.Update(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -37,20 +33,20 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Update_ByCollectionKey_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_ByCollectionKey_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionKey = TestData.CollectionKey;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             //when
-            var result = await _client.DataObjects.Update(request, dataObject.Id);
+            var result = await client.Update(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -61,22 +57,22 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Update_ByCollectionId_WithUserName_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_ByCollectionId_WithUserName_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.UserName = TestData.UserName;
 
             //when
-            var result = await _client.DataObjects.Update(request, dataObject.Id);
+            var result = await client.Update(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -88,22 +84,22 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Update_ByCollectionId_WithSourceUrl_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_ByCollectionId_WithSourceUrl_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.SourceUrl = "sourceUrl";
 
             //when
-            var result = await _client.DataObjects.Update(request, dataObject.Id);
+            var result = await client.Update(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -115,22 +111,22 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Update_ByCollectionId_WithTitle_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_ByCollectionId_WithTitle_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.Title = "New title";
 
             //when
-            var result = await _client.DataObjects.Update(request, dataObject.Id);
+            var result = await client.Update(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -142,22 +138,22 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Update_ByCollectionId_WithText_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_ByCollectionId_WithText_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.Text = "text content";
 
             //when
-            var result = await _client.DataObjects.Update(request, dataObject.Id);
+            var result = await client.Update(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -169,22 +165,22 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Update_ByCollectionId_WithLink_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_ByCollectionId_WithLink_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.Link = "dataObject link";
 
             //when
-            var result = await _client.DataObjects.Update(request, dataObject.Id);
+            var result = await client.Update(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -196,22 +192,22 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Update_ByCollectionId_WithImage_CreatesNewDataObject()
+        [Theory(Skip = "Image too big for current tcp implementation."), PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_ByCollectionId_WithImage_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.ImageBase64 = TestData.ImageToBase64("sampleImage.jpg");
 
             //when
-            var result = await _client.DataObjects.Update(request, dataObject.Id);
+            var result = await client.Update(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -225,23 +221,23 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Update_ByCollectionId_DeleteImage_CreatesNewDataObject()
+        [Theory(Skip = "Image too big for current tcp implementation."), PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_ByCollectionId_DeleteImage_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.ImageBase64 = TestData.ImageToBase64("sampleImage.jpg");
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.ImageBase64 = null;
 
             //when
-            var result = await _client.DataObjects.Update(request, dataObject.Id);
+            var result = await client.Update(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -253,24 +249,24 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Update_ByCollectionId_WithData_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_ByCollectionId_WithData_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.DataOne = 1;
             request.DataTwo = 2;
             request.DataThree = 3;
 
             //when
-            var result = await _client.DataObjects.Update(request, dataObject.Id);
+            var result = await client.Update(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -284,22 +280,22 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Update_ByCollectionId_WithStateModerated_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_ByCollectionId_WithStateModerated_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.State = DataObjectState.Moderated;
 
             //when
-            var result = await _client.DataObjects.Update(request, dataObject.Id);
+            var result = await client.Update(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -311,23 +307,23 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Update_ByCollectionId_WithParentId_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_ByCollectionId_WithParentId_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
-            var dataObject = await _client.DataObjects.New(request);
-            var parentObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
+            var parentObject = await client.New(request);
 
             request.ParentId = parentObject.Id;
 
             //when
-            var result = await _client.DataObjects.Update(request, dataObject.Id);
+            var result = await client.Update(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -337,24 +333,26 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Update_ByCollectionId_WithFolderName_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_ByCollectionId_WithFolderName_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
-            var newFolder = await _client.Folders.New(TestData.ProjectId, "NewFolder", TestData.CollectionId);
+            var folderClient =
+                new FolderSyncanoClient(new SyncanoHttpClient(TestData.InstanceName, TestData.BackendAdminApiKey));
+            var newFolder = await folderClient.New(TestData.ProjectId, "NewFolder", TestData.CollectionId);
             var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
-            var dataObject = await _client.DataObjects.New(request);
-            await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
+            await client.New(request);
 
             request.Folder = newFolder.Name;
 
             //when
-            var result = await _client.DataObjects.Update(request, dataObject.Id);
+            var result = await client.Update(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -365,12 +363,12 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
-            await _client.Folders.Delete(TestData.ProjectId, newFolder.Name, TestData.CollectionId);
+            await client.Delete(deleteRequest);
+            await folderClient.Delete(TestData.ProjectId, newFolder.Name, TestData.CollectionId);
         }
 
-        [Fact]
-        public async Task Update_ByCollectionId_WithAdditionals_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_ByCollectionId_WithAdditionals_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var additionals = new Dictionary<string, string>();
@@ -380,12 +378,12 @@ namespace Syncano.Net.Tests
             var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.Additional = additionals;
 
             //when
-            var result = await _client.DataObjects.Update(request, dataObject.Id);
+            var result = await client.Update(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -398,11 +396,11 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Update_WithInvalidProjectId_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_WithInvalidProjectId_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
@@ -412,7 +410,7 @@ namespace Syncano.Net.Tests
             try
             {
                 //when
-                await _client.DataObjects.Update(request, "dataId");
+                await client.Update(request, "dataId");
                 throw new Exception("Update should throw an exception");
             }
             catch (Exception e)
@@ -422,8 +420,8 @@ namespace Syncano.Net.Tests
             }
         }
 
-        [Fact]
-        public async Task Update_WithNullProjectId_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_WithNullProjectId_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
@@ -433,7 +431,7 @@ namespace Syncano.Net.Tests
             try
             {
                 //when
-                await _client.DataObjects.Update(request, "dataId");
+                await client.Update(request, "dataId");
                 throw new Exception("Update should throw an exception");
             }
             catch (Exception e)
@@ -443,8 +441,8 @@ namespace Syncano.Net.Tests
             }
         }
 
-        [Fact]
-        public async Task Update_WithInvalidCollectionId_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_WithInvalidCollectionId_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
@@ -454,7 +452,7 @@ namespace Syncano.Net.Tests
             try
             {
                 //when
-                await _client.DataObjects.Update(request, "dataId");
+                await client.Update(request, "dataId");
                 throw new Exception("Update should throw an exception");
             }
             catch (Exception e)
@@ -464,8 +462,8 @@ namespace Syncano.Net.Tests
             }
         }
 
-        [Fact]
-        public async Task Update_WithNullCollectionIdAndKey_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_WithNullCollectionIdAndKey_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
@@ -474,7 +472,7 @@ namespace Syncano.Net.Tests
             try
             {
                 //when
-                await _client.DataObjects.Update(request, "dataId");
+                await client.Update(request, "dataId");
                 throw new Exception("Update should throw an exception");
             }
             catch (Exception e)
@@ -484,8 +482,122 @@ namespace Syncano.Net.Tests
             }
         }
 
-        [Fact]
-        public async Task Merge_ByCollectionId_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_WithTooMuchAdditionals_ThrowsException(DataObjectSyncanoClient client)
+        {
+            //given
+            var request = new DataObjectDefinitionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.Additional = new Dictionary<string, string>();
+            for (int i = 0; i < DataObjectSyncanoClient.MaxAdditionalsCount + 5; ++i)
+                request.Additional.Add(i.ToString(CultureInfo.InvariantCulture), "additional value");
+
+            try
+            {
+                //when
+                await client.Update(request);
+                throw new Exception("Update should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_WithTooLongAdditionalKey_ThrowsException(DataObjectSyncanoClient client)
+        {
+            //given
+            var request = new DataObjectDefinitionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.Additional = new Dictionary<string, string>();
+            request.Additional.Add(new String('a', DataObjectSyncanoClient.MaxAdditionalKeyLenght + 1), "additional value");
+
+            try
+            {
+                //when
+                await client.Update(request);
+                throw new Exception("Update should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_WithTooLongAdditionalValue_ThrowsException(DataObjectSyncanoClient client)
+        {
+            //given
+            var request = new DataObjectDefinitionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.Additional = new Dictionary<string, string>();
+            request.Additional.Add("additional key", new String('a', DataObjectSyncanoClient.MaxAdditionalValueLenght + 1));
+
+            try
+            {
+                //when
+                await client.Update(request);
+                throw new Exception("Update should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_WithTooLongTitle_ThrowsException(DataObjectSyncanoClient client)
+        {
+            //given
+            var request = new DataObjectDefinitionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.Title = new String('a', DataObjectSyncanoClient.MaxTitleLenght + 1);
+
+            try
+            {
+                //when
+                await client.Update(request);
+                throw new Exception("Update should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Update_WithTooLongText_ThrowsException(DataObjectSyncanoClient client)
+        {
+            //given
+            var request = new DataObjectDefinitionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.Text = new String('a', DataObjectSyncanoClient.MaxTextLenght + 1);
+
+            try
+            {
+                //when
+                await client.Update(request);
+                throw new Exception("Update should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_ByCollectionId_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var link = "custom link";
@@ -493,12 +605,12 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Link = link;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.Link = null;
 
             //when
-            var result = await _client.DataObjects.Merge(request, dataObject.Id);
+            var result = await client.Merge(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -510,11 +622,11 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Merge_ByCollectionId_WithAdditionals_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_ByCollectionId_WithAdditionals_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var additionals = new Dictionary<string, string>();
@@ -526,13 +638,13 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Link = link;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.Link = null;
             request.Additional = additionals;
 
             //when
-            var result = await _client.DataObjects.Merge(request, dataObject.Id);
+            var result = await client.Merge(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -546,11 +658,11 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Merge_ByCollectionKey_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_ByCollectionKey_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var link = "custom link";
@@ -558,12 +670,12 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionKey = TestData.CollectionKey;
             request.Link = link;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.Link = null;
 
             //when
-            var result = await _client.DataObjects.Merge(request, dataObject.Id);
+            var result = await client.Merge(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -574,11 +686,11 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Merge_ByCollectionId_WithUserName_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_ByCollectionId_WithUserName_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var link = "custom link";
@@ -586,13 +698,13 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Link = link;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.UserName = TestData.UserName;
             request.Link = link;
 
             //when
-            var result = await _client.DataObjects.Merge(request, dataObject.Id);
+            var result = await client.Merge(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -605,11 +717,11 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Merge_ByCollectionId_WithSourceUrl_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_ByCollectionId_WithSourceUrl_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var link = "custom link";
@@ -617,13 +729,13 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Link = link;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.SourceUrl = "sourceUrl";
             request.Link = link;
 
             //when
-            var result = await _client.DataObjects.Merge(request, dataObject.Id);
+            var result = await client.Merge(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -636,11 +748,11 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Merge_ByCollectionId_WithTitle_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_ByCollectionId_WithTitle_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var link = "custom link";
@@ -648,13 +760,13 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Link = link;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.Title = "New title";
             request.Link = null;
 
             //when
-            var result = await _client.DataObjects.Merge(request, dataObject.Id);
+            var result = await client.Merge(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -667,11 +779,11 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Merge_ByCollectionId_WithText_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_ByCollectionId_WithText_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var link = "custom link";
@@ -679,13 +791,13 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Link = link;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.Text = "text content";
             request.Link = null;
 
             //when
-            var result = await _client.DataObjects.Merge(request, dataObject.Id);
+            var result = await client.Merge(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -698,11 +810,11 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Merge_ByCollectionId_WithLink_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_ByCollectionId_WithLink_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var title = "title";
@@ -710,13 +822,13 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Title = title;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.Link = "dataObject link";
             request.Title = null;
 
             //when
-            var result = await _client.DataObjects.Merge(request, dataObject.Id);
+            var result = await client.Merge(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -729,11 +841,11 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Merge_ByCollectionId_WithImage_CreatesNewDataObject()
+        [Theory(Skip = "Image too big for current tcp implementation."), PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_ByCollectionId_WithImage_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var link = "custom link";
@@ -741,13 +853,13 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Link = link;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.ImageBase64 = TestData.ImageToBase64("sampleImage.jpg");
             request.Link = null;
 
             //when
-            var result = await _client.DataObjects.Merge(request, dataObject.Id);
+            var result = await client.Merge(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -762,11 +874,11 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Merge_ByCollectionId_WithData_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_ByCollectionId_WithData_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var link = "custom link";
@@ -774,7 +886,7 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Link = link;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.DataOne = 1;
             request.DataTwo = 2;
@@ -782,7 +894,7 @@ namespace Syncano.Net.Tests
             request.Link = null;
 
             //when
-            var result = await _client.DataObjects.Merge(request, dataObject.Id);
+            var result = await client.Merge(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -797,11 +909,11 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Merge_ByCollectionId_WithStateModerated_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_ByCollectionId_WithStateModerated_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var link = "custom link";
@@ -809,13 +921,13 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Link = link;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.State = DataObjectState.Moderated;
             request.Link = null;
 
             //when
-            var result = await _client.DataObjects.Merge(request, dataObject.Id);
+            var result = await client.Merge(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -828,11 +940,11 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Merge_ByCollectionId_WithParentId_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_ByCollectionId_WithParentId_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var link = "custom link";
@@ -840,14 +952,14 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Link = link;
-            var dataObject = await _client.DataObjects.New(request);
-            var parentObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
+            var parentObject = await client.New(request);
 
             request.ParentId = parentObject.Id;
             request.Link = null;
 
             //when
-            var result = await _client.DataObjects.Merge(request, dataObject.Id);
+            var result = await client.Merge(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -858,26 +970,28 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task Merge_ByCollectionId_WithFolderName_CreatesNewDataObject()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_ByCollectionId_WithFolderName_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
             var link = "custom link";
-            var newFolder = await _client.Folders.New(TestData.ProjectId, "NewFolder", TestData.CollectionId);
+            var folderClient =
+                new FolderSyncanoClient(new SyncanoHttpClient(TestData.InstanceName, TestData.BackendAdminApiKey));
+            var newFolder = await folderClient.New(TestData.ProjectId, "NewFolder", TestData.CollectionId);
             var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
             request.Link = link;
-            var dataObject = await _client.DataObjects.New(request);
+            var dataObject = await client.New(request);
 
             request.Folder = newFolder.Name;
             request.Link = null;
 
             //when
-            var result = await _client.DataObjects.Merge(request, dataObject.Id);
+            var result = await client.Merge(request, dataObject.Id);
 
             //then
             result.ShouldNotBeNull();
@@ -889,12 +1003,12 @@ namespace Syncano.Net.Tests
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
-            await _client.DataObjects.Delete(deleteRequest);
-            await _client.Folders.Delete(TestData.ProjectId, newFolder.Name, TestData.CollectionId);
+            await client.Delete(deleteRequest);
+            await folderClient.Delete(TestData.ProjectId, newFolder.Name, TestData.CollectionId);
         }
 
-        [Fact]
-        public async Task Merge_WithInvalidProjectId_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_WithInvalidProjectId_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
@@ -904,7 +1018,7 @@ namespace Syncano.Net.Tests
             try
             {
                 //when
-                await _client.DataObjects.Merge(request, "dataId");
+                await client.Merge(request, "dataId");
                 throw new Exception("Merge should throw an exception");
             }
             catch (Exception e)
@@ -914,8 +1028,8 @@ namespace Syncano.Net.Tests
             }
         }
 
-        [Fact]
-        public async Task Merge_WithNullProjectId_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_WithNullProjectId_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
@@ -925,7 +1039,7 @@ namespace Syncano.Net.Tests
             try
             {
                 //when
-                await _client.DataObjects.Merge(request, "dataId");
+                await client.Merge(request, "dataId");
                 throw new Exception("Merge should throw an exception");
             }
             catch (Exception e)
@@ -935,8 +1049,8 @@ namespace Syncano.Net.Tests
             }
         }
 
-        [Fact]
-        public async Task Merge_WithInvalidCollectionId_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_WithInvalidCollectionId_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
@@ -946,7 +1060,7 @@ namespace Syncano.Net.Tests
             try
             {
                 //when
-                await _client.DataObjects.Merge(request, "dataId");
+                await client.Merge(request, "dataId");
                 throw new Exception("Merge should throw an exception");
             }
             catch (Exception e)
@@ -956,8 +1070,8 @@ namespace Syncano.Net.Tests
             }
         }
 
-        [Fact]
-        public async Task Merge_WithNullCollectionIdAndKey_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_WithNullCollectionIdAndKey_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
@@ -966,13 +1080,127 @@ namespace Syncano.Net.Tests
             try
             {
                 //when
-                await _client.DataObjects.Merge(request, "dataId");
+                await client.Merge(request, "dataId");
                 throw new Exception("Merge should throw an exception");
             }
             catch (Exception e)
             {
                 //then
                 e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_WithTooMuchAdditionals_ThrowsException(DataObjectSyncanoClient client)
+        {
+            //given
+            var request = new DataObjectDefinitionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.Additional = new Dictionary<string, string>();
+            for (int i = 0; i < DataObjectSyncanoClient.MaxAdditionalsCount + 5; ++i)
+                request.Additional.Add(i.ToString(CultureInfo.InvariantCulture), "additional value");
+
+            try
+            {
+                //when
+                await client.Merge(request);
+                throw new Exception("Merge should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_WithTooLongAdditionalKey_ThrowsException(DataObjectSyncanoClient client)
+        {
+            //given
+            var request = new DataObjectDefinitionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.Additional = new Dictionary<string, string>();
+            request.Additional.Add(new String('a', DataObjectSyncanoClient.MaxAdditionalKeyLenght + 1), "additional value");
+
+            try
+            {
+                //when
+                await client.Merge(request);
+                throw new Exception("Merge should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_WithTooLongAdditionalValue_ThrowsException(DataObjectSyncanoClient client)
+        {
+            //given
+            var request = new DataObjectDefinitionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.Additional = new Dictionary<string, string>();
+            request.Additional.Add("additional key", new String('a', DataObjectSyncanoClient.MaxAdditionalValueLenght + 1));
+
+            try
+            {
+                //when
+                await client.Merge(request);
+                throw new Exception("Merge should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_WithTooLongTitle_ThrowsException(DataObjectSyncanoClient client)
+        {
+            //given
+            var request = new DataObjectDefinitionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.Title = new String('a', DataObjectSyncanoClient.MaxTitleLenght + 1);
+
+            try
+            {
+                //when
+                await client.Merge(request);
+                throw new Exception("Merge should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task Merge_WithTooLongText_ThrowsException(DataObjectSyncanoClient client)
+        {
+            //given
+            var request = new DataObjectDefinitionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+            request.Text = new String('a', DataObjectSyncanoClient.MaxTextLenght + 1);
+
+            try
+            {
+                //when
+                await client.Merge(request);
+                throw new Exception("Merge should throw an exception");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
             }
         }
     }

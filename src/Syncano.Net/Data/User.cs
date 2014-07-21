@@ -3,7 +3,7 @@
 namespace Syncano.Net.Data
 {
     /// <summary>
-    /// Class reprezenting user.
+    /// Class representing user.
     /// </summary>
     public class User
     {

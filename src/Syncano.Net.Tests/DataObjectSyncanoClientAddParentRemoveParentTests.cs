@@ -2,42 +2,36 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Should;
-using Xunit;
+using Syncano.Net.Api;
+using Xunit.Extensions;
 
 namespace Syncano.Net.Tests
 {
-    public class DataObjectRestClientAddParentRemoveParentTests
+    public class DataObjectSyncanoClientAddParentRemoveParentTests
     {
-        private Syncano _client;
-
-        public DataObjectRestClientAddParentRemoveParentTests()
-        {
-            _client = new Syncano(TestData.InstanceName, TestData.BackendAdminApiKey);
-        }
-
-        [Fact]
-        public async Task AddParent_ByCollectionId()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task AddParent_ByCollectionId(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            var parentObject = await client.New(newParentRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            var childObject = await client.New(newChildRequest);
 
             //when
             var result =
                 await
-                    _client.DataObjects.AddParent(TestData.ProjectId, childObject.Id, parentObject.Id,
+                    client.AddParent(TestData.ProjectId, childObject.Id, parentObject.Id,
                         TestData.CollectionId);
 
             var getResult =
                 await
-                    _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentObject.Id,
+                    client.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentObject.Id,
                         includeChildren: true);
 
             //then
@@ -49,32 +43,32 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task AddParent_ByCollectionKey()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task AddParent_ByCollectionKey(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            var parentObject = await client.New(newParentRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            var childObject = await client.New(newChildRequest);
 
             //when
             var result =
                 await
-                    _client.DataObjects.AddParent(TestData.ProjectId, childObject.Id, parentObject.Id,
+                    client.AddParent(TestData.ProjectId, childObject.Id, parentObject.Id,
                         collectionKey: TestData.CollectionKey);
 
             var getResult =
                 await
-                    _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentObject.Id,
+                    client.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentObject.Id,
                         includeChildren: true);
 
             //then
@@ -86,38 +80,38 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task AddParent_ByCollectionKey_WithRemoveOther()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task AddParent_ByCollectionKey_WithRemoveOther(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            var parentObject = await client.New(newParentRequest);
 
             var newOtherRequest = new DataObjectDefinitionRequest();
             newOtherRequest.ProjectId = TestData.ProjectId;
             newOtherRequest.CollectionId = TestData.CollectionId;
             newOtherRequest.ParentId = parentObject.Id;
-            var otherObject = await _client.DataObjects.New(newOtherRequest);
+            var otherObject = await client.New(newOtherRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            var childObject = await client.New(newChildRequest);
 
             //when
             var result =
                 await
-                    _client.DataObjects.AddParent(TestData.ProjectId, childObject.Id, parentObject.Id, TestData.CollectionId,
+                    client.AddParent(TestData.ProjectId, childObject.Id, parentObject.Id, TestData.CollectionId,
                         removeOther: true);
 
             var getResult =
                 await
-                    _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentObject.Id,
+                    client.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentObject.Id,
                         includeChildren: true);
 
             //then
@@ -129,37 +123,37 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task AddParent_ByCollectionKey_WithOtherChildren()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task AddParent_ByCollectionKey_WithOtherChildren(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            var parentObject = await client.New(newParentRequest);
 
             var newOtherRequest = new DataObjectDefinitionRequest();
             newOtherRequest.ProjectId = TestData.ProjectId;
             newOtherRequest.CollectionId = TestData.CollectionId;
             newOtherRequest.ParentId = parentObject.Id;
-            var otherObject = await _client.DataObjects.New(newOtherRequest);
+            var otherObject = await client.New(newOtherRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            var childObject = await client.New(newChildRequest);
 
             //when
             var result =
                 await
-                    _client.DataObjects.AddParent(TestData.ProjectId, childObject.Id, parentObject.Id, TestData.CollectionId);
+                    client.AddParent(TestData.ProjectId, childObject.Id, parentObject.Id, TestData.CollectionId);
 
             var getResult =
                 await
-                    _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentObject.Id,
+                    client.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentObject.Id,
                         includeChildren: true);
 
             //then
@@ -173,28 +167,28 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task AddParent_WithInvalidProjectId_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task AddParent_WithInvalidProjectId_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            var parentObject = await client.New(newParentRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            var childObject = await client.New(newChildRequest);
 
             try
             {
                 //when
                 await
-                    _client.DataObjects.AddParent("abc", childObject.Id, parentObject.Id,
+                    client.AddParent("abc", childObject.Id, parentObject.Id,
                         TestData.CollectionId);
                 throw new Exception("AddChild should throw an exception");
             }
@@ -207,28 +201,28 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task AddParent_WithNullProjectId_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task AddParent_WithNullProjectId_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            var parentObject = await client.New(newParentRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            var childObject = await client.New(newChildRequest);
 
             try
             {
                 //when
                 await
-                    _client.DataObjects.AddParent(null, childObject.Id, parentObject.Id,
+                    client.AddParent(null, childObject.Id, parentObject.Id,
                         TestData.CollectionId);
                 throw new Exception("AddChild should throw an exception");
             }
@@ -241,28 +235,28 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task AddParent_WithNullCollectionIdAndCollectionKey_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task AddParent_WithNullCollectionIdAndCollectionKey_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            var parentObject = await client.New(newParentRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            var childObject = await client.New(newChildRequest);
 
             try
             {
                 //when
                 await
-                    _client.DataObjects.AddParent(TestData.ProjectId, childObject.Id, parentObject.Id);
+                    client.AddParent(TestData.ProjectId, childObject.Id, parentObject.Id);
                 throw new Exception("AddChild should throw an exception");
             }
             catch (Exception e)
@@ -274,28 +268,28 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task AddParent_WithNullParentId_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task AddParent_WithNullParentId_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.New(newParentRequest);
+            await client.New(newParentRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            var childObject = await client.New(newChildRequest);
 
             try
             {
                 //when
                 await
-                    _client.DataObjects.AddParent(TestData.ProjectId, childObject.Id, null,
+                    client.AddParent(TestData.ProjectId, childObject.Id, null,
                         TestData.CollectionId);
                 throw new Exception("AddChild should throw an exception");
             }
@@ -308,28 +302,28 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task AddParent_WithNullChildId_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task AddParent_WithNullChildId_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            var parentObject = await client.New(newParentRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.New(newChildRequest);
+            await client.New(newChildRequest);
 
             try
             {
                 //when
                 await
-                    _client.DataObjects.AddParent(TestData.ProjectId, null, parentObject.Id,
+                    client.AddParent(TestData.ProjectId, null, parentObject.Id,
                         TestData.CollectionId);
                 throw new Exception("AddChild should throw an exception");
             }
@@ -342,28 +336,28 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task AddParent_WithInvalidParentId_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task AddParent_WithInvalidParentId_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.New(newParentRequest);
+            await client.New(newParentRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            var childObject = await client.New(newChildRequest);
 
             try
             {
                 //when
                 await
-                    _client.DataObjects.AddChild(TestData.ProjectId, childObject.Id, "abc",
+                    client.AddChild(TestData.ProjectId, childObject.Id, "abc",
                         TestData.CollectionId);
                 throw new Exception("AddChild should throw an exception");
             }
@@ -376,28 +370,28 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task AddParent_WithInvalidChildId_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task AddParent_WithInvalidChildId_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            var parentObject = await client.New(newParentRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.New(newChildRequest);
+            await client.New(newChildRequest);
 
             try
             {
                 //when
                 await
-                    _client.DataObjects.AddParent(TestData.ProjectId, "abc", parentObject.Id,
+                    client.AddParent(TestData.ProjectId, "abc", parentObject.Id,
                         TestData.CollectionId);
                 throw new Exception("AddChild should throw an exception");
             }
@@ -410,34 +404,34 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task RemoveParent_ByCollectionId()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task RemoveParent_ByCollectionId(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            var parentObject = await client.New(newParentRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            var childObject = await client.New(newChildRequest);
 
-            await _client.DataObjects.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
+            await client.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
 
             //when
             var result =
                 await
-                    _client.DataObjects.RemoveParent(TestData.ProjectId, childObject.Id, parentObject.Id,
+                    client.RemoveParent(TestData.ProjectId, childObject.Id, parentObject.Id,
                         TestData.CollectionId);
 
             var getResult =
                 await
-                    _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentObject.Id,
+                    client.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentObject.Id,
                         includeChildren: true);
 
             //then
@@ -448,33 +442,33 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task RemoveParent_ByCollectionId_WithoutParentId()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task RemoveParent_ByCollectionId_WithoutParentId(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            var parentObject = await client.New(newParentRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            var childObject = await client.New(newChildRequest);
 
-            await _client.DataObjects.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
+            await client.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
 
             //when
             var result =
                 await
-                    _client.DataObjects.RemoveParent(TestData.ProjectId, childObject.Id, collectionId: TestData.CollectionId);
+                    client.RemoveParent(TestData.ProjectId, childObject.Id, collectionId: TestData.CollectionId);
 
             var getResult =
                 await
-                    _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentObject.Id,
+                    client.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentObject.Id,
                         includeChildren: true);
 
             //then
@@ -485,34 +479,34 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task RemoveParent_ByCollectionKey()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task RemoveParent_ByCollectionKey(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            var parentObject = await client.New(newParentRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            var childObject = await client.New(newChildRequest);
 
-            await _client.DataObjects.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
+            await client.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
 
             //when
             var result =
                 await
-                    _client.DataObjects.RemoveParent(TestData.ProjectId, childObject.Id, parentObject.Id,
+                    client.RemoveParent(TestData.ProjectId, childObject.Id, parentObject.Id,
                         collectionKey: TestData.CollectionKey);
 
             var getResult =
                 await
-                    _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentObject.Id,
+                    client.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentObject.Id,
                         includeChildren: true);
 
             //then
@@ -523,40 +517,40 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task RemoveParent_ByCollectionKey_WithOtherChildren()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task RemoveParent_ByCollectionKey_WithOtherChildren(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            var parentObject = await client.New(newParentRequest);
 
             var newOtherRequest = new DataObjectDefinitionRequest();
             newOtherRequest.ProjectId = TestData.ProjectId;
             newOtherRequest.CollectionId = TestData.CollectionId;
             newOtherRequest.ParentId = parentObject.Id;
-            var otherObject = await _client.DataObjects.New(newOtherRequest);
+            var otherObject = await client.New(newOtherRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            var childObject = await client.New(newChildRequest);
 
-            await _client.DataObjects.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
+            await client.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
 
             //when
             var result =
                 await
-                    _client.DataObjects.RemoveParent(TestData.ProjectId, childObject.Id, parentObject.Id,
+                    client.RemoveParent(TestData.ProjectId, childObject.Id, parentObject.Id,
                         TestData.CollectionId);
 
             var getResult =
                 await
-                    _client.DataObjects.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentObject.Id,
+                    client.GetOne(TestData.ProjectId, TestData.CollectionId, dataId: parentObject.Id,
                         includeChildren: true);
 
             //then
@@ -570,30 +564,30 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task RemoveParent_WithInvalidProjectId_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task RemoveParent_WithInvalidProjectId_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            var parentObject = await client.New(newParentRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            var childObject = await client.New(newChildRequest);
 
-            await _client.DataObjects.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
+            await client.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
 
             try
             {
                 //when
                 await
-                    _client.DataObjects.RemoveParent("abc", childObject.Id, parentObject.Id, TestData.CollectionId);
+                    client.RemoveParent("abc", childObject.Id, parentObject.Id, TestData.CollectionId);
                 throw new Exception("RemoveParent should throw an exception");
             }
             catch (Exception e)
@@ -605,30 +599,30 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task RemoveParent_WithNullProjectId_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task RemoveParent_WithNullProjectId_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            var parentObject = await client.New(newParentRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            var childObject = await client.New(newChildRequest);
 
-            await _client.DataObjects.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
+            await client.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
 
             try
             {
                 //when
                 await
-                    _client.DataObjects.RemoveParent(null, childObject.Id, parentObject.Id, TestData.CollectionId);
+                    client.RemoveParent(null, childObject.Id, parentObject.Id, TestData.CollectionId);
                 throw new Exception("RemoveParent should throw an exception");
             }
             catch (Exception e)
@@ -640,30 +634,30 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task RemoveParent_WithNullCollectionIdAndCollectionKey_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task RemoveParent_WithNullCollectionIdAndCollectionKey_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            var parentObject = await client.New(newParentRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            var childObject = await client.New(newChildRequest);
 
-            await _client.DataObjects.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
+            await client.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
 
             try
             {
                 //when
                 await
-                    _client.DataObjects.RemoveParent(TestData.ProjectId, childObject.Id, parentObject.Id);
+                    client.RemoveParent(TestData.ProjectId, childObject.Id, parentObject.Id);
                 throw new Exception("RemoveParent should throw an exception");
             }
             catch (Exception e)
@@ -675,29 +669,29 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task RemoveParent_WithNullChildId_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task RemoveParent_WithNullChildId_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            var parentObject = await client.New(newParentRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            var childObject = await client.New(newChildRequest);
 
-            await _client.DataObjects.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
+            await client.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
 
             try
             {
                 //when
-                await _client.DataObjects.RemoveParent(TestData.ProjectId, null, parentObject.Id, TestData.CollectionId);
+                await client.RemoveParent(TestData.ProjectId, null, parentObject.Id, TestData.CollectionId);
                 throw new Exception("RemoveParent should throw an exception");
             }
             catch (Exception e)
@@ -709,29 +703,29 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task RemoveParent_WithInvalidParentId_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task RemoveParent_WithInvalidParentId_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            var parentObject = await client.New(newParentRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            var childObject = await client.New(newChildRequest);
 
-            await _client.DataObjects.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
+            await client.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
 
             try
             {
                 //when
-                await _client.DataObjects.RemoveParent(TestData.ProjectId, childObject.Id, "abc", TestData.CollectionId);
+                await client.RemoveParent(TestData.ProjectId, childObject.Id, "abc", TestData.CollectionId);
                 throw new Exception("RemoveParent should throw an exception");
             }
             catch (Exception e)
@@ -743,29 +737,29 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
 
-        [Fact]
-        public async Task RemoveParent_WithInvalidChildId_ThrowsException()
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        public async Task RemoveParent_WithInvalidChildId_ThrowsException(DataObjectSyncanoClient client)
         {
             //given
             var newParentRequest = new DataObjectDefinitionRequest();
             newParentRequest.ProjectId = TestData.ProjectId;
             newParentRequest.CollectionId = TestData.CollectionId;
-            var parentObject = await _client.DataObjects.New(newParentRequest);
+            var parentObject = await client.New(newParentRequest);
 
             var newChildRequest = new DataObjectDefinitionRequest();
             newChildRequest.ProjectId = TestData.ProjectId;
             newChildRequest.CollectionId = TestData.CollectionId;
-            var childObject = await _client.DataObjects.New(newChildRequest);
+            var childObject = await client.New(newChildRequest);
 
-            await _client.DataObjects.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
+            await client.AddChild(TestData.ProjectId, parentObject.Id, childObject.Id, TestData.CollectionId);
 
             try
             {
                 //when
-                await _client.DataObjects.RemoveParent(TestData.ProjectId, "abc", parentObject.Id, TestData.CollectionId);
+                await client.RemoveParent(TestData.ProjectId, "abc", parentObject.Id, TestData.CollectionId);
                 throw new Exception("RemoveParent should throw an exception");
             }
             catch (Exception e)
@@ -777,7 +771,7 @@ namespace Syncano.Net.Tests
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
             deleteRequest.CollectionId = TestData.CollectionId;
-            await _client.DataObjects.Delete(deleteRequest);
+            await client.Delete(deleteRequest);
         }
     }
 }

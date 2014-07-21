@@ -260,7 +260,7 @@ namespace Syncano.Net.Api
                     project_id = request.ProjectId,
                     collection_id = request.CollectionId,
                     collection_key = request.CollectionKey,
-                    tags,
+                    tags = tags.ToArray(),
                     weight = weight.ToString(CultureInfo.InvariantCulture),
                     remove_other = removeOther
                 });

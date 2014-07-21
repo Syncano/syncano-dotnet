@@ -1,15 +1,39 @@
 ﻿namespace Syncano.Net
 {
+    /// <summary>
+    /// Possible orders for querying data objects.
+    /// </summary>
     public enum DataObjectOrder
     {
+        /// <summary>
+        /// Older first.
+        /// </summary>
         Ascending,
+
+        /// <summary>
+        /// Newest first.
+        /// </summary>
         Descending
     }
 
+    /// <summary>
+    /// Possible keys to order data objects by.
+    /// </summary>
     public enum DataObjectOrderBy
     {
+        /// <summary>
+        ///  Order by creation date.
+        /// </summary>
         CreatedAt,
+
+        /// <summary>
+        /// Order by id.
+        /// </summary>
         Id,
+
+        /// <summary>
+        /// Order by update date.
+        /// </summary>
         UpdatedAt
     }
 

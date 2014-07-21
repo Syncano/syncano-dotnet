@@ -3,7 +3,7 @@
 namespace Syncano.Net.Access
 {
     /// <summary>
-    /// Class reprezenting admin role.
+    /// Class representing admin role.
     /// </summary>
     public class Role
     {

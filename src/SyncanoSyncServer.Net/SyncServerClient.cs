@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Net.Security;
@@ -195,7 +196,18 @@ namespace SyncanoSyncServer.Net
                 foreach (var eachProperty in parameters.GetType().GetProperties())
                 {
                     if (eachProperty.GetValue(parameters) != null)
-                        request.Params.Add(eachProperty.Name, eachProperty.GetValue(parameters));
+                    {
+                        if (eachProperty.GetValue(parameters).GetType().IsConstructedGenericType && eachProperty.GetValue(parameters).GetType().GetGenericTypeDefinition() == typeof(Dictionary<,>))
+                        {
+                            var dictionary = (Dictionary<string, string>)eachProperty.GetValue(parameters);
+                            foreach (var item in dictionary)
+                            {
+                                request.Params.Add(item.Key, item.Value);
+                            }
+                        }
+                        else
+                            request.Params.Add(eachProperty.Name, eachProperty.GetValue(parameters));
+                    }
                 }
             }
             return request;
