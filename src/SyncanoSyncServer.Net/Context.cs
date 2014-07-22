@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace SyncanoSyncServer.Net
 {
@@ -23,7 +24,7 @@ namespace SyncanoSyncServer.Net
         Connection
     }
 
-    public class ContextStringConverter
+    public class ContextEnumStringConverter
     {
         private const string ClientString = "client";
         private const string SessionString = "session";
@@ -63,6 +64,27 @@ namespace SyncanoSyncServer.Net
                 default:
                     throw new ArgumentException("Unknown Context string.");
             }
+        }
+    }
+
+    public class ContextEnumJsonConverter : JsonConverter
+    {
+
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(string);
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            var enumString = (string) reader.Value;
+            return ContextEnumStringConverter.GetContext(enumString);
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            var context = (Context) value;
+            writer.WriteValue(ContextEnumStringConverter.GetString(context));
         }
     }
 }

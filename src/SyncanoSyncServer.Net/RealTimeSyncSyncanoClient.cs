@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SyncanoSyncServer.Net
@@ -25,7 +26,7 @@ namespace SyncanoSyncServer.Net
                 throw new ArgumentNullException();
 
             return _syncanoClient.GetAsync("subscription.subscribe_project",
-                new {project_id = projectId, context = ContextStringConverter.GetString(context)});
+                new {project_id = projectId, context = ContextEnumStringConverter.GetString(context)});
         }
 
         /// <summary>
@@ -67,7 +68,7 @@ namespace SyncanoSyncServer.Net
                     project_id = projectId,
                     collection_id = collectionId,
                     collection_key = collectionKey,
-                    context = ContextStringConverter.GetString(context)
+                    context = ContextEnumStringConverter.GetString(context)
                 });
         }
 
@@ -95,6 +96,21 @@ namespace SyncanoSyncServer.Net
                     collection_id = collectionId,
                     collection_key = collectionKey
                 });
+        }
+
+        /// <summary>
+        /// Get API client subscriptions.
+        /// <remarks>User API key usage permitted.</remarks>
+        /// </summary>
+        /// <param name="apiClientId">API client id defining client. If not present, gets subscriptions for current API client.</param>
+        /// <param name="sessionId">Session id associated with API client. If present, gets subscriptions associated with specified API client's session.</param>
+        /// <param name="uuid">Connection UUID. If present, gets subscriptions associated with specified API client's connection.</param>
+        /// <returns>List of Subscription objects.</returns>
+        public Task<List<Subscription>> GetSubscription(string apiClientId = null, string sessionId = null,
+            string uuid = null)
+        {
+            return _syncanoClient.GetAsync<List<Subscription>>("subscription.get",
+                new {api_client_id = apiClientId, session_id = sessionId, uuid}, "subscription");
         }
     }
 }

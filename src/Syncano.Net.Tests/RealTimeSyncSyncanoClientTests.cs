@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Should;
 using Should.Core.Exceptions;
@@ -509,6 +510,59 @@ namespace Syncano.Net.Tests
                 //then
                 e.ShouldBeType<ArgumentNullException>();
             }
+        }
+
+        [Fact]
+        public async Task GetSubscription_WithSessionIdValues()
+        {
+            //given
+            var sessionId = await _syncServer.ApiKeys.StartSession();
+            await _syncServer.RealTimeSync.SubscribeProject(TestData.ProjectId, Context.Session);
+
+            //when
+            var result = await _syncServer.RealTimeSync.GetSubscription(sessionId: sessionId);
+
+            //then
+            result.ShouldNotBeEmpty();
+            result.Count.ShouldEqual(1);
+            result.Any( s => s.Id == TestData.ProjectId && s.Context == Context.Session).ShouldBeTrue();
+
+            //cleanup
+            await _syncServer.RealTimeSync.UnsubscribeProject(TestData.ProjectId);
+        }
+
+        [Fact]
+        public async Task GetSubscription_WithDefaultValues_ForProject()
+        {
+            //given
+            await _syncServer.RealTimeSync.SubscribeProject(TestData.ProjectId);
+
+            //when
+            var result = await _syncServer.RealTimeSync.GetSubscription();
+
+            //then
+            result.ShouldNotBeEmpty();
+            result.Any( s => s.Id == TestData.ProjectId).ShouldBeTrue();
+
+            //cleanup
+            await _syncServer.RealTimeSync.UnsubscribeProject(TestData.ProjectId);
+        }
+
+        [Fact]
+        public async Task GetSubscription_WithDefaultValues_ForCollection()
+        {
+            //given
+            await _syncServer.RealTimeSync.SubscribeCollection(TestData.ProjectId, TestData.CollectionId);
+
+            //when
+            var result = await _syncServer.RealTimeSync.GetSubscription();
+
+            //then
+            result.ShouldNotBeEmpty();
+            result.Any(s => s.Id == TestData.CollectionId).ShouldBeTrue();
+
+            //cleanup
+            await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId, TestData.CollectionId);
         }
     }
 }
