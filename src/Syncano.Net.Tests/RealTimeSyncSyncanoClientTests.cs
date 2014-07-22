@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Should;
@@ -513,14 +514,14 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
-        public async Task GetSubscription_WithSessionIdValues()
+        public async Task GetSubscriptions_WithSessionIdValues()
         {
             //given
             var sessionId = await _syncServer.ApiKeys.StartSession();
             await _syncServer.RealTimeSync.SubscribeProject(TestData.ProjectId, Context.Session);
 
             //when
-            var result = await _syncServer.RealTimeSync.GetSubscription(sessionId: sessionId);
+            var result = await _syncServer.RealTimeSync.GetSubscriptions(sessionId: sessionId);
 
             //then
             result.ShouldNotBeEmpty();
@@ -532,13 +533,13 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
-        public async Task GetSubscription_WithDefaultValues_ForProject()
+        public async Task GetSubscriptions_WithDefaultValues_ForProject()
         {
             //given
             await _syncServer.RealTimeSync.SubscribeProject(TestData.ProjectId);
 
             //when
-            var result = await _syncServer.RealTimeSync.GetSubscription();
+            var result = await _syncServer.RealTimeSync.GetSubscriptions();
 
             //then
             result.ShouldNotBeEmpty();
@@ -549,13 +550,13 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
-        public async Task GetSubscription_WithDefaultValues_ForCollection()
+        public async Task GetSubscriptions_WithDefaultValues_ForCollection()
         {
             //given
             await _syncServer.RealTimeSync.SubscribeCollection(TestData.ProjectId, TestData.CollectionId);
 
             //when
-            var result = await _syncServer.RealTimeSync.GetSubscription();
+            var result = await _syncServer.RealTimeSync.GetSubscriptions();
 
             //then
             result.ShouldNotBeEmpty();
@@ -564,5 +565,122 @@ namespace Syncano.Net.Tests
             //cleanup
             await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId, TestData.CollectionId);
         }
+
+        [Fact]
+        public async Task NotificationSend_WithDefaultParameters()
+        {
+            //when
+            var result = await _syncServer.RealTimeSync.SendNotification();
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task NotificationSend_WithApiKeyId()
+        {
+            //when
+            var result = await _syncServer.RealTimeSync.SendNotification(TestData.UserApiClientId);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task NotificationSend_WithUuid()
+        {
+            //given
+            var list = await _syncServer.RealTimeSync.GetConnections();
+
+            //when
+            var result = await _syncServer.RealTimeSync.SendNotification(uuid: list[0].Uuid);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task NotificationSend_WithAdditionals()
+        {
+            //given
+            var additionals = new Dictionary<string, string>();
+            additionals.Add("key", "value");
+
+            //when
+            var result = await _syncServer.RealTimeSync.SendNotification(additional: additionals);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task GetHistory_WithDefaultParameters()
+        {
+            //when
+            var result = await _syncServer.RealTimeSync.GetHistory();
+
+            //then
+            result.ShouldNotBeNull();
+        }
+
+        [Fact]
+        public async Task GetConnections_WithDefaultValues()
+        {
+            //when
+            var result = await _syncServer.RealTimeSync.GetConnections();
+
+            //then
+            result.ShouldNotBeNull();
+            result.ShouldNotBeEmpty();
+            result.Any( c => c.Source == Source.Tcp).ShouldBeTrue();
+            result.Any(c => c.ApiClientId == TestData.BackendAdminApiId).ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task GetConnections_ByApiClientId()
+        {
+            //when
+            var result = await _syncServer.RealTimeSync.GetConnections(TestData.BackendAdminApiId);
+
+            //then
+            result.ShouldNotBeNull();
+            result.ShouldNotBeEmpty();
+            result.Any(c => c.Source == Source.Tcp).ShouldBeTrue();
+            result.Any(c => c.ApiClientId == TestData.BackendAdminApiId).ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task GetAllConnections_WithDefaultParameters()
+        {
+            //when
+            var result = await _syncServer.RealTimeSync.GetAllConnections();
+
+            //then
+            result.ShouldNotBeNull();
+            result.ShouldNotBeEmpty();
+            result.Any(c => c.Source == Source.Tcp).ShouldBeTrue();
+            result.Any(c => c.ApiClientId == TestData.BackendAdminApiId).ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task UpdateConnection_NewName()
+        {
+            //given
+            var list = await _syncServer.RealTimeSync.GetConnections(TestData.BackendAdminApiId);
+            var connection = list[0];
+            var newName = "newConnectionName";
+            
+
+            //when
+            var result = await _syncServer.RealTimeSync.UpdateConnection(connection.Uuid, newName);
+
+            //then
+            result.Name.ShouldEqual(newName);
+
+            //cleanup
+            await _syncServer.RealTimeSync.UpdateConnection(connection.Uuid, "");
+        }
+
+
     }
 }
