@@ -172,5 +172,343 @@ namespace Syncano.Net.Tests
                 e.ShouldBeType<SyncanoException>();
             }
         }
+
+        [Fact]
+        public async Task SubscribeCollection_ByCollectionId_WithConnectionContext()
+        {
+            //when
+            var result = await _syncServer.RealTimeSync.SubscribeCollection(TestData.ProjectId, TestData.CollectionId, context: Context.Connection);
+
+            //then
+            result.ShouldBeTrue();
+
+            //cleanup
+            await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId, TestData.CollectionId);
+        }
+
+        [Fact]
+        public async Task SubscribeCollection_ByCollectionId_WithSessionContext()
+        {
+            //given
+            await _syncServer.ApiKeys.StartSession();
+
+            //when
+            var result = await _syncServer.RealTimeSync.SubscribeCollection(TestData.ProjectId, TestData.CollectionId, context: Context.Connection);
+
+            //then
+            result.ShouldBeTrue();
+
+            //cleanup
+            await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId, TestData.CollectionId);
+        }
+
+        [Fact]
+        public async Task SubscribeCollection_ByCollectionId_WithDefaultContext()
+        {
+            //given
+            await _syncServer.ApiKeys.StartSession();
+
+            //when
+            var result = await _syncServer.RealTimeSync.SubscribeCollection(TestData.ProjectId, TestData.CollectionId);
+
+            //then
+            result.ShouldBeTrue();
+
+            //cleanup
+            await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId, TestData.CollectionId);
+        }
+
+        [Fact]
+        public async Task SubscribeCollection_ByCollectionKey_WithConnectionContext()
+        {
+            //when
+            var result =
+                await
+                    _syncServer.RealTimeSync.SubscribeCollection(TestData.ProjectId,
+                        collectionKey: TestData.CollectionKey, context: Context.Connection);
+
+            //then
+            result.ShouldBeTrue();
+
+            //cleanup
+            await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId, TestData.CollectionId);
+        }
+
+        [Fact]
+        public async Task SubscribeCollection_ByCollectionKey_WithSessionContext()
+        {
+            //given
+            await _syncServer.ApiKeys.StartSession();
+
+            //when
+            var result =
+                await
+                    _syncServer.RealTimeSync.SubscribeCollection(TestData.ProjectId,
+                        collectionKey: TestData.CollectionKey, context: Context.Connection);
+
+            //then
+            result.ShouldBeTrue();
+
+            //cleanup
+            await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId, TestData.CollectionId);
+        }
+
+        [Fact]
+        public async Task SubscribeCollection_ByCollectionKey_WithDefaultContext()
+        {
+            //given
+            await _syncServer.ApiKeys.StartSession();
+
+            //when
+            var result = await _syncServer.RealTimeSync.SubscribeCollection(TestData.ProjectId, collectionKey: TestData.CollectionKey);
+
+            //then
+            result.ShouldBeTrue();
+
+            //cleanup
+            await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId, TestData.CollectionId);
+        }
+
+        [Fact]
+        public async Task SubscribeCollection_WithNullProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.SubscribeCollection(null, TestData.CollectionId);
+                throw new Exception("SubscribeCollection should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task SubscribeCollection_WithInvalidProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.SubscribeCollection("abcde123", TestData.CollectionId);
+                throw new Exception("SubscribeCollection should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task SubscribeCollection_WithInvalidCollectionId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.SubscribeCollection(TestData.ProjectId, "abcde123");
+                throw new Exception("SubscribeCollection should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task SubscribeCollection_WithInvalidCollectionKey_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.SubscribeCollection(TestData.ProjectId, collectionKey: "abcde123");
+                throw new Exception("SubscribeCollection should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task SubscribeCollection_WithNullCollectionIdAndKey_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.SubscribeCollection(TestData.ProjectId);
+                throw new Exception("SubscribeCollection should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task UnsubscribeCollection_ByCollectionId_WithConnectionContext()
+        {
+            //given
+            await _syncServer.RealTimeSync.SubscribeCollection(TestData.ProjectId, TestData.CollectionId, context: Context.Connection);
+
+            //when
+            var result = await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId, TestData.CollectionId);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task UnsubscribeCollection_ByCollectionId_WithSessionContext()
+        {
+            //given
+            await _syncServer.ApiKeys.StartSession();
+            await _syncServer.RealTimeSync.SubscribeCollection(TestData.ProjectId, TestData.CollectionId, context: Context.Session);
+
+            //when
+            var result = await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId, TestData.CollectionId);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task UnsubscribeCollection_ByCollectionId_WithDefaultContext()
+        {
+            //given
+            await _syncServer.ApiKeys.StartSession();
+            await _syncServer.RealTimeSync.SubscribeCollection(TestData.ProjectId, TestData.CollectionId);
+
+            //when
+            var result = await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId, TestData.CollectionId);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task UnsubscribeCollection_ByCollectionKey_WithConnectionContext()
+        {
+            //given
+            await _syncServer.RealTimeSync.SubscribeCollection(TestData.ProjectId, TestData.CollectionId, context: Context.Connection);
+
+            //when
+            var result = await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId, collectionKey: TestData.CollectionKey);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task UnsubscribeCollection_ByCollectionKey_WithSessionContext()
+        {
+            //given
+            await _syncServer.ApiKeys.StartSession();
+            await _syncServer.RealTimeSync.SubscribeCollection(TestData.ProjectId, TestData.CollectionId, context: Context.Session);
+
+            //when
+            var result = await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId, collectionKey: TestData.CollectionKey);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task UnsubscribeCollection_ByCollectionKey_WithDefaultContext()
+        {
+            //given
+            await _syncServer.ApiKeys.StartSession();
+            await _syncServer.RealTimeSync.SubscribeCollection(TestData.ProjectId, TestData.CollectionId);
+
+            //when
+            var result = await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId, collectionKey: TestData.CollectionKey);
+
+            //then
+            result.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task UnsubscribeCollection_WithNullProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.UnsubscribeCollection(null);
+                throw new Exception("UnsubscribeCollection should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
+
+        [Fact]
+        public async Task UnsubscribeCollection_WithInvalidProjectId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.UnsubscribeCollection("abcde123", TestData.CollectionId);
+                throw new Exception("UnsubscribeCollection should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task UnsubscribeCollection_WithInvalidCollectionId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId, "abcde123");
+                throw new Exception("UnsubscribeCollection should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task UnsubscribeCollection_WithInvalidCollectionKey_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId, collectionKey: "abcde123");
+                throw new Exception("UnsubscribeCollection should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task UnsubscribeCollection_WithNullCollectionIdAndKey_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId);
+                throw new Exception("UnsubscribeCollection should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentNullException>();
+            }
+        }
     }
 }
