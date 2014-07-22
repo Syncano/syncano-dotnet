@@ -6,7 +6,6 @@ using Should;
 using Syncano.Net.Api;
 using Syncano.Net.Data;
 using Syncano.Net.Http;
-using Xunit;
 using Xunit.Extensions;
 
 namespace Syncano.Net.Tests

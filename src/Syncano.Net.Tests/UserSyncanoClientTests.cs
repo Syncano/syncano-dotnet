@@ -73,12 +73,36 @@ namespace Syncano.Net.Tests
             }
         }
 
-        [Theory(Skip = "Login allways works when used with BackendApiKey."), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
-        public async Task Login_WithInvalidPassword_CreatesNewAuthKey(UserSyncanoClient client)
+        [Fact]
+        public async Task Login_WithInvalidPasswordOverHttp_ThrowsException()
         {
+            //given
+            var httpClient = new UserSyncanoClient(new SyncanoHttpClient(TestData.InstanceName, TestData.UserApiKey));
+
             try
             {
-                await client.Login(TestData.UserName, "abcde");
+                //when
+                await httpClient.Login(TestData.UserName, "abcde");
+                throw new Exception("Login should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task Login_WithInvalidPasswordOverTcp_ThrowsException()
+        {
+            //given
+            var syncClient = new SyncServer(TestData.InstanceName, TestData.UserApiKey);
+            await syncClient.Start();
+
+            try
+            {
+                //when
+                await syncClient.Users.Login(TestData.UserName, "abcde");
                 throw new Exception("Login should throw an exception.");
             }
             catch (Exception e)
@@ -172,12 +196,12 @@ namespace Syncano.Net.Tests
             await client.Delete(user.Id);
         }
 
-        [Theory(Skip = "Avatar parameter too big for current tcp implementation."), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory, PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task New_WithAvatar_CreatesNewUserObject(UserSyncanoClient client)
         {
             //given
             const string name = "newUserName";
-            string avatar = TestData.ImageToBase64("sampleImage.jpg");
+            string avatar = TestData.ImageToBase64("smallSampleImage.png");
 
             //when
             var user = await client.New(name, avatar: avatar);
@@ -189,6 +213,29 @@ namespace Syncano.Net.Tests
 
             //cleanup
             await client.Delete(user.Id);
+        }
+
+        [Fact]
+        public async Task New_WithAvatarTooBigForTcp_ThrowsException()
+        {
+            //given
+            var syncClient = new SyncServer(TestData.InstanceName, TestData.BackendAdminApiKey);
+            await syncClient.Start();
+            const string name = "newUserName";
+            string avatar = TestData.ImageToBase64("sampleImage.jpg");
+
+            try
+            {
+                //when
+                var user = await syncClient.Users.New(name, avatar: avatar);
+                throw new Exception("New should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+            
         }
 
         [Theory, PropertyData("UserSyncanoClients", PropertyType = typeof (SyncanoClientsProvider))]
@@ -599,11 +646,15 @@ namespace Syncano.Net.Tests
             }
         }
 
-        [Theory(Skip = "Should work with UserApiKey, not Backend key."), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
-        public async Task GetOne_GetsUserObject(UserSyncanoClient client)
+        [Fact(Skip = "Not authorized.")]
+        public async Task GetOne_GetsUserObject_OverHttp()
         {
+            //given
+            var httpClient =
+                new UserSyncanoClient(new SyncanoHttpClient(TestData.InstanceName, TestData.UserApiKey));
+
             //when
-            var result = await client.GetOne();
+            var result = await httpClient.GetOne();
 
             //then
             result.ShouldNotBeNull();
@@ -695,7 +746,7 @@ namespace Syncano.Net.Tests
             await client.Delete(user.Id);
         }
 
-        [Theory(Skip = "Avatar too big for current tcp implementation."), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory, PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task Update_NewAvatar_UpdatesUserObject(UserSyncanoClient client)
         {
             //given
@@ -704,7 +755,7 @@ namespace Syncano.Net.Tests
             var user = await client.New(name, password);
 
             //when
-            var updatedUser = await client.Update(user.Id, avatar: TestData.ImageToBase64("sampleImage.jpg"), currentPassword: password);
+            var updatedUser = await client.Update(user.Id, avatar: TestData.ImageToBase64("smallSampleImage.png"), currentPassword: password);
 
             //then
             updatedUser.ShouldNotBeNull();
@@ -715,13 +766,36 @@ namespace Syncano.Net.Tests
             await client.Delete(user.Id);
         }
 
-        [Theory(Skip = "Avatar too big for current tcp implementation."), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Fact]
+        public async Task Update_NewAvatarTooBigForTcp_ThrowsException()
+        {
+            //given
+            var syncClient = new SyncServer(TestData.InstanceName, TestData.BackendAdminApiKey);
+            await syncClient.Start();
+            const string password = "abcde123";
+
+            try
+            {
+                //when
+                await syncClient.Users.Update("userId", avatar: TestData.ImageToBase64("smallSampleImage.png"), currentPassword: password);
+                throw new Exception("Update should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+
+            
+        }
+
+        [Theory, PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task Update_DeleteAvatar_UpdatesUserObject(UserSyncanoClient client)
         {
             //given
             const string name = "newUserName";
             const string password = "abcde123";
-            var user = await client.New(name, password, avatar: TestData.ImageToBase64("sampleImage.jpg"));
+            var user = await client.New(name, password, avatar: TestData.ImageToBase64("smallSampleImage.png"));
 
             //when
             var updatedUser = await client.Update(user.Id, avatar: "", currentPassword: password);
@@ -927,14 +1001,14 @@ namespace Syncano.Net.Tests
             await _dataClient.Delete(deleteRequest);
         }
 
-        [Theory(Skip = "Avatar too big for current tcp implementation."), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory(Skip = "Syncano.Net.SyncanoExceptionError: TypeError: _count_users() got an unexpected keyword argument 'type'"), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task Count_WithImageContentFilter_GetsCountOfUsers(UserSyncanoClient client)
         {
             //given
             var dataRequest = new DataObjectDefinitionRequest();
             dataRequest.ProjectId = TestData.ProjectId;
             dataRequest.CollectionId = TestData.CollectionId;
-            dataRequest.ImageBase64 = TestData.ImageToBase64("sampleImage.jpg");
+            dataRequest.ImageBase64 = TestData.ImageToBase64("smallSampleImage.png");
             await _dataClient.New(dataRequest);
 
             var request = new UserQueryRequest();
@@ -1137,13 +1211,13 @@ namespace Syncano.Net.Tests
             result.ShouldBeTrue();
         }
 
-        [Theory(Skip = "Avatar too big for current tcp implementation."), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory, PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task Delete_ByUserId_WithAvatar_DeletesUserObject(UserSyncanoClient client)
         {
             //given
             const string name = "newUserName";
             const string password = "abcde123";
-            var avatar = TestData.ImageToBase64("sampleImage.jpg");
+            var avatar = TestData.ImageToBase64("smallSampleImage.png");
             var user = await client.New(name, password, avatar: avatar);
 
             //cleanup
@@ -1199,13 +1273,13 @@ namespace Syncano.Net.Tests
             result.ShouldBeTrue();
         }
 
-        [Theory(Skip = "Avatar too big for current tcp implementation."), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory, PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task Delete_ByUserName_WithAvatar_CreatesNewUserObject(UserSyncanoClient client)
         {
             //given
             const string name = "newUserName";
             const string password = "abcde123";
-            var avatar = TestData.ImageToBase64("sampleImage.jpg");
+            var avatar = TestData.ImageToBase64("smallSampleImage.png");
             var user = await client.New(name, password, avatar: avatar);
 
             //cleanup

@@ -24,5 +24,7 @@ namespace Syncano.Net
 
         public ApiKeySyncanoClient ApiKeys { get { return  new ApiKeySyncanoClient(_httpClient);} }
 
+        public UserSyncanoClient Users { get { return new UserSyncanoClient(_httpClient);} }
+
     }
 }

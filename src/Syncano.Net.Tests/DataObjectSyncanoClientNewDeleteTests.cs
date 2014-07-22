@@ -6,6 +6,8 @@ using Should;
 using Syncano.Net.Api;
 using Syncano.Net.Data;
 using Syncano.Net.Http;
+using SyncanoSyncServer.Net;
+using Xunit;
 using Xunit.Extensions;
 
 namespace Syncano.Net.Tests
@@ -183,7 +185,7 @@ namespace Syncano.Net.Tests
             await client.Delete(deleteRequest);
         }
 
-        [Theory(Skip = "Image is too big for current tcp implementation."), PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task New_ByCollectionId_WithImage_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
@@ -191,7 +193,7 @@ namespace Syncano.Net.Tests
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
 
-            var imageBase64 = TestData.ImageToBase64("sampleImage.jpg");
+            var imageBase64 = TestData.ImageToBase64("smallSampleImage.png");
 
             request.ImageBase64 = imageBase64;
 
@@ -208,6 +210,32 @@ namespace Syncano.Net.Tests
             deleteRequest.CollectionId = TestData.CollectionId;
             deleteRequest.DataId = result.Id;
             await client.Delete(deleteRequest);
+        }
+
+        [Fact]
+        public async Task New_ByCollectionId_WithTooBigImageForTcp_ThrowsException()
+        {
+            //given
+            var syncServer = new SyncServer(TestData.InstanceName, TestData.BackendAdminApiKey);
+            await syncServer.Start();
+            var request = new DataObjectDefinitionRequest();
+            request.ProjectId = TestData.ProjectId;
+            request.CollectionId = TestData.CollectionId;
+
+            var imageBase64 = TestData.ImageToBase64("sampleImage.jpg");
+            request.ImageBase64 = imageBase64;
+
+            try
+            {
+                //when
+                await syncServer.DataObjects.New(request);
+                throw new Exception("New should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
         }
 
         [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
@@ -864,14 +892,14 @@ namespace Syncano.Net.Tests
             result.ShouldBeTrue();
         }
 
-        [Theory(Skip = "Image too big for current tcp implementation."), PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory, PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task Delete_FilterByImageContent(DataObjectSyncanoClient client)
         {
             //given
             var request = new DataObjectDefinitionRequest();
             request.ProjectId = TestData.ProjectId;
             request.CollectionId = TestData.CollectionId;
-            request.ImageBase64 = TestData.ImageToBase64("sampleImage.jpg");
+            request.ImageBase64 = TestData.ImageToBase64("smallSampleImage.png");
             var dataObject = await client.New(request);
             var deleteRequest = new DataObjectSimpleQueryRequest();
             deleteRequest.ProjectId = TestData.ProjectId;
