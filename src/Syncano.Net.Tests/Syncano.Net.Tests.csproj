@@ -74,6 +74,7 @@
     <Compile Include="DataObjectSyncanoClientUpdateMergeTests.cs" />
     <Compile Include="FolderSyncanoClientTests.cs" />
     <Compile Include="ProjectSyncanoClientTests.cs" />
+    <Compile Include="RealTimeSyncSyncanoClientTests.cs" />
     <Compile Include="SyncanoClientsProvider.cs" />
     <Compile Include="SyncanoRestClientTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

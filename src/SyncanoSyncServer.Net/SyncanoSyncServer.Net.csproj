@@ -63,11 +63,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiCommandRequest.cs" />
+    <Compile Include="Context.cs" />
     <Compile Include="ISyncanoRequest.cs" />
     <Compile Include="LoginRequest.cs" />
     <Compile Include="LoginResponse.cs" />
     <Compile Include="LoginResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RealTimeSyncSyncanoClient.cs" />
     <Compile Include="SyncServer.cs" />
     <Compile Include="SyncServerClient.cs" />
   </ItemGroup>

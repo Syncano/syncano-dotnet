@@ -37,5 +37,7 @@ namespace SyncanoSyncServer.Net
         public ApiKeySyncanoClient ApiKeys { get { return new ApiKeySyncanoClient(_syncClient); } }
 
         public UserSyncanoClient Users { get { return new UserSyncanoClient(_syncClient); } }
+
+        public RealTimeSyncSyncanoClient RealTimeSync { get { return new RealTimeSyncSyncanoClient(_syncClient);} }
     }
 }
