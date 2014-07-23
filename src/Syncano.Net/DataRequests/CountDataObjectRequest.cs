@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
-using Syncano.Net.Api;
 using Syncano.Net.Data;
 
-namespace Syncano.Net
+namespace Syncano.Net.DataRequests
 {
     /// <summary>
-    /// Request for querying DataObjects.
+    /// Request for counting DataObjects.
     /// </summary>
-    public class DataObjectSimpleQueryRequest
+    public class CountDataObjectRequest
     {
-        public DataObjectSimpleQueryRequest()
+        /// <summary>
+        /// Creates CountDataObjectRequest object.
+        /// </summary>
+        public CountDataObjectRequest()
         {
             State = DataObjectState.All;
-            Limit = DataObjectSyncanoClient.MaxVauluesPerRequest;
-            Filter = null;
         }
 
         /// <summary>
@@ -32,32 +32,22 @@ namespace Syncano.Net
         public string CollectionKey { get; set; }
 
         /// <summary>
-        /// If specified, will filter by Data id.
-        /// </summary>
-        public string DataId { get; set; }
-
-        /// <summary>
-        /// If specified, will filter by Data ids. Max 100 ids per request.
-        /// </summary>
-        public List<string> DataIds { get; set; }
-
-        /// <summary>
-        /// If specified, filter by Data state. Accepted values: Pending, Moderated, All. Default value: All.
+        /// State of data to be counted. Accepted values: Pending, Moderated, All. Default value: All.
         /// </summary>
         public DataObjectState State { get; set; }
 
         /// <summary>
-        /// If specified, filter by specified folder.
+        /// Folder name that data will be counted from. If not presents counts data from across all collection folders. Max 100 values per request.
         /// </summary>
         public string Folder { get; set; }
 
         /// <summary>
-        /// If specified, filter by specified folders. Max 100 values per request.
+        /// Folder names that data will be counted from. If not presents counts data from across all collection folders. Max 100 values per request.
         /// </summary>
         public List<string> Folders { get; set; }
 
         /// <summary>
-        /// If specified filtering by content.
+        /// Filtering by content.
         /// </summary>
         public DataObjectContentFilter? Filter { get; set; }
 
@@ -66,9 +56,7 @@ namespace Syncano.Net
         /// </summary>
         public string ByUser { get; set; }
 
-        /// <summary>
-        /// Number of Data Objects to process. Default and max value: 100.
-        /// </summary>
-        public int Limit { get; set; }
+
+
     }
 }

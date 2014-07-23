@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Should;
 using Syncano.Net.Api;
+using Syncano.Net.DataRequests;
 using Xunit.Extensions;
 
 namespace Syncano.Net.Tests

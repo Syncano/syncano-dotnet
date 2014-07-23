@@ -5,10 +5,17 @@ using Syncano.Net.Access;
 
 namespace Syncano.Net.Api
 {
+    /// <summary>
+    /// Class with ApiKey management api.
+    /// </summary>
     public class ApiKeySyncanoClient
     {
         private readonly ISyncanoClient _syncanoClient;
 
+        /// <summary>
+        /// Creates ApiKeySyncanoClient object.
+        /// </summary>
+        /// <param name="syncanoClient">Object implementing ISyncanoClient interface. Provides means for connecting to Syncano.</param>
         public ApiKeySyncanoClient(ISyncanoClient syncanoClient)
         {
             _syncanoClient = syncanoClient;

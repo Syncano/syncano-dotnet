@@ -2,6 +2,9 @@
 
 namespace Syncano.Net
 {
+    /// <summary>
+    /// Interface defining possible methods of communication with Syncano.
+    /// </summary>
     public interface ISyncanoClient
     {
         Task<bool> GetAsync(string methodName, object parameters);

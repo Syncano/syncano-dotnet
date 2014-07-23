@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using Syncano.Net.Data;
 
-namespace Syncano.Net
+namespace Syncano.Net.DataRequests
 {
     /// <summary>
     /// Request defining data object.
     /// </summary>
     public class DataObjectDefinitionRequest
     {
+        /// <summary>
+        /// Creates DataObjectsDefinitionRequest object.
+        /// </summary>
         public DataObjectDefinitionRequest()
         {
             Folder = "Default";

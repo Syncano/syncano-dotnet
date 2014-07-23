@@ -3,14 +3,35 @@ using Newtonsoft.Json;
 
 namespace Syncano.Net.Data
 {
+    /// <summary>
+    /// Possible DataObject states.
+    /// </summary>
     public enum DataObjectState
     {
+        /// <summary>
+        /// Pending state.
+        /// </summary>
         Pending,
+
+        /// <summary>
+        /// Moderated state.
+        /// </summary>
         Moderated,
+
+        /// <summary>
+        /// Rejected state.
+        /// </summary>
         Rejected,
+
+        /// <summary>
+        /// All state.
+        /// </summary>
         All
     }
 
+    /// <summary>
+    /// Class converting DataObjectState to JSON objects and the other way around.
+    /// </summary>
     public class DataObjectStateEnumConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)

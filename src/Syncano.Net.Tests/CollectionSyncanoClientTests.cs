@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Should;
 using Syncano.Net.Api;
 using Syncano.Net.Data;
+using Syncano.Net.DataRequests;
 using Xunit.Extensions;
 
 namespace Syncano.Net.Tests

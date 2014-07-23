@@ -4,13 +4,21 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Syncano.Net.Data;
+using Syncano.Net.DataRequests;
 
 namespace Syncano.Net.Api
 {
+    /// <summary>
+    /// Class with Collection management api.
+    /// </summary>
     public class CollectionSyncanoClient
     {
         private readonly ISyncanoClient _syncanoClient;
 
+        /// <summary>
+        /// Creates CollectionSyncanoClient object.
+        /// </summary>
+        /// <param name="syncanoClient">Object implementing ISyncanoClient interface. Provides means for connecting to Syncano.</param>
         public CollectionSyncanoClient(ISyncanoClient syncanoClient)
         {
             _syncanoClient = syncanoClient;

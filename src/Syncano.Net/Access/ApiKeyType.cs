@@ -19,6 +19,9 @@ namespace Syncano.Net.Access
         User
     }
 
+    /// <summary>
+    /// Class providing convertion of ApiKeyType to and from JSON format.
+    /// </summary>
     public class ApiKeyTypeEnumConverter : JsonConverter
     {
         public override bool CanConvert(System.Type objectType)

@@ -1,4 +1,4 @@
-﻿namespace Syncano.Net
+﻿namespace Syncano.Net.Data
 {
     /// <summary>
     /// DataObject content filters.

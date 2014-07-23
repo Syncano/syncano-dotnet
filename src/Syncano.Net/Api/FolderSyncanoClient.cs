@@ -4,10 +4,17 @@ using System.Threading.Tasks;
 using Syncano.Net.Data;
 namespace Syncano.Net.Api
 {
+    /// <summary>
+    /// Class with Folder management api.
+    /// </summary>
     public class FolderSyncanoClient
     {
         private readonly ISyncanoClient _syncanoClient;
 
+        /// <summary>
+        /// Creates FolderSyncanoClient object.
+        /// </summary>
+        /// <param name="syncanoClient">Object implementing ISyncanoClient interface. Provides means for connecting to Syncano.</param>
         public FolderSyncanoClient(ISyncanoClient syncanoClient)
         {
             _syncanoClient = syncanoClient;

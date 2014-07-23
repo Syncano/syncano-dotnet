@@ -2,6 +2,9 @@
 
 namespace Syncano.Net
 {
+    /// <summary>
+    /// Exception thrown by Syncano.Net, when Syncano instance request fails.
+    /// </summary>
     public class SyncanoException : Exception
     {
         //

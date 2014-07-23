@@ -6,6 +6,7 @@ namespace Syncano.Net.Data
 {
     /// <summary>
     /// Representing DataObject.
+    /// <remarks>Data Objects always live in the top level of a parent-child relationship hierarchy (the parent of all parents). It is not possible to change that. However, one can also make the Data Object a child of other Data Objects. E.g. if Object #1 resides in the folder “Pictures,” and Object #2 resides in the folder “Authors,” Object #2 can be set as a child of Object #1. It will still reside in it’s original folder, but there will be a parent-child connection between these Data Objects. It is possible to define all kinds of data relationships: one-to-many, many-to-one, one-to-one, many-to-many. When using data.new() or data.update() you can only pass one parent_id parameter, which is sufficient for one-to-one or one-to-many relationships. To add more parent-child connections (called Data Object Relations in Syncano) use data.add_parent() or data.add_child(). Remove of these connections with data.remove_parent() and data.remove_child(). Data Objects can have multiple parents, however they cannot be removed from the structure of its folder/collection.</remarks>
     /// </summary>
     public class DataObject
     {

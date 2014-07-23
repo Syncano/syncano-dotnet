@@ -26,8 +26,16 @@
         Subscribe
     }
 
+    /// <summary>
+    /// Class providing convertion from ApiKeyPermission to String.
+    /// </summary>
     public class ApiKeyPermissionByStringConverter
     {
+        /// <summary>
+        /// Gets string representing ApiKeyPermission.
+        /// </summary>
+        /// <param name="permission">Permission to convertion.</param>
+        /// <returns>String representing permission.</returns>
         public static string GetString(ApiKeyPermission permission)
         {
             string result;

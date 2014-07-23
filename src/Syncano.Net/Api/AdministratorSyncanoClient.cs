@@ -5,10 +5,17 @@ using Syncano.Net.Access;
 
 namespace Syncano.Net.Api
 {
+    /// <summary>
+    /// Class with Administrator management api.
+    /// </summary>
     public class AdministratorSyncanoClient
     {
         private readonly ISyncanoClient _syncanoClient;
 
+        /// <summary>
+        /// Creates AdministratorSyncanoClient object.
+        /// </summary>
+        /// <param name="syncanoClient">Object implementing ISyncanoClient interface. Provides means for connecting to Syncano.</param>
         public AdministratorSyncanoClient(ISyncanoClient syncanoClient)
         {
             _syncanoClient = syncanoClient;

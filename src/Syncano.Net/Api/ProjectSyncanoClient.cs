@@ -5,10 +5,17 @@ using Syncano.Net.Data;
 
 namespace Syncano.Net.Api
 {
+    /// <summary>
+    /// Class with Project management api.
+    /// </summary>
     public class ProjectSyncanoClient
     {
         private readonly ISyncanoClient _syncanoClient;
 
+        /// <summary>
+        /// Creates ProjectSyncanoClient object.
+        /// </summary>
+        /// <param name="syncanoClient">Object implementing ISyncanoClient interface. Provides means for connecting to Syncano.</param>
         public ProjectSyncanoClient(ISyncanoClient syncanoClient)
         {
             _syncanoClient = syncanoClient;

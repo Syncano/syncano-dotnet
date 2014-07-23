@@ -1,12 +1,16 @@
 ﻿using System.Collections.Generic;
+using Syncano.Net.Data;
 
-namespace Syncano.Net
+namespace Syncano.Net.DataRequests
 {
     /// <summary>
     /// Request for querying data objects.
     /// </summary>
     public class DataObjectRichQueryRequest : DataObjectSimpleQueryRequest
     {
+        /// <summary>
+        /// Creates DataObjectRichQueryRequest object.
+        /// </summary>
         public DataObjectRichQueryRequest()
         {
             Order = DataObjectOrder.Ascending;

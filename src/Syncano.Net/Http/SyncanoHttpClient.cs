@@ -9,6 +9,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Syncano.Net.Http
 {
+    /// <summary>
+    /// Client of Syncano using connection over Http. Provides functionality of sending end geting http request to and from Syncano.
+    /// </summary>
     public class SyncanoHttpClient : ISyncanoClient
     {
         private readonly string _instanceName;
@@ -16,6 +19,11 @@ namespace Syncano.Net.Http
         private HttpClient _client;
         private string _baseUrl;
 
+        /// <summary>
+        /// Creates SyncanoHttpClientObject.
+        /// </summary>
+        /// <param name="instanceName">Name of Syncano instance.</param>
+        /// <param name="apiKey">Api key for Syncano instance (backend or user).</param>
         public SyncanoHttpClient(string instanceName, string apiKey)
         {
             _instanceName = instanceName;
@@ -162,13 +170,5 @@ namespace Syncano.Net.Http
 
             return true;
         }
-
-        public Task<string> StartSession()
-        {
-            return GetAsync<string>("apikey.start_session", "session_id");
-        }
-
-        
-
     }
 }

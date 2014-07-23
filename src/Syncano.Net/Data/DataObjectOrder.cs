@@ -1,4 +1,4 @@
-﻿namespace Syncano.Net
+﻿namespace Syncano.Net.Data
 {
     /// <summary>
     /// Possible orders for querying data objects.
@@ -37,8 +37,16 @@
         UpdatedAt
     }
 
+    /// <summary>
+    /// Class providing functionality of converting DataObjectOrderBy to String.
+    /// </summary>
     public class DataObjectOrderByStringConverter
     {
+        /// <summary>
+        /// Gets string representing DataObjectOrderBy object.
+        /// </summary>
+        /// <param name="orderBy">OrderBy object.</param>
+        /// <returns>String object.</returns>
         public static string GetString(DataObjectOrderBy orderBy)
         {
             string result;
@@ -65,8 +73,16 @@
         }
     }
 
+    /// <summary>
+    /// Class providing functionality of converting DataObjectOrder to String.
+    /// </summary>
     public class DataObjectOrderStringConverter
     {
+        /// <summary>
+        /// Gets string representing DataObjectOrder object.
+        /// </summary>
+        /// <param name="order">Order object.</param>
+        /// <returns>String object.</returns>
         public static string GetString(DataObjectOrder order)
         {
             string result;

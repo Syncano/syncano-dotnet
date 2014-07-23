@@ -3,20 +3,51 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Syncano.Net.Data;
+using Syncano.Net.DataRequests;
 
 namespace Syncano.Net.Api
 {
+    /// <summary>
+    /// Class with DataObject management api.
+    /// </summary>
     public class DataObjectSyncanoClient
     {
+        /// <summary>
+        /// Max objects per request.
+        /// </summary>
         public const int MaxVauluesPerRequest = 100;
+
+        /// <summary>
+        /// Max text parameter lenght.
+        /// </summary>
         public const int MaxTextLenght = 50000;
+
+        /// <summary>
+        /// Max title parameter title.
+        /// </summary>
         public const int MaxTitleLenght = 2500;
+
+        /// <summary>
+        /// Max number of additionals in DataObject.
+        /// </summary>
         public const int MaxAdditionalsCount = 40;
+
+        /// <summary>
+        /// Max length of additional key.
+        /// </summary>
         public const int MaxAdditionalKeyLenght = 100;
+
+        /// <summary>
+        /// Max lenght of additional value.
+        /// </summary>
         public const int MaxAdditionalValueLenght = 5000;
 
         private readonly ISyncanoClient _syncanoClient;
 
+        /// <summary>
+        /// Creates DataObjectSyncanoClient object.
+        /// </summary>
+        /// <param name="syncanoClient">Object implementing ISyncanoClient interface. Provides means for connecting to Syncano.</param>
         public DataObjectSyncanoClient(ISyncanoClient syncanoClient)
         {
             _syncanoClient = syncanoClient;

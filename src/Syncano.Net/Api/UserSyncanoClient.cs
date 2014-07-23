@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Syncano.Net.Data;
+using Syncano.Net.DataRequests;
 
 namespace Syncano.Net.Api
 {
+    /// <summary>
+    /// Class with User management api.
+    /// </summary>
     public class UserSyncanoClient
     {
         /// <summary>
@@ -14,6 +18,10 @@ namespace Syncano.Net.Api
 
         private readonly ISyncanoClient _syncanoClient;
 
+        /// <summary>
+        /// Creates UserSyncanoClient object.
+        /// </summary>
+        /// <param name="syncanoClient">Object implementing ISyncanoClient interface. Provides means for connecting to Syncano.</param>
         public UserSyncanoClient(ISyncanoClient syncanoClient)
         {
             _syncanoClient = syncanoClient;

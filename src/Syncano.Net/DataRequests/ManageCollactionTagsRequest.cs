@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-namespace Syncano.Net
+namespace Syncano.Net.DataRequests
 {
     /// <summary>
     /// Request object for methods adding and deleting collection tags.
