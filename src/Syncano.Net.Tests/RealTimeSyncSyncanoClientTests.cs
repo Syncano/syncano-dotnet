@@ -12,6 +12,7 @@ namespace Syncano.Net.Tests
     public class RealTimeSyncSyncanoClientTests
     {
         private SyncServer _syncServer;
+        private Connection _currentConnection;
 
         public RealTimeSyncSyncanoClientTests()
         {
@@ -23,6 +24,7 @@ namespace Syncano.Net.Tests
         {
             _syncServer = new SyncServer(TestData.InstanceName, TestData.BackendAdminApiKey);
             await _syncServer.Start();
+            _currentConnection = (await _syncServer.RealTimeSync.GetConnections())[0];
         }
 
         [Fact]
@@ -514,7 +516,7 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
-        public async Task GetSubscriptions_WithSessionIdValues()
+        public async Task GetSubscriptions_WithSessionIdValues_ForProject()
         {
             //given
             var sessionId = await _syncServer.ApiKeys.StartSession();
@@ -525,11 +527,26 @@ namespace Syncano.Net.Tests
 
             //then
             result.ShouldNotBeEmpty();
-            result.Count.ShouldEqual(1);
             result.Any( s => s.Id == TestData.ProjectId && s.Context == Context.Session).ShouldBeTrue();
 
             //cleanup
             await _syncServer.RealTimeSync.UnsubscribeProject(TestData.ProjectId);
+        }
+
+        [Fact]
+        public async Task GetSubscriptions_WithConnectionUuid_ForProject()
+        {
+            //given
+            await _syncServer.RealTimeSync.SubscribeProject(TestData.ProjectId, Context.Connection);
+
+            //when
+            var result = await _syncServer.RealTimeSync.GetSubscriptions(uuid: _currentConnection.Uuid);
+
+            //cleanup
+            await _syncServer.RealTimeSync.UnsubscribeProject(TestData.ProjectId);
+
+            //then
+            result.ShouldNotBeNull();
         }
 
         [Fact]
@@ -564,6 +581,76 @@ namespace Syncano.Net.Tests
 
             //cleanup
             await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId, TestData.CollectionId);
+        }
+
+        [Fact]
+        public async Task GetSubscriptions_WithSessionIdValues_ForCollection()
+        {
+            //given
+            var sessionId = await _syncServer.ApiKeys.StartSession();
+            await
+                _syncServer.RealTimeSync.SubscribeCollection(TestData.ProjectId, TestData.CollectionId,
+                    context: Context.Session);
+
+            //when
+            var result = await _syncServer.RealTimeSync.GetSubscriptions(sessionId: sessionId);
+
+            //then
+            result.ShouldNotBeEmpty();
+            result.Any(s => s.Id == TestData.CollectionId && s.Context == Context.Session).ShouldBeTrue();
+
+            //cleanup
+            await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId, TestData.CollectionId);
+        }
+
+        [Fact]
+        public async Task GetSubscriptions_WithConnectionUuid_ForCollection()
+        {
+            //given
+            await
+                _syncServer.RealTimeSync.SubscribeCollection(TestData.ProjectId, TestData.CollectionId,
+                    context: Context.Connection);
+
+            //when
+            var result = await _syncServer.RealTimeSync.GetSubscriptions(uuid: _currentConnection.Uuid);
+
+            //cleanup
+            await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId, TestData.CollectionId);
+
+            //then
+            result.ShouldNotBeNull();
+        }
+
+        [Fact]
+        public async Task GetSubscriptions_WithInvalidApiClientId_ThrowsEcxeption()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.GetSubscriptions("abcde123");
+                throw new Exception("GetSubscriptions should throw an excpetion.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetSubscriptions_WithInvalidConnectionUuid_ThrowsEcxeption()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.GetSubscriptions(uuid: "abcde123");
+                throw new Exception("GetSubscriptions should throw an excpetion.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
         }
 
         [Fact]
@@ -614,6 +701,38 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task NotificationSend_WithInvalidApiKeyId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.SendNotification("abcde123");
+                throw new Exception("SendNotification should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task NotificationSend_WithInvalidUuid_ThrowsExcpetion()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.SendNotification(uuid: "abcde123");
+                throw new Exception("SendNotification should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
         public async Task GetHistory_WithDefaultParameters()
         {
             //when
@@ -621,6 +740,137 @@ namespace Syncano.Net.Tests
 
             //then
             result.ShouldNotBeNull();
+            result.ShouldNotBeEmpty();
+        }
+
+        [Fact]
+        public async Task GetHistory_WithLimit()
+        {
+            //when
+            var result = await _syncServer.RealTimeSync.GetHistory(limit: 1);
+
+            //then
+            result.ShouldNotBeNull();
+            result.ShouldNotBeEmpty();
+        }
+
+        [Fact]
+        public async Task GetHistory_WithDescendingOrder()
+        {
+            //when
+            var result = await _syncServer.RealTimeSync.GetHistory(order: DataObjectOrder.Descending);
+
+            //then
+            result.ShouldNotBeNull();
+            result.ShouldNotBeEmpty();
+            (result[0].Timestamp > result[1].Timestamp).ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task GetHistory_WithAscendingOrder()
+        {
+            //when
+            var result = await _syncServer.RealTimeSync.GetHistory(order: DataObjectOrder.Ascending);
+
+            //then
+            result.ShouldNotBeNull();
+            result.ShouldNotBeEmpty();
+            (result[0].Timestamp < result[1].Timestamp).ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task GetHistory_WithSinceId()
+        {
+            //given
+            var list = await _syncServer.RealTimeSync.GetHistory();
+
+            //when
+            var result = await _syncServer.RealTimeSync.GetHistory(sinceId: list[0].Id);
+
+            //then
+            result.ShouldNotBeNull();
+            result.ShouldNotBeEmpty();
+            result.All( n => int.Parse(n.Id) > int.Parse(list[0].Id)).ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task GetHistory_WithSinceTime()
+        {
+            //given
+            var list = await _syncServer.RealTimeSync.GetHistory();
+
+            //when
+            var result = await _syncServer.RealTimeSync.GetHistory(sinceTime: list[0].Timestamp);
+
+            //then
+            result.ShouldNotBeNull();
+            result.ShouldNotBeEmpty();
+            result.Count.ShouldBeLessThan(list.Count);
+            result.All(n => int.Parse(n.Id) > int.Parse(list[0].Id)).ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task GetHistory_WithNegativeLimit()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.GetHistory(limit: -1);
+                throw new Exception("GetHistory should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetHistory_WithTooBigLimit()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.GetHistory(limit: RealTimeSyncSyncanoClient.MaxLimit + 1);
+                throw new Exception("GetHistory should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetHistory_WithInvalidSinceId()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.GetHistory("abcde123");
+                throw new Exception("GetHistory should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetHistory_WithEmptySinceTime()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.GetHistory(sinceTime: DateTime.MinValue);
+                throw new Exception("GetHistory should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
         }
 
         [Fact]
@@ -637,6 +887,144 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task GetConnections_WithMultipleConnections()
+        {
+            //given
+            var count = 10;
+            var servers = new SyncServer[count];
+            for (int i = 0; i < count; ++i)
+            {
+                servers[i] = new SyncServer(TestData.InstanceName, TestData.BackendAdminApiKey);
+                await servers[i].Start();
+            }
+
+            //when
+            var result = await _syncServer.RealTimeSync.GetConnections();
+
+            //then
+            result.ShouldNotBeNull();
+            result.ShouldNotBeEmpty();
+            result.Any(c => c.Source == Source.Tcp).ShouldBeTrue();
+            result.Any(c => c.ApiClientId == TestData.BackendAdminApiId).ShouldBeTrue();
+
+            //cleanup
+            foreach (var server in servers)
+                server.Stop();
+        }
+
+        [Fact]
+        public async Task GetConnections_WithLimit()
+        {
+            //given
+            var limit = 5;
+            var count = 10;
+            var servers = new SyncServer[count];
+            for (int i = 0; i < count; ++i)
+            {
+                servers[i] = new SyncServer(TestData.InstanceName, TestData.BackendAdminApiKey);
+                await servers[i].Start();
+            }
+
+            //when
+            var result = await _syncServer.RealTimeSync.GetConnections(limit: limit);
+
+            //then
+            result.ShouldNotBeNull();
+            result.ShouldNotBeEmpty();
+            result.Any(c => c.Source == Source.Tcp).ShouldBeTrue();
+            result.Any(c => c.ApiClientId == TestData.BackendAdminApiId).ShouldBeTrue();
+
+            //cleanup
+            foreach (var server in servers)
+                server.Stop();
+        }
+
+        [Fact]
+        public async Task GetConnections_WithSinceId()
+        {
+            //given
+            var limit = 5;
+            var count = 10;
+            var list = await _syncServer.RealTimeSync.GetConnections();
+
+            var servers = new SyncServer[count];
+            for (int i = 0; i < count; ++i)
+            {
+                servers[i] = new SyncServer(TestData.InstanceName, TestData.BackendAdminApiKey);
+                await servers[i].Start();
+            }
+
+            //when
+            var result = await _syncServer.RealTimeSync.GetConnections(sinceId: list[0].Id);
+
+            //then
+            result.ShouldNotBeNull();
+            result.ShouldNotBeEmpty();
+            result.Any(c => c.Source == Source.Tcp).ShouldBeTrue();
+            result.Any(c => c.ApiClientId == TestData.BackendAdminApiId).ShouldBeTrue();
+
+            //cleanup
+            foreach (var server in servers)
+                server.Stop();
+        }
+
+        [Fact]
+        public async Task GetConnections_WithApiClientId()
+        {
+            //given
+            var count = 10;
+            var servers = new SyncServer[count];
+            for (int i = 0; i < count; ++i)
+            {
+                servers[i] = new SyncServer(TestData.InstanceName, TestData.UserApiKey);
+                await servers[i].Start();
+            }
+
+            //when
+            var result = await _syncServer.RealTimeSync.GetConnections(TestData.BackendAdminApiId);
+
+            //then
+            result.ShouldNotBeNull();
+            result.ShouldNotBeEmpty();
+            result.Any(c => c.Source == Source.Tcp).ShouldBeTrue();
+            result.Any(c => c.ApiClientId == TestData.BackendAdminApiId).ShouldBeTrue();
+
+            //cleanup
+            foreach (var server in servers)
+                server.Stop();
+        }
+
+        [Fact]
+        public async Task GetConnections_WithName()
+        {
+            //given
+            var count = 10;
+            var newName = "newConnectionName";
+            var list = await _syncServer.RealTimeSync.GetConnections();
+            await _syncServer.RealTimeSync.UpdateConnection(list[0].Uuid, newName);
+
+            var servers = new SyncServer[count];
+            for (int i = 0; i < count; ++i)
+            {
+                servers[i] = new SyncServer(TestData.InstanceName, TestData.BackendAdminApiKey);
+                await servers[i].Start();
+            }
+
+            //when
+            var result = await _syncServer.RealTimeSync.GetConnections(name: newName);
+
+            //then
+            result.ShouldNotBeNull();
+            result.ShouldNotBeEmpty();
+            result.Any(c => c.Source == Source.Tcp).ShouldBeTrue();
+            result.Any(c => c.ApiClientId == TestData.BackendAdminApiId).ShouldBeTrue();
+
+            //cleanup
+            foreach (var server in servers)
+                server.Stop();
+        }
+
+        [Fact]
         public async Task GetConnections_ByApiClientId()
         {
             //when
@@ -650,6 +1038,81 @@ namespace Syncano.Net.Tests
         }
 
         [Fact]
+        public async Task GetConnections_WithTooBigLimit_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.GetConnections(limit: RealTimeSyncSyncanoClient.MaxLimit + 1);
+                throw new Exception("GetConnection should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetConnections_WithTooNegativeLimit_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.GetConnections(limit: -1);
+                throw new Exception("GetConnection should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetConnections_WithInvalidSindeId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.GetConnections(sinceId: "abcde123");
+                throw new Exception("GetConnection should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetConnections_WithInvalidApiKeyId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.GetConnections("abcde123");
+                throw new Exception("GetConnection should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetConnections_WithInvalidName_ThrowsException()
+        {
+            //when
+            var result = await _syncServer.RealTimeSync.GetConnections(name: "abcde123");
+
+            //then
+            result.ShouldNotBeNull();
+            result.ShouldBeEmpty();
+        }
+
+        [Fact]
         public async Task GetAllConnections_WithDefaultParameters()
         {
             //when
@@ -660,6 +1123,179 @@ namespace Syncano.Net.Tests
             result.ShouldNotBeEmpty();
             result.Any(c => c.Source == Source.Tcp).ShouldBeTrue();
             result.Any(c => c.ApiClientId == TestData.BackendAdminApiId).ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task GetAllConnections_WithMultipleConnections()
+        {
+            //given
+            var count = 10;
+            var servers = new SyncServer[count];
+            for (int i = 0; i < count; ++i)
+            {
+                servers[i] = new SyncServer(TestData.InstanceName, TestData.BackendAdminApiKey);
+                await servers[i].Start();
+            }
+
+            //when
+            var result = await _syncServer.RealTimeSync.GetAllConnections();
+
+            //then
+            result.ShouldNotBeNull();
+            result.ShouldNotBeEmpty();
+            result.Any(c => c.Source == Source.Tcp).ShouldBeTrue();
+            result.Any(c => c.ApiClientId == TestData.BackendAdminApiId).ShouldBeTrue();
+
+            //cleanup
+            foreach (var server in servers)
+                server.Stop();
+        }
+
+        [Fact]
+        public async Task GetAllConnections_WithLimit()
+        {
+            //given
+            var limit = 5;
+            var count = 10;
+            var servers = new SyncServer[count];
+            for (int i = 0; i < count; ++i)
+            {
+                servers[i] = new SyncServer(TestData.InstanceName, TestData.BackendAdminApiKey);
+                await servers[i].Start();
+            }
+
+            //when
+            var result = await _syncServer.RealTimeSync.GetAllConnections(limit: limit);
+
+            //then
+            result.ShouldNotBeNull();
+            result.ShouldNotBeEmpty();
+            result.Any(c => c.Source == Source.Tcp).ShouldBeTrue();
+            result.Any(c => c.ApiClientId == TestData.BackendAdminApiId).ShouldBeTrue();
+
+            //cleanup
+            foreach (var server in servers)
+                server.Stop();
+        }
+
+        [Fact]
+        public async Task GetAllConnections_WithSinceId()
+        {
+            //given
+            var limit = 5;
+            var count = 10;
+            var list = await _syncServer.RealTimeSync.GetAllConnections();
+
+            var servers = new SyncServer[count];
+            for (int i = 0; i < count; ++i)
+            {
+                servers[i] = new SyncServer(TestData.InstanceName, TestData.BackendAdminApiKey);
+                await servers[i].Start();
+            }
+
+            //when
+            var result = await _syncServer.RealTimeSync.GetConnections(sinceId: list[0].Id);
+
+            //then
+            result.ShouldNotBeNull();
+            result.ShouldNotBeEmpty();
+            result.Any(c => c.Source == Source.Tcp).ShouldBeTrue();
+            result.Any(c => c.ApiClientId == TestData.BackendAdminApiId).ShouldBeTrue();
+
+            //cleanup
+            foreach (var server in servers)
+                server.Stop();
+        }
+
+        [Fact]
+        public async Task GetAllConnections_WithName()
+        {
+            //given
+            var count = 10;
+            var newName = "newConnectionName";
+            var list = await _syncServer.RealTimeSync.GetAllConnections();
+            await _syncServer.RealTimeSync.UpdateConnection(list[0].Uuid, newName);
+
+            var servers = new SyncServer[count];
+            for (int i = 0; i < count; ++i)
+            {
+                servers[i] = new SyncServer(TestData.InstanceName, TestData.BackendAdminApiKey);
+                await servers[i].Start();
+            }
+
+            //when
+            var result = await _syncServer.RealTimeSync.GetConnections(name: newName);
+
+            //then
+            result.ShouldNotBeNull();
+            result.ShouldNotBeEmpty();
+            result.Any(c => c.Source == Source.Tcp).ShouldBeTrue();
+            result.Any(c => c.ApiClientId == TestData.BackendAdminApiId).ShouldBeTrue();
+
+            //cleanup
+            foreach (var server in servers)
+                server.Stop();
+        }
+
+        [Fact]
+        public async Task GetAllConnections_ByApiClientId()
+        {
+            //when
+            var result = await _syncServer.RealTimeSync.GetAllConnections();
+
+            //then
+            result.ShouldNotBeNull();
+            result.ShouldNotBeEmpty();
+            result.Any(c => c.Source == Source.Tcp).ShouldBeTrue();
+            result.Any(c => c.ApiClientId == TestData.BackendAdminApiId).ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task GetAllConnections_WithTooBigLimit_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.GetAllConnections(limit: RealTimeSyncSyncanoClient.MaxLimit + 1);
+                throw new Exception("GetConnection should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetAllConnections_WithTooNegativeLimit_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.GetAllConnections(limit: -1);
+                throw new Exception("GetConnection should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<ArgumentException>();
+            }
+        }
+
+        [Fact]
+        public async Task GetAllConnections_WithInvalidSindeId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.GetAllConnections(sinceId: "abcde123");
+                throw new Exception("GetConnection should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
         }
 
         [Fact]
@@ -681,6 +1317,55 @@ namespace Syncano.Net.Tests
             await _syncServer.RealTimeSync.UpdateConnection(connection.Uuid, "");
         }
 
+        [Fact]
+        public async Task UpdateConnection_NewName_ByApiKeyId()
+        {
+            //given
+            var list = await _syncServer.RealTimeSync.GetConnections(TestData.BackendAdminApiId);
+            var connection = list[0];
+            var newName = "newConnectionName";
 
+
+            //when
+            var result = await _syncServer.RealTimeSync.UpdateConnection(connection.Uuid, newName, apiClientId: TestData.BackendAdminApiId);
+
+            //then
+            result.Name.ShouldEqual(newName);
+
+            //cleanup
+            await _syncServer.RealTimeSync.UpdateConnection(connection.Uuid, "");
+        }
+
+        [Fact]
+        public async Task UpdateConnection_WithInvalidUuid_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.UpdateConnection("abcde123");
+                throw new Exception("UpdateConnection should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
+
+        [Fact]
+        public async Task UpdateConnection_WithInvalidApiClientId_ThrowsException()
+        {
+            try
+            {
+                //when
+                await _syncServer.RealTimeSync.UpdateConnection(_currentConnection.Uuid, apiClientId: "abcde123");
+                throw new Exception("UpdateConnection should throw an exception.");
+            }
+            catch (Exception e)
+            {
+                //then
+                e.ShouldBeType<SyncanoException>();
+            }
+        }
     }
 }

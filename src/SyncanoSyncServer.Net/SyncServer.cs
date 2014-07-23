@@ -24,6 +24,11 @@ namespace SyncanoSyncServer.Net
             return await _syncClient.Login(_api, _instanceName);
         }
 
+        public void Stop()
+        {
+            _syncClient.Disconnect();
+        }
+
         public ProjectSyncanoClient Projects { get { return new ProjectSyncanoClient(_syncClient); } }
 
         public FolderSyncanoClient Folders { get { return new FolderSyncanoClient(_syncClient); } }

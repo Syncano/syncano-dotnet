@@ -86,6 +86,11 @@ namespace SyncanoSyncServer.Net
             return _client.ConnectAsync();
         }
 
+        public void Disconnect()
+        {
+            _client.Disconnect();
+        }
+
 
         public async Task<LoginResult> Login(string apiKey, string instanceName)
         {

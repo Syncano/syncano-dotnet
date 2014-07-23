@@ -144,6 +144,9 @@ namespace SyncanoSyncServer.Net
         public async Task<List<History>> GetHistory(string sinceId = null, DateTime? sinceTime = null, int limit = MaxLimit,
             DataObjectOrder order = DataObjectOrder.Ascending)
         {
+            if (limit > MaxLimit || limit < 1)
+                throw new ArgumentException();
+
             return
                 await
                     _syncanoClient.GetAsync<List<History>>("notification.get_history",
@@ -166,7 +169,7 @@ namespace SyncanoSyncServer.Net
         /// <returns>List of Connection objects.</returns>
         public async Task<List<Connection>> GetConnections(string apiClientId = null, string name = null, string sinceId = null, int limit = MaxLimit)
         {
-            if(limit > MaxLimit)
+            if(limit > MaxLimit || limit < 1)
                 throw new ArgumentException();
 
             return await _syncanoClient.GetAsync<List<Connection>>("connection.get", new {api_client_id = apiClientId, name, since_id = sinceId, limit},
@@ -183,7 +186,7 @@ namespace SyncanoSyncServer.Net
         public async Task<List<Connection>> GetAllConnections(string name = null, string sinceId = null,
             int limit = MaxLimit)
         {
-            if (limit > MaxLimit)
+            if (limit > MaxLimit || limit < 1)
                 throw new ArgumentException();
 
             return
