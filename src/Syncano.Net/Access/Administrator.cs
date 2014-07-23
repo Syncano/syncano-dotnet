@@ -1,6 +1,5 @@
 ﻿using System;
 using Newtonsoft.Json;
-
 namespace Syncano.Net.Access
 {
     /// <summary>
