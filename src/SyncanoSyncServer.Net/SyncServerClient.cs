@@ -83,13 +83,13 @@ namespace SyncanoSyncServer.Net
         {
             Debug.WriteLine(message);
 
-            if(_callResponseRegex.IsMatch(message))
+            if (_callResponseRegex.IsMatch(message))
                 return;
 
-            if(_newNotificationRegex.IsMatch(message))
+            if (_newNotificationRegex.IsMatch(message))
                 _newDataNotificationObservable.OnNext(JsonConvert.DeserializeObject<NewDataNotification>(message));
 
-            if(_deleteNotificationRegex.IsMatch(message))
+            if (_deleteNotificationRegex.IsMatch(message))
                 _deleteDataNotificationObservable.OnNext(JsonConvert.DeserializeObject<DeleteDataNotification>(message));
 
             if (_changeNotificationRegex.IsMatch(message))
@@ -132,28 +132,18 @@ namespace SyncanoSyncServer.Net
         }
 
 
-        public async Task<LoginResult> Login(string apiKey, string instanceName)
+        public Task<LoginResult> Login(string apiKey, string instanceName)
         {
             var request = new LoginRequest() {InstanceName = instanceName, ApiKey = apiKey};
 
             var t = _messagesObservable.FirstAsync().Select(ToLoginResult)
                 .FirstAsync().Timeout(TimeSpan.FromSeconds(10))
-                .Do(r => { _isAuthenticated = r.WasSuccessful; });
+                .Do(r => { _isAuthenticated = r.WasSuccessful; })
+                .ToTask();
 
-
-            var cts = new CancellationTokenSource();
-
-            try
-            {
-                await _client.SendAsync(CreateRequest(request));
-            }
-            catch (Exception)
-            {
-                cts.Cancel();
-                throw;
-            }
-
-            return await t.ToTask(cts.Token);
+            _client.SendAsync(CreateRequest(request));
+          
+            return t;
         }
 
         private static LoginResult ToLoginResult(string s)
@@ -188,12 +178,12 @@ namespace SyncanoSyncServer.Net
             return json;
         }
 
-        private  Task<T> SendCommandAsync<T>(ApiCommandRequest request, string contentToken)
+        private Task<T> SendCommandAsync<T>(ApiCommandRequest request, string contentToken)
         {
             return SendCommandAsync<T>(request, jo => jo.SelectToken("data").SelectToken(contentToken).ToObject<T>());
         }
 
-        private async Task<T> SendCommandAsync<T>(ApiCommandRequest request, Func<JToken,T> getResult)
+        private Task<T> SendCommandAsync<T>(ApiCommandRequest request, Func<JToken, T> getResult)
         {
             var t = _messagesObservable.Where(s => IsResponseToRequest(s, request))
                 .Select(m =>
@@ -213,21 +203,12 @@ namespace SyncanoSyncServer.Net
                     if (!_isDisposing)
                         _semaphore.Release();
                 }
-                );
+                ).ToTask();
 
-            var cts = new CancellationTokenSource();
 
-            try
-            {
-                await SendRequestAsync(request);
-            }
-            catch (Exception)
-            {
-                cts.Cancel();
-                throw;
-            }
-
-            return await t.ToTask(cts.Token);
+            SendRequestAsync(request);
+            
+            return t;
         }
 
 
@@ -242,7 +223,8 @@ namespace SyncanoSyncServer.Net
                 {
                     if (eachProperty.GetValue(parameters) != null)
                     {
-                        if (eachProperty.GetValue(parameters).GetType().IsConstructedGenericType && eachProperty.GetValue(parameters).GetType().GetGenericTypeDefinition() == typeof(Dictionary<,>))
+                        if (eachProperty.GetValue(parameters).GetType().IsConstructedGenericType &&
+                            eachProperty.GetValue(parameters).GetType().GetGenericTypeDefinition() == typeof (Dictionary<,>))
                         {
                             try
                             {
@@ -252,7 +234,7 @@ namespace SyncanoSyncServer.Net
                             }
                             catch (Exception)
                             {
-                                var dictionary = (Dictionary<string, object>)eachProperty.GetValue(parameters);
+                                var dictionary = (Dictionary<string, object>) eachProperty.GetValue(parameters);
                                 foreach (var item in dictionary)
                                     request.Params.Add(item.Key, item.Value);
                             }
@@ -268,7 +250,7 @@ namespace SyncanoSyncServer.Net
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(8);
         private IDisposable _messagesSubscription;
         private bool _isDisposing;
-        
+
 
         private async Task SendRequestAsync(ApiCommandRequest request)
         {
