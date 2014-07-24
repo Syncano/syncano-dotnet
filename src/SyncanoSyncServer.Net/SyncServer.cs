@@ -1,14 +1,19 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Syncano.Net;
 using Syncano.Net.Api;
+using SyncanoSyncServer.Net.Notifications;
 
 namespace SyncanoSyncServer.Net
 {
     public class SyncServer
     {
-        private readonly string _instanceName;
-        private readonly string _api;
-        private SyncServerClient _syncClient;
+        protected readonly string _instanceName;
+        protected readonly string _api;
+        protected SyncServerClient _syncClient;
+
+        
+        public IObservable<NewDataNotification> NewDataObservable { get { return _syncClient.NewDataNotificationObservable; } }
 
         public SyncServer(string instanceName, string api)
         {

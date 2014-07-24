@@ -133,6 +133,12 @@ namespace SyncanoSyncServer.Net
             return _syncanoClient.GetAsync("notification.send", new {api_client_id = apiClientId, uuid, additional});
         }
 
+
+        public Task<bool> SendNotification(string topic, Dictionary<string, object> additional = null)
+        {
+            return _syncanoClient.GetAsync("notification.send", new { topic, additional });
+        }
+
         /// <summary>
         /// Get a history of notifications of current API client. History items are stored for 24 hours.
         /// <remarks>User API key usage permitted if subscribe permission is added through apikey.authorize().</remarks>

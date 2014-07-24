@@ -13,6 +13,7 @@ namespace Syncano.Net.Tests
         public const string ProjectId = "1625";
 
         public const string CollectionId = "6490";
+        public const string SubscriptionCollectionId = "8765";
         public const string CollectionKey = "default";
 
         public const string FolderName = "Default";

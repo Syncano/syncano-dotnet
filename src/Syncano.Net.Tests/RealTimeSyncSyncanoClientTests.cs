@@ -668,7 +668,7 @@ namespace Syncano.Net.Tests
         public async Task NotificationSend_WithApiKeyId()
         {
             //when
-            var result = await _syncServer.RealTimeSync.SendNotification(TestData.UserApiClientId);
+            var result = await _syncServer.RealTimeSync.SendNotification(apiClientId:TestData.UserApiClientId);
 
             //then
             result.ShouldBeTrue();
@@ -707,7 +707,7 @@ namespace Syncano.Net.Tests
             try
             {
                 //when
-                await _syncServer.RealTimeSync.SendNotification("abcde123");
+                await _syncServer.RealTimeSync.SendNotification(apiClientId: "abcde123");
                 throw new Exception("SendNotification should throw an exception.");
             }
             catch (Exception e)

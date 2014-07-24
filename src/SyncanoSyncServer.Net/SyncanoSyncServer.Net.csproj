@@ -70,6 +70,11 @@
     <Compile Include="LoginRequest.cs" />
     <Compile Include="LoginResponse.cs" />
     <Compile Include="LoginResult.cs" />
+    <Compile Include="Notifications\NotificationBody.cs" />
+    <Compile Include="Notifications\DataRelationNotification.cs" />
+    <Compile Include="Notifications\DataRelationNotificationMessage.cs" />
+    <Compile Include="Notifications\NewDataNotification.cs" />
+    <Compile Include="Notifications\NotificationMessage.cs" />
     <Compile Include="NotificationType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RealTimeSyncSyncanoClient.cs" />

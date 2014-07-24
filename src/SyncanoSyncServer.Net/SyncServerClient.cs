@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Net.Security;
@@ -10,12 +11,14 @@ using System.Reactive.Subjects;
 using System.Reactive.Threading.Tasks;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ReactiveSockets;
 using Syncano.Net;
+using SyncanoSyncServer.Net.Notifications;
 
 namespace SyncanoSyncServer.Net
 {
@@ -27,6 +30,12 @@ namespace SyncanoSyncServer.Net
         public IObservable<string> MessagesObservable
         {
             get { return _messagesObservable; }
+        }
+
+        private Subject<NewDataNotification> _newDataNotificationObservable = new Subject<NewDataNotification>();
+        public IObservable<NewDataNotification> NewDataNotificationObservable
+        {
+            get { return _newDataNotificationObservable; }
         }
 
         public bool IsConnected
@@ -51,9 +60,19 @@ namespace SyncanoSyncServer.Net
             _messagesSubscription = _messagesObservable.SubscribeOn(TaskPoolScheduler.Default).Subscribe(OnNewMessage);
         }
 
-
+        private Regex _callResponseRegex = new Regex("\"type\":\"callresponse\"");
+        private Regex _newNotificationRegex = new Regex("\"type\":\"new\"");
         private void OnNewMessage(string message)
         {
+            Debug.WriteLine(message);
+
+            if(_callResponseRegex.IsMatch(message))
+                return;
+
+
+            if(_newNotificationRegex.IsMatch(message))
+                _newDataNotificationObservable.OnNext(JsonConvert.DeserializeObject<NewDataNotification>(message));
+
         }
 
 
@@ -204,7 +223,7 @@ namespace SyncanoSyncServer.Net
                     {
                         if (eachProperty.GetValue(parameters).GetType().IsConstructedGenericType && eachProperty.GetValue(parameters).GetType().GetGenericTypeDefinition() == typeof(Dictionary<,>))
                         {
-                            var dictionary = (Dictionary<string, string>)eachProperty.GetValue(parameters);
+                            var dictionary = (Dictionary<string, object>)eachProperty.GetValue(parameters);
                             foreach (var item in dictionary)
                             {
                                 request.Params.Add(item.Key, item.Value);
@@ -221,6 +240,7 @@ namespace SyncanoSyncServer.Net
         private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(8);
         private IDisposable _messagesSubscription;
         private bool _isDisposing;
+        
 
         private async Task SendRequestAsync(ApiCommandRequest request)
         {
