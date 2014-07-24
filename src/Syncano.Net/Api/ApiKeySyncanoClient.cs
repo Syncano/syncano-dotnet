@@ -11,6 +11,7 @@ namespace Syncano.Net.Api
     public class ApiKeySyncanoClient
     {
         private readonly ISyncanoClient _syncanoClient;
+        private readonly TimeZoneStringConverter _timeZoneConverter;
 
         /// <summary>
         /// Creates ApiKeySyncanoClient object.
@@ -19,26 +20,7 @@ namespace Syncano.Net.Api
         public ApiKeySyncanoClient(ISyncanoClient syncanoClient)
         {
             _syncanoClient = syncanoClient;
-        }
-
-        private string WindowsTzToIanaTz(TimeZoneInfo timeZoneInfo)
-        {
-            if (timeZoneInfo == null)
-                return null;
-
-            if (timeZoneInfo == TimeZoneInfo.Utc)
-                return "Etc/UTC";
-
-            var tzdbSource = NodaTime.TimeZones.TzdbDateTimeZoneSource.Default;
-            
-            var tzid = tzdbSource.MapTimeZoneId(timeZoneInfo);
-
-            if (tzid == null)
-            {
-                throw new ArgumentException("Time zones marked as old are not supported");
-            }
-
-            return tzdbSource.CanonicalIdMap[tzid];
+            _timeZoneConverter = new TimeZoneStringConverter();
         }
 
         /// <summary>
@@ -58,7 +40,7 @@ namespace Syncano.Net.Api
         /// <returns>Assigned session id. This can be passed for subsequent calls as authentication.</returns>
         public Task<string> StartSession(TimeZoneInfo timeZone = null)
         {
-            return _syncanoClient.PostAsync<string>("apikey.start_session", new {timezone = WindowsTzToIanaTz(timeZone)}, "session_id");
+            return _syncanoClient.PostAsync<string>("apikey.start_session", new {timezone = _timeZoneConverter.GetString(timeZone)}, "session_id");
         }
 
         /// <summary>
