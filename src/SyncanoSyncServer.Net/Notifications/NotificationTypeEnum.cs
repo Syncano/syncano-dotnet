@@ -2,7 +2,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace SyncanoSyncServer.Net
+namespace SyncanoSyncServer.Net.Notifications
 {
     public enum NotificationType
     {

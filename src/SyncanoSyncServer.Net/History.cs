@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using SyncanoSyncServer.Net.Notifications;
 
 namespace SyncanoSyncServer.Net
 {

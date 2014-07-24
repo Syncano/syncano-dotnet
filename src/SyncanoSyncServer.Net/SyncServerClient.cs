@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -33,9 +34,22 @@ namespace SyncanoSyncServer.Net
         }
 
         private Subject<NewDataNotification> _newDataNotificationObservable = new Subject<NewDataNotification>();
+        private Subject<DeleteDataNotification> _deleteDataNotificationObservable = new Subject<DeleteDataNotification>();
+        private Subject<ChangeDataNotification> _changeDataNotificationObservable = new Subject<ChangeDataNotification>();
+
         public IObservable<NewDataNotification> NewDataNotificationObservable
         {
             get { return _newDataNotificationObservable; }
+        }
+
+        public IObservable<DeleteDataNotification> DeleteDataNotificationObservable
+        {
+            get { return _deleteDataNotificationObservable; }
+        }
+
+        public IObservable<ChangeDataNotification> ChangeDataNotificationObservable
+        {
+            get { return _changeDataNotificationObservable; }
         }
 
         public bool IsConnected
@@ -62,6 +76,9 @@ namespace SyncanoSyncServer.Net
 
         private Regex _callResponseRegex = new Regex("\"type\":\"callresponse\"");
         private Regex _newNotificationRegex = new Regex("\"type\":\"new\"");
+        private Regex _deleteNotificationRegex = new Regex("\"type\":\"delete\"");
+        private Regex _changeNotificationRegex = new Regex("\"type\":\"change\"");
+
         private void OnNewMessage(string message)
         {
             Debug.WriteLine(message);
@@ -69,10 +86,14 @@ namespace SyncanoSyncServer.Net
             if(_callResponseRegex.IsMatch(message))
                 return;
 
-
             if(_newNotificationRegex.IsMatch(message))
                 _newDataNotificationObservable.OnNext(JsonConvert.DeserializeObject<NewDataNotification>(message));
 
+            if(_deleteNotificationRegex.IsMatch(message))
+                _deleteDataNotificationObservable.OnNext(JsonConvert.DeserializeObject<DeleteDataNotification>(message));
+
+            if (_changeNotificationRegex.IsMatch(message))
+                _changeDataNotificationObservable.OnNext(JsonConvert.DeserializeObject<ChangeDataNotification>(message));
         }
 
 
@@ -223,10 +244,17 @@ namespace SyncanoSyncServer.Net
                     {
                         if (eachProperty.GetValue(parameters).GetType().IsConstructedGenericType && eachProperty.GetValue(parameters).GetType().GetGenericTypeDefinition() == typeof(Dictionary<,>))
                         {
-                            var dictionary = (Dictionary<string, object>)eachProperty.GetValue(parameters);
-                            foreach (var item in dictionary)
+                            try
                             {
-                                request.Params.Add(item.Key, item.Value);
+                                var dictionary = (Dictionary<string, string>) eachProperty.GetValue(parameters);
+                                foreach (var item in dictionary)
+                                    request.Params.Add(item.Key, item.Value);
+                            }
+                            catch (Exception)
+                            {
+                                var dictionary = (Dictionary<string, object>)eachProperty.GetValue(parameters);
+                                foreach (var item in dictionary)
+                                    request.Params.Add(item.Key, item.Value);
                             }
                         }
                         else

@@ -2,7 +2,7 @@
 
 namespace SyncanoSyncServer.Net.Notifications
 {
-    public class DataRelationNotification
+    public class DataRelationNotification : BaseNotification
     {
         [JsonProperty("child_id")]
         public long ChildId { get; set; }

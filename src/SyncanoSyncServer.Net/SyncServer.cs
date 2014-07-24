@@ -13,7 +13,19 @@ namespace SyncanoSyncServer.Net
         protected SyncServerClient _syncClient;
 
         
-        public IObservable<NewDataNotification> NewDataObservable { get { return _syncClient.NewDataNotificationObservable; } }
+        public IObservable<NewDataNotification> NewDataObservable { get
+        {
+            return _syncClient.NewDataNotificationObservable;
+        } }
+        public IObservable<DeleteDataNotification> DeleteDataObservable { get
+        {
+            return _syncClient.DeleteDataNotificationObservable;
+        } }
+
+        public IObservable<ChangeDataNotification> ChangeDataObservable { get
+        {
+            return _syncClient.ChangeDataNotificationObservable;
+        } } 
 
         public SyncServer(string instanceName, string api)
         {
