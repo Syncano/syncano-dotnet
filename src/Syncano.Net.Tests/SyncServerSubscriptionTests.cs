@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -340,6 +341,8 @@ namespace Syncano.Net.Tests
             relationNotification.ShouldNotBeNull();
             relationNotification.Type.ShouldEqual(NotificationType.New);
             relationNotification.Object.ShouldEqual(NotificationObject.DataRelation);
+            relationNotification.Target.ParentId.ShouldEqual(parent.Id);
+            relationNotification.Target.ChildId.ShouldEqual(child.Id);
         }
 
         [Fact]
@@ -385,6 +388,167 @@ namespace Syncano.Net.Tests
             relationNotification.ShouldNotBeNull();
             relationNotification.Type.ShouldEqual(NotificationType.New);
             relationNotification.Object.ShouldEqual(NotificationObject.DataRelation);
+            relationNotification.Target.ParentId.ShouldEqual(parent.Id);
+            relationNotification.Target.ChildId.ShouldEqual(child.Id);
+        }
+
+        [Fact]
+        public async Task DataRelationNotification_IsRecievedOnRemovingRelation_ByRemoveChild()
+        {
+            //given
+            DataRelationNotification relationNotification = null;
+            await
+                _syncSubscriber.RealTimeSync.SubscribeCollection(TestData.ProjectId,
+                    collectionId: TestData.SubscriptionCollectionId);
+            _syncSubscriber.DataRelationObservable.Subscribe(m => relationNotification = m);
+
+            var child = await _syncServer.DataObjects.New(new DataObjectDefinitionRequest()
+            {
+                ProjectId = TestData.ProjectId,
+                CollectionId = TestData.SubscriptionCollectionId,
+                Title = "child",
+            });
+
+            var parent = await _syncServer.DataObjects.New(new DataObjectDefinitionRequest()
+            {
+                ProjectId = TestData.ProjectId,
+                CollectionId = TestData.SubscriptionCollectionId,
+                Title = "parent",
+            });
+
+            await _syncServer.DataObjects.AddChild(TestData.ProjectId, parent.Id, child.Id, TestData.SubscriptionCollectionId);
+
+            //when
+            await
+                _syncServer.DataObjects.RemoveChild(TestData.ProjectId, parent.Id, child.Id,
+                    TestData.SubscriptionCollectionId);
+            await WaitForNotifications();
+
+            //cleanup
+            await
+                _syncSubscriber.RealTimeSync.UnsubscribeCollection(TestData.ProjectId,
+                    collectionId: TestData.SubscriptionCollectionId);
+            await
+                _syncServer.DataObjects.Delete(new DataObjectSimpleQueryRequest()
+                {
+                    ProjectId = TestData.ProjectId,
+                    CollectionId = TestData.SubscriptionCollectionId
+                });
+
+            //then
+            relationNotification.ShouldNotBeNull();
+            relationNotification.Type.ShouldEqual(NotificationType.Delete);
+            relationNotification.Object.ShouldEqual(NotificationObject.DataRelation);
+            relationNotification.Target.ParentId.ShouldEqual(parent.Id);
+            relationNotification.Target.ChildId.ShouldEqual(child.Id);
+        }
+
+        [Fact]
+        public async Task DataRelationNotification_IsRecievedOnRemovingRelation_ByRemoveParent()
+        {
+            //given
+            DataRelationNotification relationNotification = null;
+            await
+                _syncSubscriber.RealTimeSync.SubscribeCollection(TestData.ProjectId,
+                    collectionId: TestData.SubscriptionCollectionId);
+            _syncSubscriber.DataRelationObservable.Subscribe(m => relationNotification = m);
+
+            var child = await _syncServer.DataObjects.New(new DataObjectDefinitionRequest()
+            {
+                ProjectId = TestData.ProjectId,
+                CollectionId = TestData.SubscriptionCollectionId,
+                Title = "child",
+            });
+
+            var parent = await _syncServer.DataObjects.New(new DataObjectDefinitionRequest()
+            {
+                ProjectId = TestData.ProjectId,
+                CollectionId = TestData.SubscriptionCollectionId,
+                Title = "parent",
+            });
+
+            await _syncServer.DataObjects.AddChild(TestData.ProjectId, parent.Id, child.Id, TestData.SubscriptionCollectionId);
+
+            //when
+            await
+                _syncServer.DataObjects.RemoveParent(TestData.ProjectId, child.Id, parent.Id,
+                    TestData.SubscriptionCollectionId);
+            await WaitForNotifications();
+
+            //cleanup
+            await
+                _syncSubscriber.RealTimeSync.UnsubscribeCollection(TestData.ProjectId,
+                    collectionId: TestData.SubscriptionCollectionId);
+            await
+                _syncServer.DataObjects.Delete(new DataObjectSimpleQueryRequest()
+                {
+                    ProjectId = TestData.ProjectId,
+                    CollectionId = TestData.SubscriptionCollectionId
+                });
+
+            //then
+            relationNotification.ShouldNotBeNull();
+            relationNotification.Type.ShouldEqual(NotificationType.Delete);
+            relationNotification.Object.ShouldEqual(NotificationObject.DataRelation);
+            relationNotification.Target.ParentId.ShouldEqual(parent.Id);
+            relationNotification.Target.ChildId.ShouldEqual(child.Id);
+        }
+
+        [Fact]
+        public async Task DataRelationNotification_IsRecievedOnRemovingRelation_RemoveMultipleChildren()
+        {
+            //given
+            DataRelationNotification relationNotification = null;
+            await
+                _syncSubscriber.RealTimeSync.SubscribeCollection(TestData.ProjectId,
+                    collectionId: TestData.SubscriptionCollectionId);
+            _syncSubscriber.DataRelationObservable.Subscribe(m => relationNotification = m);
+
+            var parent = await _syncServer.DataObjects.New(new DataObjectDefinitionRequest()
+            {
+                ProjectId = TestData.ProjectId,
+                CollectionId = TestData.SubscriptionCollectionId,
+                Title = "parent",
+            });
+            var childOne = await _syncServer.DataObjects.New(new DataObjectDefinitionRequest()
+            {
+                ProjectId = TestData.ProjectId,
+                CollectionId = TestData.SubscriptionCollectionId,
+                Title = "child",
+                ParentId = parent.Id
+            });
+
+            var childTwo = await _syncServer.DataObjects.New(new DataObjectDefinitionRequest()
+            {
+                ProjectId = TestData.ProjectId,
+                CollectionId = TestData.SubscriptionCollectionId,
+                Title = "child",
+                ParentId = parent.Id
+            });
+
+            //when
+            await
+                _syncServer.DataObjects.RemoveChild(TestData.ProjectId, parent.Id, null,
+                    collectionId: TestData.SubscriptionCollectionId);
+            await WaitForNotifications();
+
+            //cleanup
+            await
+                _syncSubscriber.RealTimeSync.UnsubscribeCollection(TestData.ProjectId,
+                    collectionId: TestData.SubscriptionCollectionId);
+            await
+                _syncServer.DataObjects.Delete(new DataObjectSimpleQueryRequest()
+                {
+                    ProjectId = TestData.ProjectId,
+                    CollectionId = TestData.SubscriptionCollectionId
+                });
+
+            //then
+            relationNotification.ShouldNotBeNull();
+            relationNotification.Type.ShouldEqual(NotificationType.Delete);
+            relationNotification.Object.ShouldEqual(NotificationObject.DataRelation);
+            relationNotification.Target.ParentId.ShouldEqual(parent.Id);
+            relationNotification.Target.ChildId.ShouldBeNull();
         }
 
         [Fact]

@@ -521,11 +521,11 @@ namespace Syncano.Net.Api
         /// </summary>
         /// <param name="projectId">Project id.</param>
         /// <param name="dataId">Data Object id.</param>
-        /// <param name="childId">Parent id to remove. If not specified, will remove all Data Object children.</param>
+        /// <param name="childId">Child id to remove. If not specified, will remove all Data Object children.</param>
         /// <param name="collectionId">Collection id defining collection containing data.</param>
         /// <param name="collectionKey">Collection key defining collection containing data.</param>
         /// <returns>Boolen value indicating success of method.</returns>
-        public Task<bool> RemoveChild(string projectId, string dataId, string childId, string collectionId = null,
+        public Task<bool> RemoveChild(string projectId, string dataId, string childId = null, string collectionId = null,
             string collectionKey = null)
         {
             if (projectId == null)
@@ -534,7 +534,7 @@ namespace Syncano.Net.Api
             if (collectionId == null && collectionKey == null)
                 throw new ArgumentNullException();
 
-            if (dataId == null || childId == null)
+            if (dataId == null)
                 throw new ArgumentNullException();
 
             return _syncanoClient.GetAsync("data.remove_child",
