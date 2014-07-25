@@ -74,11 +74,8 @@
     <Compile Include="Notifications\BaseNotification.cs" />
     <Compile Include="Notifications\ChangeDataNotification.cs" />
     <Compile Include="Notifications\DeleteDataNotification.cs" />
-    <Compile Include="Notifications\NotificationBody.cs" />
     <Compile Include="Notifications\DataRelationNotification.cs" />
-    <Compile Include="Notifications\DataRelationNotificationMessage.cs" />
     <Compile Include="Notifications\NewDataNotification.cs" />
-    <Compile Include="Notifications\NotificationMessage.cs" />
     <Compile Include="Notifications\NotificationObjectEnum.cs" />
     <Compile Include="Notifications\NotificationTypeEnum.cs" />
     <Compile Include="Notifications\Target.cs" />

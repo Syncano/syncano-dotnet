@@ -6,13 +6,15 @@ namespace SyncanoSyncServer.Net.Notifications
     public enum NotificationObject
     {
         Data,
-        DataRelation
+        DataRelation,
+        Me
     }
 
     public class NotificationObjectEnumStringConverter
     {
         private const string DataString = "data";
         private const string DataRelationString = "datarelation";
+        private const string MeString = "me";
 
         public static string GetString(NotificationObject value)
         {
@@ -23,6 +25,9 @@ namespace SyncanoSyncServer.Net.Notifications
 
                 case NotificationObject.DataRelation:
                     return DataRelationString;
+
+                case NotificationObject.Me:
+                    return MeString;
 
                 default:
                     throw new ArgumentException("Unknown NotificationObject value.");
@@ -38,6 +43,9 @@ namespace SyncanoSyncServer.Net.Notifications
 
                 case DataRelationString:
                     return NotificationObject.DataRelation;
+
+                case MeString:
+                    return NotificationObject.Me;
 
                 default:
                     throw new ArgumentException("Unknown NotificationObject string value.");

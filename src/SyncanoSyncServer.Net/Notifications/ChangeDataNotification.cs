@@ -5,13 +5,16 @@ namespace SyncanoSyncServer.Net.Notifications
 {
     public class ChangeDataNotification
     {
+        [JsonProperty("target")]
+        public Target Target { get; set; }
+
         [JsonProperty("add")]
         public Dictionary<string, string> Add { get; set; }
 
         [JsonProperty("replace")]
         public Dictionary<string, string> Replace { get; set; }
 
-        [JsonProperty]
+        [JsonProperty("delete")]
         public List<string> Delete { get; set; }
         
         [JsonProperty("additional")]

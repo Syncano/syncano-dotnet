@@ -283,6 +283,7 @@ namespace Syncano.Net.Tests
 
             //then
             changeDataNotification.ShouldNotBeNull();
+            changeDataNotification.Target.ShouldNotBeNull();
 
             //cleanup
             await
