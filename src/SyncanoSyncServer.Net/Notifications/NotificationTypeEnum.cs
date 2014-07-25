@@ -9,7 +9,8 @@ namespace SyncanoSyncServer.Net.Notifications
         New,
         Change,
         Delete,
-        Message
+        Message,
+        Authorization
     }
 
     public class NotificationTypeEnumStringConverter
@@ -18,6 +19,7 @@ namespace SyncanoSyncServer.Net.Notifications
         private const string ChangeString = "change";
         private const string DeleteString = "delete";
         private const string MessageString = "message";
+        private const string AuthString = "auth";
 
         public static string GetString(NotificationType type)
         {
@@ -34,6 +36,9 @@ namespace SyncanoSyncServer.Net.Notifications
 
                 case NotificationType.Message:
                     return MessageString;
+
+                case NotificationType.Authorization:
+                    return AuthString;
 
                 default:
                     throw new ArgumentException("Unknown NotificationType value.");
@@ -55,6 +60,9 @@ namespace SyncanoSyncServer.Net.Notifications
 
                 case MessageString:
                     return NotificationType.Message;
+
+                case AuthString:
+                    return NotificationType.Authorization;
 
                 default:
                     throw new ArgumentException("Unknown NotificationType string value.");

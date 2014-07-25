@@ -691,7 +691,7 @@ namespace Syncano.Net.Tests
         public async Task NotificationSend_WithAdditionals()
         {
             //given
-            var additionals = new Dictionary<string, string>();
+            var additionals = new Dictionary<string, object>();
             additionals.Add("key", "value");
 
             //when

@@ -25,6 +25,16 @@ namespace SyncanoSyncServer.Net
         public IObservable<ChangeDataNotification> ChangeDataObservable { get
         {
             return _syncClient.ChangeDataNotificationObservable;
+        } }
+
+        public IObservable<DataRelationNotification> DataRelationObservable { get
+        {
+            return _syncClient.DataRelationNotificationObservable;
+        } }
+
+        public IObservable<GenericNotification> GenericNotificationObservable { get
+        {
+            return _syncClient.GenericNotificationObservable;
         } } 
 
         public SyncServer(string instanceName, string api)

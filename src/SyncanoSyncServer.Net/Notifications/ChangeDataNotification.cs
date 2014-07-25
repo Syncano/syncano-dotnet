@@ -6,7 +6,7 @@ namespace SyncanoSyncServer.Net.Notifications
     public class ChangeDataNotification
     {
         [JsonProperty("target")]
-        public Target Target { get; set; }
+        public DataTarget Target { get; set; }
 
         [JsonProperty("add")]
         public Dictionary<string, string> Add { get; set; }

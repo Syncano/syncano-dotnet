@@ -128,7 +128,7 @@ namespace SyncanoSyncServer.Net
         /// <param name="uuid">UUID of specified API client's connection. If not specified, will send a broadcast to all specified API client's connections.</param>
         /// <param name="additional">Any number of additional parameters will be sent as well into data structure.</param>
         /// <returns>Boolen value indicating success of method.</returns>
-        public Task<bool> SendNotification(string apiClientId = null, string uuid = null, Dictionary<string, string> additional = null)
+        public Task<bool> SendNotification(string apiClientId = null, string uuid = null, Dictionary<string, object> additional = null)
         {
             return _syncanoClient.GetAsync("notification.send", new {api_client_id = apiClientId, uuid, additional});
         }

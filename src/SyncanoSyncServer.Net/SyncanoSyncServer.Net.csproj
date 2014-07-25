@@ -75,10 +75,12 @@
     <Compile Include="Notifications\ChangeDataNotification.cs" />
     <Compile Include="Notifications\DeleteDataNotification.cs" />
     <Compile Include="Notifications\DataRelationNotification.cs" />
+    <Compile Include="Notifications\GenericNotification.cs" />
     <Compile Include="Notifications\NewDataNotification.cs" />
     <Compile Include="Notifications\NotificationObjectEnum.cs" />
     <Compile Include="Notifications\NotificationTypeEnum.cs" />
-    <Compile Include="Notifications\Target.cs" />
+    <Compile Include="Notifications\DataTarget.cs" />
+    <Compile Include="Notifications\RelationTarget.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RealTimeSyncSyncanoClient.cs" />
     <Compile Include="Source.cs" />

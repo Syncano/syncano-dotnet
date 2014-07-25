@@ -33,6 +33,8 @@ namespace SyncanoSyncServer.Net
         private Subject<NewDataNotification> _newDataNotificationObservable = new Subject<NewDataNotification>();
         private Subject<DeleteDataNotification> _deleteDataNotificationObservable = new Subject<DeleteDataNotification>();
         private Subject<ChangeDataNotification> _changeDataNotificationObservable = new Subject<ChangeDataNotification>();
+        private Subject<DataRelationNotification> _dataRelationNotificationObservable = new Subject<DataRelationNotification>();
+        private Subject<GenericNotification> _genericNotificationObservable = new Subject<GenericNotification>();
 
         public IObservable<NewDataNotification> NewDataNotificationObservable
         {
@@ -47,6 +49,16 @@ namespace SyncanoSyncServer.Net
         public IObservable<ChangeDataNotification> ChangeDataNotificationObservable
         {
             get { return _changeDataNotificationObservable; }
+        }
+
+        public IObservable<DataRelationNotification> DataRelationNotificationObservable
+        {
+            get { return _dataRelationNotificationObservable; }
+        }
+
+        public IObservable<GenericNotification> GenericNotificationObservable
+        {
+            get { return _genericNotificationObservable; }
         }
 
         public bool IsConnected
@@ -76,6 +88,10 @@ namespace SyncanoSyncServer.Net
         private Regex _deleteNotificationRegex = new Regex("\"type\":\"delete\"");
         private Regex _changeNotificationRegex = new Regex("\"type\":\"change\"");
 
+        private Regex _dataNotificationRegex = new Regex("\"object\":\"data\"");
+        private Regex _dataRelationNotificationRegex = new Regex("\"object\":\"datarelation\"");
+        private Regex _genericNotificationRegex = new Regex("\"object\":\"me\"");
+
         private void OnNewMessage(string message)
         {
             Debug.WriteLine(message);
@@ -83,14 +99,26 @@ namespace SyncanoSyncServer.Net
             if (_callResponseRegex.IsMatch(message))
                 return;
 
-            if (_newNotificationRegex.IsMatch(message))
-                _newDataNotificationObservable.OnNext(JsonConvert.DeserializeObject<NewDataNotification>(message));
+            if (_dataNotificationRegex.IsMatch(message))
+            {
+                if (_newNotificationRegex.IsMatch(message))
+                    _newDataNotificationObservable.OnNext(JsonConvert.DeserializeObject<NewDataNotification>(message));
 
-            if (_deleteNotificationRegex.IsMatch(message))
-                _deleteDataNotificationObservable.OnNext(JsonConvert.DeserializeObject<DeleteDataNotification>(message));
+                if (_deleteNotificationRegex.IsMatch(message))
+                    _deleteDataNotificationObservable.OnNext(
+                        JsonConvert.DeserializeObject<DeleteDataNotification>(message));
 
-            if (_changeNotificationRegex.IsMatch(message))
-                _changeDataNotificationObservable.OnNext(JsonConvert.DeserializeObject<ChangeDataNotification>(message));
+                if (_changeNotificationRegex.IsMatch(message))
+                    _changeDataNotificationObservable.OnNext(
+                        JsonConvert.DeserializeObject<ChangeDataNotification>(message));
+            }else if (_dataRelationNotificationRegex.IsMatch(message))
+            {
+                _dataRelationNotificationObservable.OnNext(
+                    JsonConvert.DeserializeObject<DataRelationNotification>(message));
+            }else if (_genericNotificationRegex.IsMatch(message))
+            {
+                _genericNotificationObservable.OnNext(JsonConvert.DeserializeObject<GenericNotification>(message));
+            }
         }
 
 
@@ -225,15 +253,15 @@ namespace SyncanoSyncServer.Net
                         if (eachProperty.GetValue(parameters).GetType().IsConstructedGenericType &&
                             eachProperty.GetValue(parameters).GetType().GetGenericTypeDefinition() == typeof (Dictionary<,>))
                         {
-                            try
+                            if (eachProperty.GetValue(parameters) is Dictionary<string, string>)
                             {
-                                var dictionary = (Dictionary<string, string>) eachProperty.GetValue(parameters);
+                                var dictionary = (Dictionary<string, string>)eachProperty.GetValue(parameters);
                                 foreach (var item in dictionary)
                                     request.Params.Add(item.Key, item.Value);
                             }
-                            catch (Exception)
+                            else
                             {
-                                var dictionary = (Dictionary<string, object>) eachProperty.GetValue(parameters);
+                                var dictionary = (Dictionary<string, object>)eachProperty.GetValue(parameters);
                                 foreach (var item in dictionary)
                                     request.Params.Add(item.Key, item.Value);
                             }

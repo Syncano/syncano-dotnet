@@ -296,5 +296,129 @@ namespace Syncano.Net.Tests
                     CollectionId = TestData.SubscriptionCollectionId
                 });
         }
+
+        [Fact]
+        public async Task DataRelationNotification_IsRecievedOnCreatingRelation_ByAddChild()
+        {
+            //given
+            DataRelationNotification relationNotification = null;
+            await
+                _syncSubscriber.RealTimeSync.SubscribeCollection(TestData.ProjectId,
+                    collectionId: TestData.SubscriptionCollectionId);
+            _syncSubscriber.DataRelationObservable.Subscribe(m => relationNotification = m);
+
+            var child = await _syncServer.DataObjects.New(new DataObjectDefinitionRequest()
+            {
+                ProjectId = TestData.ProjectId,
+                CollectionId = TestData.SubscriptionCollectionId,
+                Title = "child",
+            });
+
+            var parent = await _syncServer.DataObjects.New(new DataObjectDefinitionRequest()
+            {
+                ProjectId = TestData.ProjectId,
+                CollectionId = TestData.SubscriptionCollectionId,
+                Title = "parent",
+            });
+
+            //when
+            await _syncServer.DataObjects.AddChild(TestData.ProjectId, parent.Id, child.Id, TestData.SubscriptionCollectionId);
+            await WaitForNotifications();
+
+            //cleanup
+            await
+                _syncSubscriber.RealTimeSync.UnsubscribeCollection(TestData.ProjectId,
+                    collectionId: TestData.SubscriptionCollectionId);
+            await
+                _syncServer.DataObjects.Delete(new DataObjectSimpleQueryRequest()
+                {
+                    ProjectId = TestData.ProjectId,
+                    CollectionId = TestData.SubscriptionCollectionId
+                });
+
+            //then
+            relationNotification.ShouldNotBeNull();
+            relationNotification.Type.ShouldEqual(NotificationType.New);
+            relationNotification.Object.ShouldEqual(NotificationObject.DataRelation);
+        }
+
+        [Fact]
+        public async Task DataRelationNotification_IsRecievedOnCreatingRelation_ByAddParent()
+        {
+            //given
+            DataRelationNotification relationNotification = null;
+            await
+                _syncSubscriber.RealTimeSync.SubscribeCollection(TestData.ProjectId,
+                    collectionId: TestData.SubscriptionCollectionId);
+            _syncSubscriber.DataRelationObservable.Subscribe(m => relationNotification = m);
+
+            var child = await _syncServer.DataObjects.New(new DataObjectDefinitionRequest()
+            {
+                ProjectId = TestData.ProjectId,
+                CollectionId = TestData.SubscriptionCollectionId,
+                Title = "child",
+            });
+
+            var parent = await _syncServer.DataObjects.New(new DataObjectDefinitionRequest()
+            {
+                ProjectId = TestData.ProjectId,
+                CollectionId = TestData.SubscriptionCollectionId,
+                Title = "parent",
+            });
+
+            //when
+            await _syncServer.DataObjects.AddParent(TestData.ProjectId, child.Id, parent.Id, TestData.SubscriptionCollectionId);
+            await WaitForNotifications();
+
+            //cleanup
+            await
+                _syncSubscriber.RealTimeSync.UnsubscribeCollection(TestData.ProjectId,
+                    collectionId: TestData.SubscriptionCollectionId);
+            await
+                _syncServer.DataObjects.Delete(new DataObjectSimpleQueryRequest()
+                {
+                    ProjectId = TestData.ProjectId,
+                    CollectionId = TestData.SubscriptionCollectionId
+                });
+
+            //then
+            relationNotification.ShouldNotBeNull();
+            relationNotification.Type.ShouldEqual(NotificationType.New);
+            relationNotification.Object.ShouldEqual(NotificationObject.DataRelation);
+        }
+
+        [Fact]
+        public async Task GenericNotification_IsRecieved()
+        {
+            //given
+            var genericNotifications = new List<GenericNotification>();
+            _syncSubscriber.GenericNotificationObservable.Subscribe(genericNotifications.Add);
+
+            //when
+            await _syncServer.RealTimeSync.SendNotification();
+            await WaitForNotifications();
+
+            //then
+            genericNotifications.ShouldNotBeEmpty();
+        }
+
+        [Fact]
+        public async Task GenericNotification_IsRecieved_WithAdditionals()
+        {
+            //given
+            var additionals = new Dictionary<string, object>();
+            additionals.Add("key1", "value1");
+            additionals.Add("key2", new object());
+            additionals.Add("key3", 123);
+            var genericNotifications = new List<GenericNotification>();
+            _syncSubscriber.GenericNotificationObservable.Subscribe(genericNotifications.Add);
+
+            //when
+            await _syncServer.RealTimeSync.SendNotification(additional: additionals);
+            await WaitForNotifications();
+
+            //then
+            genericNotifications.ShouldNotBeEmpty();
+        }
     }
 }

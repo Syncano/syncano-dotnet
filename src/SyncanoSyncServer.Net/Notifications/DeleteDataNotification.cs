@@ -6,6 +6,6 @@ namespace SyncanoSyncServer.Net.Notifications
     public class DeleteDataNotification : BaseNotification
     {
         [JsonProperty("target")]
-        public Target Target { get; set; }
+        public DataTarget Target { get; set; }
     }
 }
