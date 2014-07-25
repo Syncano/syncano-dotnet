@@ -203,7 +203,9 @@ namespace SyncanoSyncServer.Net
                 ).ToTask();
 
 
-            SendRequestAsync(request);
+            var task = SendRequestAsync(request);
+            if (task.Exception != null)
+                throw task.Exception.InnerException;
             
             return t;
         }

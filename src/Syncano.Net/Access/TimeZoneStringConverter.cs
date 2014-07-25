@@ -126,6 +126,9 @@ namespace Syncano.Net.Access
         /// <returns>String object.</returns>
         public string GetString(TimeZoneInfo timeZone)
         {
+            if (timeZone == null)
+                return null;
+
             if(timeZone == TimeZoneInfo.Utc)
                 return "Etc/UTC";
 
