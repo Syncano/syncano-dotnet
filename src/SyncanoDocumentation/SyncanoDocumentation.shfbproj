@@ -37,6 +37,16 @@
       <DocumentationSource sourceFile="..\Syncano.Net\Syncano.Net.csproj" />
     </DocumentationSources>
     <MissingTags>AutoDocumentCtors, AutoDocumentDispose</MissingTags>
+    <PlugInConfigurations>
+      <PlugInConfig id="Version Builder" enabled="True">
+        <configuration>
+          <currentProject label="Portable" version="1" ripOldApis="False" />
+          <versions>
+            <version label=" " version="1.0" helpFileProject="..\SyncServerDocumentation\SyncServerDocumentation.shfbproj" />
+          </versions>
+        </configuration>
+      </PlugInConfig>
+    </PlugInConfigurations>
   </PropertyGroup>
   <!-- There are no properties for these groups.  AnyCPU needs to appear in order for Visual Studio to perform
 			 the build.  The others are optional common platform types that may appear. -->

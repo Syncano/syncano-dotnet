@@ -73,6 +73,13 @@
   <ItemGroup>
     <Content Include="icons\Help.png" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SyncanoDocumentation\SyncanoDocumentation.shfbproj">
+      <Name>SyncanoDocumentation</Name>
+      <Project>{5b8a4a40-8d1f-422d-8a24-bf4422c3ffb1}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
   <!-- Import the SHFB build targets -->
   <Import Project="$(SHFBROOT)\SandcastleHelpFileBuilder.targets" />
 </Project>
