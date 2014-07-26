@@ -13,6 +13,8 @@ Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "SyncanoDocumentation", "Syn
 EndProject
 Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "SyncServerDocumentation", "SyncServerDocumentation\SyncServerDocumentation.shfbproj", "{DC2AEF3D-658C-4E76-A892-46927A58F68B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWpfApplication", "SampleWpfApplication\SampleWpfApplication.csproj", "{AB2F8160-1FE8-4F45-9515-110CC301A5DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{DC2AEF3D-658C-4E76-A892-46927A58F68B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC2AEF3D-658C-4E76-A892-46927A58F68B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC2AEF3D-658C-4E76-A892-46927A58F68B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB2F8160-1FE8-4F45-9515-110CC301A5DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB2F8160-1FE8-4F45-9515-110CC301A5DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB2F8160-1FE8-4F45-9515-110CC301A5DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB2F8160-1FE8-4F45-9515-110CC301A5DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
