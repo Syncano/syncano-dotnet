@@ -20,11 +20,17 @@ using SyncanoSyncServer.Net.Notifications;
 
 namespace SyncanoSyncServer.Net
 {
+    /// <summary>
+    /// Class may be used to connect to Syncano Sync Server over Tcp.
+    /// </summary>
     public class SyncServerClient : IDisposable, ISyncanoClient
     {
         private ReactiveClient _client;
         private Subject<string> _messagesObservable = new Subject<string>();
 
+        /// <summary>
+        /// Observable where you can subscribe on incoming messages as string objects.
+        /// </summary>
         public IObservable<string> MessagesObservable
         {
             get { return _messagesObservable; }
@@ -36,31 +42,49 @@ namespace SyncanoSyncServer.Net
         private Subject<DataRelationNotification> _dataRelationNotificationObservable = new Subject<DataRelationNotification>();
         private Subject<GenericNotification> _genericNotificationObservable = new Subject<GenericNotification>();
 
+        /// <summary>
+        /// Observable providing notifications about new DataObjects in Syncano Instance.
+        /// </summary>
         public IObservable<NewDataNotification> NewDataNotificationObservable
         {
             get { return _newDataNotificationObservable; }
         }
 
+        /// <summary>
+        /// Observable providing notifications about deleted DataObjects in Syncano Instance.
+        /// </summary>
         public IObservable<DeleteDataNotification> DeleteDataNotificationObservable
         {
             get { return _deleteDataNotificationObservable; }
         }
 
+        /// <summary>
+        /// Observable providing notifications about modified DataObjects in Syncano Instance.
+        /// </summary>
         public IObservable<ChangeDataNotification> ChangeDataNotificationObservable
         {
             get { return _changeDataNotificationObservable; }
         }
 
+        /// <summary>
+        /// Observable providing notifications about DataObjects relations in Syncano Instance.
+        /// </summary>
         public IObservable<DataRelationNotification> DataRelationNotificationObservable
         {
             get { return _dataRelationNotificationObservable; }
         }
 
+        /// <summary>
+        /// Observable providing some generic notifications about Syncano Instance (ex. new server logged in or custom notification send by other user).
+        /// </summary>
         public IObservable<GenericNotification> GenericNotificationObservable
         {
             get { return _genericNotificationObservable; }
         }
 
+        /// <summary>
+        /// Boolen value with information about connection status. True means that SyncServer object is connected with Syncano Sync Server.
+        /// </summary>
         public bool IsConnected
         {
             get { return _client.IsConnected && _isAuthenticated; }
@@ -69,6 +93,9 @@ namespace SyncanoSyncServer.Net
         private ConcurrentStack<byte> _messageByteStack = new ConcurrentStack<byte>();
         private static long _currentMessageId;
 
+        /// <summary>
+        /// Creates SyncServerClient client object.
+        /// </summary>
         public SyncServerClient()
         {
             _client = new ReactiveClient("api.syncano.com", 8200, stream =>
@@ -146,20 +173,32 @@ namespace SyncanoSyncServer.Net
             return newByte == 10;
         }
 
+        /// <summary>
+        /// Connects SyncServerClient to Syncano SyncServer.
+        /// </summary>
+        /// <returns>Task performing connection operation.</returns>
         public Task Connect()
         {
             return _client.ConnectAsync();
         }
 
+        /// <summary>
+        /// Disconnects SyncServerClient form Syncano Sync Server.
+        /// </summary>
         public void Disconnect()
         {
             _client.Disconnect();
         }
 
-
+        /// <summary>
+        /// Logs in to specified Syncano Instance over specified ApiKey.
+        /// </summary>
+        /// <param name="apiKey">Api Key of Syncano Instance (user or backend).</param>
+        /// <param name="instanceName">Name of Syncano Instance.</param>
+        /// <returns>Task performing login operation and returning LoginResult object.</returns>
         public Task<LoginResult> Login(string apiKey, string instanceName)
         {
-            var request = new LoginRequest() {InstanceName = instanceName, ApiKey = apiKey};
+            var request = new LoginRequest {InstanceName = instanceName, ApiKey = apiKey};
 
             var t = _messagesObservable.FirstAsync().Select(ToLoginResult)
                 .FirstAsync().Timeout(TimeSpan.FromSeconds(10))
@@ -316,7 +355,9 @@ namespace SyncanoSyncServer.Net
             return messageBytes;
         }
 
-
+        /// <summary>
+        /// Disposes SyncServerCLient object.
+        /// </summary>
         public void Dispose()
         {
             _isDisposing = true;
@@ -333,23 +374,52 @@ namespace SyncanoSyncServer.Net
             }
         }
 
+        /// <summary>
+        /// Method of sending messages to Syncano.
+        /// </summary>
+        /// <param name="methodName">Name of Syncano Rest Api method.</param>
+        /// <param name="parameters">Object containg proper parameters.</param>
+        /// <returns>Boolean value indicating operation success.</returns>
         public Task<bool> GetAsync(string methodName, object parameters)
         {
             var request = CreateCommandRequest(methodName, parameters);
             return SendCommandAsync<bool>(request, jo => jo.SelectToken("result").Value<string>() == "OK");
         }
 
+        /// <summary>
+        /// Method of sending messages to Syncano.
+        /// </summary>
+        /// <typeparam name="T">Type to retrieve from Syncano.</typeparam>
+        /// <param name="methodName">Name of Syncano Rest Api method.</param>
+        /// <param name="contentToken">Token of response message marking object to retrieve.</param>
+        /// <returns>Retrived object.</returns>
         public Task<T> GetAsync<T>(string methodName, string contentToken)
         {
             return GetAsync<T>(methodName, null, contentToken);
         }
 
+        /// <summary>
+        /// Method of sending messages to Syncano.
+        /// </summary>
+        /// <typeparam name="T">Type to retrieve from Syncano.</typeparam>
+        /// <param name="methodName">Name of Syncano Rest Api method.</param>
+        /// <param name="parameters">Object containg proper parameters.</param>
+        /// <param name="contentToken">Token of response message marking object to retrieve.</param>
+        /// <returns>Retrived object.</returns>
         public Task<T> GetAsync<T>(string methodName, object parameters, string contentToken)
         {
             var request = CreateCommandRequest(methodName, parameters);
             return SendCommandAsync<T>(request, contentToken);
         }
 
+        /// <summary>
+        /// Method of posting messages to Syncano.
+        /// </summary>
+        /// <typeparam name="T">Type to retrieve from Syncano.</typeparam>
+        /// <param name="methodName">Name of Syncano Rest Api method.</param>
+        /// <param name="parameters">Object containg proper parameters.</param>
+        /// <param name="contentToken">Token of response message marking object to retrieve.</param>
+        /// <returns>Retrived object.</returns>
         public Task<T> PostAsync<T>(string methodName, object parameters, string contentToken)
         {
             return GetAsync<T>(methodName, parameters, contentToken);

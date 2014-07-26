@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using SyncanoSyncServer.Net.Notifications;
 
-namespace SyncanoSyncServer.Net
+namespace SyncanoSyncServer.Net.RealTimeSyncApi
 {
     /// <summary>
     /// History object.

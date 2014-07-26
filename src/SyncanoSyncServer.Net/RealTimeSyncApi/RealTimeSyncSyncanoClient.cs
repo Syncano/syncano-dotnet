@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Syncano.Net;
 using Syncano.Net.Data;
 
-namespace SyncanoSyncServer.Net
+namespace SyncanoSyncServer.Net.RealTimeSyncApi
 {
     public class RealTimeSyncSyncanoClient
     {

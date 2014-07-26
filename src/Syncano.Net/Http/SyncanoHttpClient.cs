@@ -161,14 +161,5 @@ namespace Syncano.Net.Http
 
             return true;
         }
-
-        public async Task<bool> PostAsync(string methodName, object parameters)
-        {
-            var content = CreatePostContent(parameters);
-            var response = await _client.PostAsync(CreateBaseUri(methodName), content);
-            var json = CheckResponseStatus(await response.Content.ReadAsStringAsync());
-
-            return true;
-        }
     }
 }

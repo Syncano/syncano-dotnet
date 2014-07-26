@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace SyncanoSyncServer.Net
+namespace SyncanoSyncServer.Net.RealTimeSyncApi
 {
     /// <summary>
     /// Context to subscribe within.
@@ -24,6 +24,9 @@ namespace SyncanoSyncServer.Net
         Connection
     }
 
+    /// <summary>
+    /// Class converting Context objects to string ant the other way.
+    /// </summary>
     public class ContextEnumStringConverter
     {
         private const string ClientString = "client";
@@ -67,6 +70,9 @@ namespace SyncanoSyncServer.Net
         }
     }
 
+    /// <summary>
+    /// Class serializing Context objects to JSON format.
+    /// </summary>
     public class ContextEnumJsonConverter : JsonConverter
     {
 

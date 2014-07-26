@@ -3,25 +3,45 @@ using Newtonsoft.Json;
 
 namespace SyncanoSyncServer.Net
 {
+    /// <summary>
+    /// Request for Syncano Api Command.
+    /// </summary>
     public class ApiCommandRequest : ISyncanoRequest
     {
+        /// <summary>
+        /// Creates ApiCommandRequest object.
+        /// </summary>
+        /// <param name="method">Method.</param>
+        /// <param name="messageId">Message Id.</param>
         public ApiCommandRequest(string method, long messageId)
         {
             Type = "call";
-            this.Method = method;
+            Method = method;
             MessageId = messageId;
-            this.Params = new Dictionary<string, object>();
+            Params = new Dictionary<string, object>();
         }
 
+        /// <summary>
+        /// Type.
+        /// </summary>
         [JsonProperty("type")]
         public string Type { get; set; }
 
+        /// <summary>
+        /// Method.
+        /// </summary>
         [JsonProperty("method")]
         public string Method { get; set; }
 
+        /// <summary>
+        /// Parameters of request.
+        /// </summary>
         [JsonProperty("params")]
         public Dictionary<string, object> Params { get; set; }
 
+        /// <summary>
+        /// Message Id.
+        /// </summary>
         [JsonProperty("message_id")]
         public long MessageId { get; set; }
     }

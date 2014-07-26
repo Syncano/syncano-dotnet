@@ -1,22 +1,22 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using SyncanoSyncServer.Net.Notifications;
 
 namespace SyncanoSyncServer.Net
 {
-    public class LoginResponse
+    /// <summary>
+    /// Response to login request.
+    /// </summary>
+    public class LoginResponse : BaseNotification
     {
-        [JsonProperty("timestamp")]
-        public DateTime Timestamp { get; set; }
-
-        [JsonProperty("object")]
-        public string Object { get; set; }
-
-        [JsonProperty("type")]
-        public string Type { get; set; }
-
+        /// <summary>
+        /// Unique id of connection.
+        /// </summary>
         [JsonProperty("uuid")]
         public string Uuid { get; set; }
 
+        /// <summary>
+        /// Result of login operation.
+        /// </summary>
         [JsonProperty("result")]
         public string Result { get; set; }
         

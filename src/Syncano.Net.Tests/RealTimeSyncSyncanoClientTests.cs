@@ -6,6 +6,7 @@ using Should;
 using Should.Core.Exceptions;
 using Syncano.Net.Data;
 using SyncanoSyncServer.Net;
+using SyncanoSyncServer.Net.RealTimeSyncApi;
 using Xunit;
 
 namespace Syncano.Net.Tests

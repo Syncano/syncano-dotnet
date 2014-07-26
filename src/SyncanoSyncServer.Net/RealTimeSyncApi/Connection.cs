@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace SyncanoSyncServer.Net
+namespace SyncanoSyncServer.Net.RealTimeSyncApi
 {
     /// <summary>
     /// Connections provide a way to distinguish between multiple Sync Server connections within one API key. They are uniquely defined by UUID. Each Connection can also be provided with a name and a state, which can help create stateful clients that are externally controlled or monitored.

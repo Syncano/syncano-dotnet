@@ -1,15 +1,28 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace SyncanoSyncServer.Net
+namespace SyncanoSyncServer.Net.RealTimeSyncApi
 {
+    /// <summary>
+    /// Sources of connections.
+    /// </summary>
     public enum Source
     {
+        /// <summary>
+        /// Tcp source.
+        /// </summary>
         Tcp,
+
+        /// <summary>
+        /// Web socket source.
+        /// </summary>
         WebSocket
     }
 
-    public class SourceEnumStringConverter
+    /// <summary>
+    /// Class convertinf Source objects to string and the other way.
+    /// </summary>
+    public static class SourceEnumStringConverter
     {
         private const string TcpString = "TCP";
         private const string WebSocketString = "WebSocket";
@@ -45,6 +58,9 @@ namespace SyncanoSyncServer.Net
         }
     }
 
+    /// <summary>
+    /// Class serializing Source objects to JSON format.
+    /// </summary>
     public class SourceEnumJsonConverter : JsonConverter
     {
 

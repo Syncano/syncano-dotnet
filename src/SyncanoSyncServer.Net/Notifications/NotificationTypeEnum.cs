@@ -1,19 +1,43 @@
-﻿
-using System;
+﻿using System;
 using Newtonsoft.Json;
 
 namespace SyncanoSyncServer.Net.Notifications
 {
+    /// <summary>
+    /// Types of notifications.
+    /// </summary>
     public enum NotificationType
     {
+        /// <summary>
+        /// New object or relation.
+        /// </summary>
         New,
+
+        /// <summary>
+        /// Changed object.
+        /// </summary>
         Change,
+
+        /// <summary>
+        /// Removed object or relation.
+        /// </summary>
         Delete,
+
+        /// <summary>
+        /// Information.
+        /// </summary>
         Message,
+
+        /// <summary>
+        /// Server login.
+        /// </summary>
         Authorization
     }
 
-    public class NotificationTypeEnumStringConverter
+    /// <summary>
+    /// Class converts NotificationTypes to String and the other way.
+    /// </summary>
+    public static class NotificationTypeEnumStringConverter
     {
         private const string NewString = "new";
         private const string ChangeString = "change";
@@ -21,6 +45,11 @@ namespace SyncanoSyncServer.Net.Notifications
         private const string MessageString = "message";
         private const string AuthString = "auth";
 
+        /// <summary>
+        /// Converts to string.
+        /// </summary>
+        /// <param name="type">NotificationType object.</param>
+        /// <returns>Coresponding string value.</returns>
         public static string GetString(NotificationType type)
         {
             switch (type)
@@ -37,14 +66,16 @@ namespace SyncanoSyncServer.Net.Notifications
                 case NotificationType.Message:
                     return MessageString;
 
-                case NotificationType.Authorization:
-                    return AuthString;
-
                 default:
-                    throw new ArgumentException("Unknown NotificationType value.");
+                    return AuthString;
             }
         }
 
+        /// <summary>
+        /// Converts to NotificationType.
+        /// </summary>
+        /// <param name="value">String object.</param>
+        /// <returns>Corresponding NotificationType.</returns>
         public static NotificationType GetNotificationType(string value)
         {
             switch (value)
@@ -61,18 +92,17 @@ namespace SyncanoSyncServer.Net.Notifications
                 case MessageString:
                     return NotificationType.Message;
 
-                case AuthString:
-                    return NotificationType.Authorization;
-
                 default:
-                    throw new ArgumentException("Unknown NotificationType string value.");
+                    return NotificationType.Authorization;
             }
         }
     }
 
+    /// <summary>
+    /// Class serializes NotificationTypes to JSON format.
+    /// </summary>
     public class NotificationTypeEnumJsonConverter : JsonConverter
     {
-
         public override bool CanConvert(Type objectType)
         {
             return objectType == typeof(string);

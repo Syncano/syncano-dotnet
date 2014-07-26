@@ -3,19 +3,41 @@ using Newtonsoft.Json;
 
 namespace SyncanoSyncServer.Net.Notifications
 {
+    /// <summary>
+    /// Objects of notifications.
+    /// </summary>
     public enum NotificationObject
     {
+        /// <summary>
+        /// DataObject.
+        /// </summary>
         Data,
+
+        /// <summary>
+        /// DataObjects relation.
+        /// </summary>
         DataRelation,
+
+        /// <summary>
+        /// Generic notification.
+        /// </summary>
         Me
     }
 
-    public class NotificationObjectEnumStringConverter
+    /// <summary>
+    /// Class converts NotificationObject to String and the other way.
+    /// </summary>
+    public static class NotificationObjectEnumStringConverter
     {
         private const string DataString = "data";
         private const string DataRelationString = "datarelation";
         private const string MeString = "me";
 
+        /// <summary>
+        /// Converts to string.
+        /// </summary>
+        /// <param name="value">NotificationObject object.</param>
+        /// <returns>Coresponding string value.</returns>
         public static string GetString(NotificationObject value)
         {
             switch (value)
@@ -26,14 +48,16 @@ namespace SyncanoSyncServer.Net.Notifications
                 case NotificationObject.DataRelation:
                     return DataRelationString;
 
-                case NotificationObject.Me:
-                    return MeString;
-
                 default:
-                    throw new ArgumentException("Unknown NotificationObject value.");
+                    return MeString;
             }
         }
 
+        /// <summary>
+        /// Converts to NotificationObject.
+        /// </summary>
+        /// <param name="value">String object.</param>
+        /// <returns>Corresponding NotificationObject.</returns>
         public static NotificationObject GetNotificationObject(string value)
         {
             switch (value)
@@ -44,11 +68,10 @@ namespace SyncanoSyncServer.Net.Notifications
                 case DataRelationString:
                     return NotificationObject.DataRelation;
 
-                case MeString:
+                default:
                     return NotificationObject.Me;
 
-                default:
-                    throw new ArgumentException("Unknown NotificationObject string value.");
+                
             }
         }
     }
