@@ -43,12 +43,19 @@ namespace SampleWpfApplication
 
         private void AddDataObjectClick(object sender, RoutedEventArgs e)
         {
-            _viewModel.AddDataObject("Title", "Text content.");
+            var dialog = new AddDataObjectWindow();
+            if (dialog.ShowDialog() == true)
+                _viewModel.AddDataObject(dialog.Title.Text, dialog.Text.Text, dialog.Link.Text, dialog.Image.Text, dialog.Additionals);
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             _viewModel.Cleanup();
+        }
+
+        private void RefreshDataobjectsClick(object sender, RoutedEventArgs e)
+        {
+            _viewModel.RefreshDataObjects();
         }
     }
 }

@@ -4,9 +4,15 @@
         xmlns:l="clr-namespace:SampleWpfApplication"
         Title="Syncano.Net Sample WPF Application" Height="350" Width="525" Closing="Window_Closing" WindowState="Maximized">
     <Window.Resources>
-        <l:BoolToVisibilityConverter x:Key="boolToVisibility"/>
+        <l:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
         <Style TargetType="{x:Type TextBlock}">
             <Setter Property="Padding" Value="5,5,5,5"/>
+        </Style>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Margin" Value="5,5,5,5"/>
+        </Style>
+        <Style TargetType="{x:Type ListView}">
+            <Setter Property="Margin" Value="5,5,5,5"/>
         </Style>
         <Style TargetType="ListViewItem">
             <Style.Triggers>
@@ -18,16 +24,44 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*"/>
+            <RowDefinition Height="3*"/>
             <RowDefinition Height="7*"/>
-            <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
 
-        <Button Click="AddDataObjectClick">Add Data Object</Button>
+        
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right">Instance Name:</TextBlock>
+            <TextBlock Grid.Column="1" Grid.Row="0" Grid.ColumnSpan="3" Text="{Binding InstanceName}"/>
+            <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right">Api Key:</TextBlock>
+            <TextBlock Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3" Text="{Binding Path=ApiKey}"/>
+            <TextBlock Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right">Project Id:</TextBlock>
+            <TextBlock Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3" Text="{Binding Path=ProjectId}"/>
+            <TextBlock Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right">Collection Id:</TextBlock>
+            <TextBlock Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="3" Text="{Binding Path=CollectionId}"/>
+            <TextBlock Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right">Folder Name:</TextBlock>
+            <TextBlock Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3" Text="{Binding Path=FolderName}"/>
+            <Button Click="AddDataObjectClick" Grid.Column="0" Grid.Row="5">Add Data Object</Button>
+            <Button Click="RefreshDataobjectsClick" Grid.Column="1" Grid.Row="5">Refresh Data Objects</Button>
+        </Grid>
 
         <ListView x:Name="DataObjectsList" ItemsSource="{Binding Path=DataObjects}" Grid.Column="0" Grid.Row="1" AlternationCount="2">
             <ListView.ItemTemplate>
@@ -66,7 +100,7 @@
                             <TextBlock Grid.Column="0" Grid.Row="1">Notification object:</TextBlock>
                             <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Path=Object}"/>
                         </Grid>
-                        <StackPanel Orientation="Horizontal" Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ListBoxItem}, Path=IsSelected, Converter={StaticResource boolToVisibility}}">
+                        <StackPanel Orientation="Horizontal" Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ListBoxItem}, Path=IsSelected, Converter={StaticResource BoolToVisibility}}">
                             <TextBlock>Time stamp:</TextBlock>
                             <TextBlock Text="{Binding Path=TimeStamp}"/>
                             <TextBlock>Id:</TextBlock>
