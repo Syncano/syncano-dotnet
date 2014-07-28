@@ -1,59 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <topic id="6998a527-7e72-4aec-a2c7-f1f4f0732a3e" revisionNumber="1">
-	<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
-		<introduction>
-			<para>This is a sample conceptual topic.  You can use this as a starting point for adding more conceptual
-content to your help project.</para>
-		</introduction>
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>This is a documentation for Syncano.Net project. It is designed to enable you to connect to Syncano Instances from .Net applications</para>
+    </introduction>
 
-		<section>
-			<title>Getting Started</title>
-			<content>
-				<para>To get started, add a documentation source to the project (a Visual Studio solution, project, or
-assembly and XML comments file).  See the <legacyBold>Getting Started</legacyBold> topics in the Sandcastle Help
-File Builder's help file for more information.  The following default items are included in this project:</para>
+    <section>
+      <title>Getting Started</title>
+      <content>
+        <para>To get started you have to obtain Syncano Instance name and Api Key. This credentials will allow you to connect to Syncano. Basically you have two options of connection:</para>
+        <list class="bullet">
+          <listItem>
+            <para>Over Http to Syncano Rest Api.</para>
+          </listItem>
+          <listItem>
+            <para>Over Tcp to Syncano Sync Server.</para>
+          </listItem>
+        </list>
+      </content>
+    </section>
+
+    <section>
+      <title>Syncano Rest Api</title>
+      <content>
+        <para>To connect to Syncano Rest Api you can use class Syncano.</para>
         <code>
-          ldsfvnalsdfnv
-          salvknsldvn
-          Console.WriteLine();
+          //Create Syncano class
+          Syncano syncano = new Syncano(instanceName, apiKey);
+
+          //Now you can access Syncano Instance
+          ...
         </code>
-				<list class="bullet">
-					<listItem>
-						<para><localUri>ContentLayout.content</localUri> - Use the content layout file to manage the
-conceptual content in the project and define its layout in the table of contents.</para>
-					</listItem>
+        <para>Syncano class provides with multiple properties to manage certain aspects of Syncano Instance. All operatins can be performed asynchronously. They  have been prepared to use 'async' and 'await' operators.</para>
+        <code>
+          //Create new project
+          Project project = await syncano.Projects.New("MyNewProject", "This is my first project in Syncano.");
 
-					<listItem>
-						<para>The <localUri>.\Media</localUri> folder - Place images in this folder that you will reference
-from conceptual content using <codeInline>medialLink</codeInline> or <codeInline>mediaLinkInline</codeInline>
-elements.  If you will not have any images in the file, you may remove this folder.</para>
-					</listItem>
+          //Create collection in project
+          Collection collection = await syncano.Collections.New(project.Id, "MyNewCollection");
 
-					<listItem>
-						<para>The <localUri>.\icons</localUri> folder - This contains a default logo for the help file.  You
-may replace it or remove it and the folder if not wanted.  If removed or if you change the file name, update
-the <ui>Transform Args</ui> project properties page by removing or changing the filename in the
-<codeInline>logoFile</codeInline> transform argument.  Note that unlike images referenced from conceptual topics,
-the logo file should have its <legacyBold>BuildAction</legacyBold> property set to <codeInline>Content</codeInline>.</para>
-					</listItem>
+          //Create new folder in collection
+          Folder folder = await syncano.Folders.New(project.Id, "MyNewFolder", collection.Id);
 
-					<listItem>
-						<para>The <localUri>.\Content</localUri> folder - Use this to store your conceptual topics.  You may
-name the files and organize them however you like.  One suggestion is to lay the files out on disk as you have
-them in the content layout file as shown in this project but the choice is yours.  Files can be added via the
-Solution Explorer or from within the content layout file editor.  Files must appear in the content layout file
-in order to be compiled into the help file.</para>
-					</listItem>
-				</list>
+          //Create new Data Object in folder
+          DataObjectDefinitionRequest request = new DataObjectDefinitionRequest();
+          request.ProjectId = project.Id;
+          request.CollectionId = collection.Id;
+          request.Folder = folder.Name;
+          request.Title = "DataObject Title";
+          request.Text = "Sample data object text content.";
 
-				<para>See the <legacyBold>Conceptual Content</legacyBold> topics in the Sandcastle Help File Builder's
-help file for more information.  See the <legacyBold> Sandcastle MAML Guide</legacyBold> for details on Microsoft
-Assistance Markup Language (MAML) which is used to create these topics.</para>
-			</content>
-		</section>
+          DataObject dataObject = await syncano.DataObjects.New(request);
 
-		<relatedTopics>
-			<link xlink:href="7444d5ff-e3fb-44e3-b09a-839f12a226df" />
-		</relatedTopics>
-	</developerConceptualDocument>
+          //Delete Data Object
+          DataObjectSimpleQueryRequest deleteRequest = new DataObjectSimpleQueryRequest();
+          deleteRequest.ProjectId = project.Id;
+          deleteRequest.CollectionId = collection.Id;
+          deleteRequest.Folder = folder.Name;
+          deleteRequest.DataId = dataObject.Id;
+
+          await syncano.DataObjects.Delete(deleteRequest);
+
+          //Delete folder
+          await syncano.Folders.Delete(project.Id, folder.Name, collection.Id);
+
+          //Delete collection
+          await syncano.Collections.Delete(project.Id, collection.Id);
+
+          //Delete project
+          await syncano.Projects.Delete(project.Id);
+        </code>
+        <para>Above basic example shows how to access and use Syncano Rest API using Syncano class. To find out more about possible operations and DataObject content inspect other parts of this documentation.</para>
+      </content>
+    </section>
+
+    <section>
+      <title>Syncano Sync Server</title>
+      <content>
+        <para>SyncServer class allows to connect to Syncano Instance over Tcp. SyncServer can perform all operations of Syncano class, for example creat and delete projects, collections, folders and data objects. Additional possibilities in SyncServer class include notifications mechanisms. Sync Server can send live time notifications about events that happened in Syncano Instance. It is possible to recieve this notifications by using SyncServer class. First, it is necessary to start server. Then you can subscribe to a project or collection and then subscribe to recieve notifications.</para>
+        <code>
+            //Create and start SyncServer
+            SyncServer syncServer = new SyncServer(instanceName, apiKey);
+            await syncServer.Start();
+
+            //Subscribe to Default project
+            await syncServer.RealTimeSync.SubscribeProject(projectId, Context.Connection);
+
+            //Subscribe to recive notifications about new Data Objects
+            syncServer.NewDataObservable.Subscribe(ndn =>
+            {
+                //Access NewDataNotification object
+            });
+
+            //Unsubscribe
+            await syncServer.RealTimeSync.UnsubscribeProject(projectId);
+        </code>
+        <para>There are more types of notifiactions. It is also possible to send notification by hand using SendNotification method in RealTimeSync. To find out more inspect other parts of this documentation.</para>
+      </content>
+    </section>
+
+    <relatedTopics>
+      <link xlink:href="7444d5ff-e3fb-44e3-b09a-839f12a226df" />
+    </relatedTopics>
+  </developerConceptualDocument>
 </topic>

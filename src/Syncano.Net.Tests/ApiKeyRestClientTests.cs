@@ -5,6 +5,11 @@ using System.Threading.Tasks;
 using Should;
 using Syncano.Net.Access;
 using Syncano.Net.Api;
+using Syncano.Net.Data;
+using Syncano.Net.DataRequests;
+using SyncanoSyncServer.Net;
+using SyncanoSyncServer.Net.RealTimeSyncApi;
+using Xunit;
 using Xunit.Extensions;
 
 namespace Syncano.Net.Tests
