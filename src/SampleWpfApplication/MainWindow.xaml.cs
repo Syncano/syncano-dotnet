@@ -12,6 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Syncano.Net.Data;
+using Syncano.Net.DataRequests;
+
 
 namespace SampleWpfApplication
 {
@@ -20,9 +23,32 @@ namespace SampleWpfApplication
     /// </summary>
     public partial class MainWindow : Window
     {
+        private MainWindowViewModel _viewModel;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            //Set data context
+            _viewModel = new MainWindowViewModel();
+            DataContext = _viewModel;
+        }
+
+        private void DeleteDataObjectClick(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var dataObject = button.DataContext as Syncano.Net.Data.DataObject;
+            _viewModel.DeleteDataObject(dataObject);
+        }
+
+        private void AddDataObjectClick(object sender, RoutedEventArgs e)
+        {
+            _viewModel.AddDataObject("Title", "Text content.");
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            _viewModel.Cleanup();
         }
     }
 }
