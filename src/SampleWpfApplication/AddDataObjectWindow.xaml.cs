@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using MahApps.Metro.Controls;
 using Microsoft.Win32;
 
 namespace SampleWpfApplication
@@ -19,7 +20,7 @@ namespace SampleWpfApplication
     /// <summary>
     /// Interaction logic for AddDataObjectWindow.xaml
     /// </summary>
-    public partial class AddDataObjectWindow : Window
+    public partial class AddDataObjectWindow : MetroWindow
     {
         public ObservableCollection<AdditionalItem> Additionals { get; set; }
 

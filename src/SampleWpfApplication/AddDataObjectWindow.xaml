@@ -1,21 +1,9 @@
-﻿<Window x:Class="SampleWpfApplication.AddDataObjectWindow"
+﻿<controls:MetroWindow x:Class="SampleWpfApplication.AddDataObjectWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Add new Data Object" Height="600" Width="450" WindowStyle="None" ResizeMode="CanResizeWithGrip" MinWidth="450" MinHeight="600" WindowStartupLocation="CenterScreen">
-    <Window.Resources>
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="Margin" Value="5,5,5,5"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-            <Setter Property="Width" Value="80"/>
-            <Setter Property="Height" Value="45"/>
-        </Style>
-        <Style TargetType="{x:Type TextBlock}">
-            <Setter Property="Margin" Value="5,5,5,5"/>
-        </Style>
-        <Style TargetType="{x:Type TextBox}">
-            <Setter Property="Margin" Value="5,5,5,5"/>
-        </Style>
-    </Window.Resources>
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        Title="Add new Data Object" Height="600" Width="450" ResizeMode="CanResizeWithGrip" MinWidth="450" MinHeight="600" WindowStartupLocation="CenterOwner" SizeToContent="WidthAndHeight">
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -55,4 +43,4 @@
 
 
     </Grid>
-</Window>
+</controls:MetroWindow>

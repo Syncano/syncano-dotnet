@@ -3,8 +3,10 @@
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:l="clr-namespace:SampleWpfApplication"
                       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
                       Title="Syncano.Net Sample WPF Application" Height="600" Width="800" Closing="Window_Closing"
-                      WindowState="Normal">
+                      WindowState="Normal" d:DataContext="{d:DesignInstance l:MainWindowViewModel}">
     <controls:MetroWindow.Resources>
         <l:BoolToVisibilityConverter x:Key="BoolToVisibility" />
 
@@ -47,13 +49,13 @@
                 <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Path=FolderName}" />
                 
                 <StackPanel Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button>Connect</Button>
+                    <Button Command="{Binding ConnectCommand}">Connect</Button>
                 </StackPanel>
 
             </Grid>
         </GroupBox>
 
-        <GroupBox Header="Data Objects Http" Grid.Row="1" Grid.Column="0" >
+        <GroupBox Header="Data Objects Http" Grid.Row="1" Grid.Column="0" IsEnabled="{Binding IsConnected}" >
             <Grid >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
@@ -69,7 +71,7 @@
            
             </GroupBox>
 
-        <GroupBox Header="Data Objects SyncServer" Grid.Row="1" Grid.Column="1" >
+        <GroupBox Header="Data Objects SyncServer" Grid.Row="1" Grid.Column="1" IsEnabled="{Binding IsConnected}" >
             <Grid >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />

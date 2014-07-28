@@ -2,7 +2,10 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Syncano.Net.Data;
 using Syncano.Net.DataRequests;
 using SyncanoSyncServer.Net;
@@ -28,48 +31,9 @@ namespace SampleWpfApplication
             FolderName = "Default";
 
             //Connect to Syncano
-            _syncano = new Syncano.Net.Syncano(InstanceName, ApiKey);
-            _syncServer = new SyncServer(InstanceName, ApiKey);
-
-            RefreshDataObjects();
-            InitSyncServer();
         }
 
-        public async void InitSyncServer()
-        {
-            await _syncServer.Start();
-
-            try
-            {
-                await _syncServer.RealTimeSync.SubscribeProject(ProjectId);
-            }
-            catch (Exception) { }
-
-            //Subscribe to new data notifications
-            _syncServer.NewDataObservable.Subscribe(n =>
-            {
-                App.Current.Dispatcher.Invoke((Action)(() => Notifications.Add(n)));
-            });
-
-            //Subscribe to delete data notifications
-            _syncServer.DeleteDataObservable.Subscribe(n =>
-            {
-                App.Current.Dispatcher.Invoke((Action)(() => Notifications.Add(n)));
-            });
-
-            //Subscribe to generic notifications
-            _syncServer.GenericNotificationObservable.Subscribe(n =>
-            {
-                App.Current.Dispatcher.Invoke((Action)(() => Notifications.Add(n)));
-            });
-
-            //Subscribe to data relations notifications
-            _syncServer.DataRelationObservable.Subscribe(n =>
-            {
-                App.Current.Dispatcher.Invoke((Action)(() => Notifications.Add(n)));
-            });
-        }
-
+      
         public async void Cleanup()
         {
             await _syncServer.RealTimeSync.UnsubscribeProject(ProjectId);
@@ -145,10 +109,7 @@ namespace SampleWpfApplication
 
         public string InstanceName
         {
-            get
-            {
-                return _instanceName;
-            }
+            get { return _instanceName; }
             set
             {
                 _instanceName = value;
@@ -160,10 +121,7 @@ namespace SampleWpfApplication
 
         public string ApiKey
         {
-            get
-            {
-                return _apiKey;
-            }
+            get { return _apiKey; }
             set
             {
                 _apiKey = value;
@@ -187,10 +145,7 @@ namespace SampleWpfApplication
 
         public string CollectionId
         {
-            get
-            {
-                return _collectionid;
-            }
+            get { return _collectionid; }
             set
             {
                 _collectionid = value;
@@ -199,6 +154,7 @@ namespace SampleWpfApplication
         }
 
         private string _folderName;
+        private bool _isConnected;
 
         public string FolderName
         {
@@ -210,9 +166,53 @@ namespace SampleWpfApplication
             }
         }
 
+        public ICommand ConnectCommand
+        {
+            get { return new RelayCommand(Connect); }
+        }
+
+        private async void Connect()
+        {
+            //Login
+            _syncServer = new SyncServer(this.InstanceName, this.ApiKey);
+            var login = await _syncServer.Start();
+            this.IsConnected = login.WasSuccessful;
+
+            //Add subscriptions.
+            if ((await _syncServer.RealTimeSync.GetSubscriptions()).Any(s => s.Type == "Project" && s.Id == this.ProjectId) == false)
+                await _syncServer.RealTimeSync.SubscribeProject(ProjectId);
+
+            //React on subscriptions using reactive extensions
+
+            //Subscribe to new data notifications
+            _syncServer.NewDataObservable.SubscribeOnDispatcher().Subscribe( Notifications.Add);
+
+            //Subscribe to delete data notifications
+            _syncServer.DeleteDataObservable.SubscribeOnDispatcher().Subscribe(Notifications.Add);
+
+            //Subscribe to generic notifications
+            _syncServer.GenericNotificationObservable.SubscribeOnDispatcher().Subscribe(Notifications.Add);
+
+            //Subscribe to data relations notifications
+            _syncServer.DataRelationObservable.SubscribeOnDispatcher().Subscribe(Notifications.Add);
+
+
+            _syncano = new Syncano.Net.Syncano(this.InstanceName, this.ApiKey);
+  }
+
+        public bool IsConnected
+        {
+            get { return _isConnected; }
+            set
+            {
+                _isConnected = value;
+                OnPropertyChanged("IsConnected");
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged = null;
-        virtual protected void OnPropertyChanged(string propertyName)
+
+        protected virtual void OnPropertyChanged(string propertyName)
         {
             var handler = PropertyChanged;
             if (handler != null)
