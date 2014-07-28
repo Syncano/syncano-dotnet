@@ -39,12 +39,9 @@ namespace SampleWpfApplication
 
             try
             {
-                //Unsubscribing to Project - in case errors in prior runs of app.
-                await _syncServer.RealTimeSync.UnsubscribeProject(DefaultProjectId);
+                await _syncServer.RealTimeSync.SubscribeProject(DefaultProjectId);
             }
             catch (Exception) { }
-
-            await _syncServer.RealTimeSync.SubscribeProject(DefaultProjectId);
 
             //Subscribe to new data notifications
             _syncServer.NewDataObservable.Subscribe(n =>
@@ -56,6 +53,12 @@ namespace SampleWpfApplication
             _syncServer.DeleteDataObservable.Subscribe(n =>
             {
                 App.Current.Dispatcher.Invoke((Action) (() => Notifications.Add(n)));
+            });
+
+            //Subscribe to generic notifications
+            _syncServer.GenericNotificationObservable.Subscribe(n =>
+            {
+                App.Current.Dispatcher.Invoke((Action)(() => Notifications.Add(n)));
             });
         }
 
