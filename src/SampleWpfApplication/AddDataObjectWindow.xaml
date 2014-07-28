@@ -36,7 +36,7 @@
         <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Center">Title:</TextBlock>
         <TextBox Grid.Column="1" Grid.Row="1" x:Name="Title" VerticalAlignment="Center"/>
         <TextBlock Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center">Text:</TextBlock>
-        <TextBox Grid.Column="1" Grid.Row="2" x:Name="Text"/>
+        <TextBox Grid.Column="1" Grid.Row="2" x:Name="Text" TextWrapping="Wrap" AcceptsReturn="True"/>
         <TextBlock Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" VerticalAlignment="Center">Link:</TextBlock>
         <TextBox Grid.Column="1" Grid.Row="3" x:Name="Link" VerticalAlignment="Center"/>
         <TextBlock Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center">Image:</TextBlock>

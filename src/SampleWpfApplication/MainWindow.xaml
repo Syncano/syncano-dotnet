@@ -70,9 +70,46 @@
                         <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}" />
                     </DataTemplate.Resources>
                     <StackPanel>
-                        <TextBlock Text="{Binding Path=Title}"/>
-                        <TextBlock Text="{Binding Path=Text}"/>
-                        <Button Click="DeleteDataObjectClick">Delete</Button>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="3*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Column="0" Grid.Row="0">Title:</TextBlock>
+                        <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Path=Title}"/>
+                        <TextBlock Grid.Column="0" Grid.Row="1">Owner Name:</TextBlock>
+                        <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Path=User.Name}"/>
+                    </Grid>
+                        <Grid Visibility="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ListBoxItem}, Path=IsSelected, Converter={StaticResource BoolToVisibility}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="3*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Column="0" Grid.Row="0">Text:</TextBlock>
+                            <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Path=Text}"/>
+                            <TextBlock Grid.Column="0" Grid.Row="1">Link:</TextBlock>
+                            <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Path=Link}"/>
+                            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2">
+                                <TextBlock>Created at:</TextBlock>
+                                <TextBlock Text="{Binding Path=CreatedAt}"/>
+                                <TextBlock>Updated at:</TextBlock>
+                                <TextBlock Text="{Binding Path=UpdatedAt}"/>
+                            </StackPanel>
+                            <TextBlock Grid.Column="0" Grid.Row="3">Additionals:</TextBlock>
+                            <DataGrid Grid.Column="1" Grid.Row="3" ItemsSource="{Binding Path=Additional}" ColumnWidth="150" Width="310" Margin="5,5,5,5"/>
+                            <Button Grid.Column="0" Grid.Row="4" Click="DeleteDataObjectClick">Delete</Button>
+                        </Grid>
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>

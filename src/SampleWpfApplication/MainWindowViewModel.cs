@@ -48,13 +48,13 @@ namespace SampleWpfApplication
             //Subscribe to new data notifications
             _syncServer.NewDataObservable.Subscribe(n =>
             {
-                App.Current.Dispatcher.Invoke((Action) (() => Notifications.Add(n)));
+                App.Current.Dispatcher.Invoke((Action)(() => Notifications.Add(n)));
             });
 
             //Subscribe to delete data notifications
             _syncServer.DeleteDataObservable.Subscribe(n =>
             {
-                App.Current.Dispatcher.Invoke((Action) (() => Notifications.Add(n)));
+                App.Current.Dispatcher.Invoke((Action)(() => Notifications.Add(n)));
             });
 
             //Subscribe to generic notifications
@@ -114,18 +114,19 @@ namespace SampleWpfApplication
             request.Text = text;
             request.Link = link;
 
-            using (var f = new FileStream(imagePath, FileMode.Open, FileAccess.Read, FileShare.Read))
-            {
-                using (var ms = new MemoryStream())
+            if (imagePath != "")
+                using (var f = new FileStream(imagePath, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    f.CopyTo(ms);
-                    byte[] imageBytes = ms.ToArray();
+                    using (var ms = new MemoryStream())
+                    {
+                        f.CopyTo(ms);
+                        byte[] imageBytes = ms.ToArray();
 
-                    // Convert byte[] to Base64 String
-                    string base64String = Convert.ToBase64String(imageBytes);
-                    request.ImageBase64 = base64String;
+                        // Convert byte[] to Base64 String
+                        string base64String = Convert.ToBase64String(imageBytes);
+                        request.ImageBase64 = base64String;
+                    }
                 }
-            }
 
             request.Additional = new Dictionary<string, string>();
             foreach (var item in additionalItems)
@@ -134,7 +135,7 @@ namespace SampleWpfApplication
             await _syncano.DataObjects.New(request);
             RefreshDataObjects();
         }
-        
+
 
         public ObservableCollection<DataObject> DataObjects { get; set; }
 
