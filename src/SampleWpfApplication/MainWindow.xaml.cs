@@ -42,5 +42,15 @@ namespace SampleWpfApplication
         {
             _viewModel.RefreshDataObjectsHttp();
         }
+
+        private void DeleteHttpClick(object sender, RoutedEventArgs e)
+        {
+            _viewModel.DeleteObjectHttp(DataGridHttp.SelectedIndex);
+        }
+
+        private void DeleteSyncHttp(object sender, RoutedEventArgs e)
+        {
+            _viewModel.DeleteObjectSync(DataGridSync.SelectedIndex);
+        }
     }
 }

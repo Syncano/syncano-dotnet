@@ -52,9 +52,7 @@ namespace SampleWpfApplication
             {
                 App.Current.Dispatcher.Invoke(() =>
                 {
-                    var toRemove = DataObjectsSync.Where(d => n.Target.Ids.Contains(d.Id));
-                    foreach (var dataObject in toRemove)
-                        DataObjectsSync.Remove(dataObject);
+                    RefreshDataObjectsSync();
                 });
             });
 
@@ -149,6 +147,37 @@ namespace SampleWpfApplication
             return request;
         }
 
+        public async void DeleteObjectHttp(int index)
+        {
+            var dataObject = DataObjectsHttp[index];
+            DataObjectsHttp.Remove(dataObject);
+
+            var request = new DataObjectSimpleQueryRequest
+            {
+                ProjectId = ProjectId,
+                CollectionId = CollectionId,
+                Folder = FolderName,
+                DataId = dataObject.Id
+            };
+
+            await _syncano.DataObjects.Delete(request);
+        }
+
+        public async void DeleteObjectSync(int index)
+        {
+            var dataObject = DataObjectsSync[index];
+            DataObjectsHttp.Remove(dataObject);
+
+            var request = new DataObjectSimpleQueryRequest
+            {
+                ProjectId = ProjectId,
+                CollectionId = CollectionId,
+                Folder = FolderName,
+                DataId = dataObject.Id
+            };
+
+            await _syncServer.DataObjects.Delete(request);
+        }
 
         public ObservableCollection<DataObject> DataObjectsHttp { get; set; }
         public ObservableCollection<DataObject> DataObjectsSync { get; set; } 
