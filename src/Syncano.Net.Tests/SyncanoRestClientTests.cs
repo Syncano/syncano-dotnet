@@ -21,7 +21,7 @@ namespace Syncano.Net.Tests
 
         public const string UserApiClientId = "1086";
         public const string UserName = "UserName";
-        public const string UserPassword = "qwerty";
+        public const string UserPassword = "12345";
         public const string UserId = "529";
         public const string UserApiKey = "2347b3ee5d7a9b13622e2812e34aaa7351dc7cbb";
         public const string OldUserId = "524";

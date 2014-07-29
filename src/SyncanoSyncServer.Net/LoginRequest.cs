@@ -18,5 +18,17 @@ namespace SyncanoSyncServer.Net
         /// </summary>
         [JsonProperty("instance")]
         public string InstanceName { get; set; }
+
+        /// <summary>
+        /// Auth Key.
+        /// </summary>
+        [JsonProperty("auth_key")]
+        public string AuthKey { get; set; }
+
+        /// <summary>
+        /// Session Id.
+        /// </summary>
+        [JsonProperty("session_id")]
+        public string SessionId { get; set; }
     }
 }

@@ -27,6 +27,8 @@ namespace SyncanoSyncServer.Net
     {
         private ReactiveClient _client;
         private Subject<string> _messagesObservable = new Subject<string>();
+        private string _sessionId = null;
+        private string _authKey = null;
 
         /// <summary>
         /// Observable where you can subscribe on incoming messages as string objects.
@@ -198,7 +200,7 @@ namespace SyncanoSyncServer.Net
         /// <returns>Task performing login operation and returning LoginResult object.</returns>
         public Task<LoginResult> Login(string apiKey, string instanceName)
         {
-            var request = new LoginRequest {InstanceName = instanceName, ApiKey = apiKey};
+            var request = new LoginRequest {InstanceName = instanceName, ApiKey = apiKey, AuthKey = _authKey, SessionId = _sessionId};
 
             var t = _messagesObservable.FirstAsync().Select(ToLoginResult)
                 .FirstAsync().Timeout(TimeSpan.FromSeconds(10))
@@ -423,6 +425,17 @@ namespace SyncanoSyncServer.Net
         public Task<T> PostAsync<T>(string methodName, object parameters, string contentToken)
         {
             return GetAsync<T>(methodName, parameters, contentToken);
+        }
+
+
+        public void SetUserContext(string authKey)
+        {
+            _authKey = authKey;
+        }
+
+        public void SetSessionContext(string sessionId)
+        {
+            _sessionId = sessionId;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Syncano.Net
 {
@@ -43,5 +44,17 @@ namespace Syncano.Net
         /// <param name="contentToken">Token of response message marking object to retrieve.</param>
         /// <returns>Retrived object.</returns>
         Task<T> PostAsync<T>(string methodName, object parameters, string contentToken);
+
+        /// <summary>
+        /// Sets user AuthKey. It is called by Login method.
+        /// </summary>
+        /// <param name="authKey">AuthKey string.</param>
+        void SetUserContext(string authKey);
+
+        /// <summary>
+        /// Sets Session Id. It is called by StartSession.
+        /// </summary>
+        /// <param name="sessionId">Session Id string.</param>
+        void SetSessionContext(string sessionId);
     }
 }

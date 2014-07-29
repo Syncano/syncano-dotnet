@@ -16,6 +16,8 @@ namespace Syncano.Net.Http
     {
         private readonly string _instanceName;
         private readonly string _apiKey;
+        private string _sessionId;
+        private string _authKey;
         private HttpClient _client;
         private string _baseUrl;
 
@@ -26,6 +28,7 @@ namespace Syncano.Net.Http
         /// <param name="apiKey">Api key for Syncano instance (backend or user).</param>
         public SyncanoHttpClient(string instanceName, string apiKey)
         {
+            _authKey = null;
             _instanceName = instanceName;
             _apiKey = apiKey;
             _baseUrl = string.Format("https://{0}.syncano.com/api/", _instanceName);
@@ -43,8 +46,19 @@ namespace Syncano.Net.Http
         {
             var sb = new StringBuilder(_baseUrl);
             sb.Append(methodName);
+            if (_authKey != null)
+            {
+                sb.Append("?auth_key=");
+                sb.Append(_authKey);
+            }
             sb.Append("?api_key=");
             sb.Append(_apiKey);
+            if (_sessionId != null)
+            {
+                sb.Append("?session_id=");
+                sb.Append(_sessionId);
+            }
+            
             return sb.ToString();
         }
 
@@ -160,6 +174,18 @@ namespace Syncano.Net.Http
             var json = CheckResponseStatus(response);
 
             return true;
+        }
+
+
+        public void SetUserContext(string authKey)
+        {
+            _authKey = authKey;
+        }
+
+
+        public void SetSessionContext(string sessionId)
+        {
+            _sessionId = sessionId;
         }
     }
 }

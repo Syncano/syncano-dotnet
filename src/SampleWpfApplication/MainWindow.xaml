@@ -61,10 +61,10 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <DataGrid ItemsSource="{Binding DataObjectsHttp}"></DataGrid>
+                <DataGrid ItemsSource="{Binding DataObjectsHttp}" IsReadOnly="True" />
 
                 <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Click="AddDataObjectClick">Add Data Object</Button>
+                    <Button Click="AddDataObjectHttpClick">Add Data Object</Button>
                     <Button Click="RefreshDataobjectsClick">Refresh Data Objects</Button>
                 </StackPanel>
             </Grid>
@@ -77,10 +77,10 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <DataGrid ItemsSource="{Binding DataObjectsSync}"></DataGrid>
+                <DataGrid ItemsSource="{Binding DataObjectsSync}" IsReadOnly="True"/>
 
                 <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Click="AddDataObjectClick">Add Data Object</Button>
+                    <Button Click="AddDataObjectSyncClick">Add Data Object</Button>
                 </StackPanel>
             </Grid>
         </GroupBox>

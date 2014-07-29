@@ -38,9 +38,19 @@ namespace Syncano.Net.Api
         /// </summary>
         /// <param name="timeZone">Sets default timezone for all subsequent requests using returned session_id.</param>
         /// <returns>Assigned session id. This can be passed for subsequent calls as authentication.</returns>
-        public Task<string> StartSession(TimeZoneInfo timeZone = null)
+        public async Task<string> StartSession(TimeZoneInfo timeZone = null)
         {
-            return _syncanoClient.PostAsync<string>("apikey.start_session", new {timezone = _timeZoneConverter.GetString(timeZone)}, "session_id");
+            var sessionId = await _syncanoClient.PostAsync<string>("apikey.start_session", new {timezone = _timeZoneConverter.GetString(timeZone)}, "session_id");
+            _syncanoClient.SetSessionContext(sessionId);
+            return sessionId;
+        }
+
+        /// <summary>
+        /// Clears current Session Id.
+        /// </summary>
+        public void ClearSession()
+        {
+            _syncanoClient.SetSessionContext(null);
         }
 
         /// <summary>

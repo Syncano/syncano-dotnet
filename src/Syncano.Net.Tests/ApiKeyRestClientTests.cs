@@ -60,6 +60,8 @@ namespace Syncano.Net.Tests
                 try
                 {
                     sessionIds.Add(await client.StartSession(timeZoneInfo));
+                    client.ClearSession();
+                    
                 }
                 catch(ArgumentException)
                 { }

@@ -25,38 +25,11 @@ namespace Syncano.Net.Tests
         [Theory, PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task Login_CreatesNewAuthKey(UserSyncanoClient client)
         {
-            //given
-            const string name = "newUserName";
-            const string password = "abcde123";
-            var user = await client.New(name, password);
-
             //when
-            var result = await client.Login(user.Name, password);
+            var result = await client.Login(TestData.UserName, TestData.UserPassword);
 
             //then
             result.ShouldNotBeNull();
-
-            //cleanup
-            await client.Delete(user.Id);
-        }
-
-        [Theory, PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
-        public async Task Login_WithNick_CreatesNewAuthKey(UserSyncanoClient client)
-        {
-            //given
-            const string name = "newUserName";
-            const string nick = "newUserNick";
-            const string password = "abcde123";
-            var user = await client.New(name, password, nick);
-
-            //when
-            var result = await client.Login(user.Name, password);
-
-            //then
-            result.ShouldNotBeNull();
-
-            //cleanup
-            await client.Delete(user.Id);
         }
 
         [Theory, PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
@@ -653,6 +626,7 @@ namespace Syncano.Net.Tests
             //given
             var httpClient =
                 new UserSyncanoClient(new SyncanoHttpClient(TestData.InstanceName, TestData.UserApiKey));
+            await httpClient.Login(TestData.UserName, TestData.UserPassword);
 
             //when
             var result = await httpClient.GetOne();

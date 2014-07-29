@@ -34,12 +34,14 @@ namespace Syncano.Net.Api
         /// <param name="userName">User name.</param>
         /// <param name="password">User's password.</param>
         /// <returns>Returns it's auth_key. Use auth_key in following requests.</returns>
-        public Task<string> Login(string userName, string password)
+        public async Task<string> Login(string userName, string password)
         {
             if (userName == null || password == null)
                 throw new ArgumentNullException();
 
-            return _syncanoClient.GetAsync<string>("user.login", new {user_name = userName, password}, "auth_key");
+            var authKey = await _syncanoClient.GetAsync<string>("user.login", new {user_name = userName, password}, "auth_key");
+            _syncanoClient.SetUserContext(authKey);
+            return authKey;
         }
 
         /// <summary>
