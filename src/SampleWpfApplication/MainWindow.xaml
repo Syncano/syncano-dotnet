@@ -8,8 +8,6 @@
                       Title="Syncano.Net Sample WPF Application" Height="600" Width="800" Closing="Window_Closing"
                       WindowState="Normal" d:DataContext="{d:DesignInstance l:MainWindowViewModel}">
     <controls:MetroWindow.Resources>
-        <l:BoolToVisibilityConverter x:Key="BoolToVisibility" />
-
     </controls:MetroWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>

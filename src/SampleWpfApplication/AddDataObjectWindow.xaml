@@ -3,44 +3,40 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
         Title="Add new Data Object" Height="600" Width="450" ResizeMode="CanResizeWithGrip" MinWidth="450" MinHeight="600" WindowStartupLocation="CenterOwner" SizeToContent="WidthAndHeight">
-
-    <Grid>
+    <controls:MetroWindow.Resources>
+    </controls:MetroWindow.Resources>
+    <Grid Margin="0,10,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Center" FontSize="20">Add new data object.</TextBlock>
-
-        <TextBlock Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right">Title:</TextBlock>
-        <TextBox Grid.Column="1" Grid.Row="1" x:Name="Title"/>
-        <TextBlock Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right">Text:</TextBlock>
-        <TextBox Grid.Column="1" Grid.Row="2" x:Name="Text" TextWrapping="Wrap" AcceptsReturn="True"/>
-        <TextBlock Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right">Link:</TextBlock>
-        <TextBox Grid.Column="1" Grid.Row="3" x:Name="Link"/>
-        <TextBlock Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right">Image:</TextBlock>
-        <Grid Grid.Column="1" Grid.Row="4" >
+        <Label Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right">Title:</Label>
+        <TextBox Grid.Column="1" Grid.Row="0" x:Name="Title"/>
+        <Label Grid.Column="0" Grid.Row="1" HorizontalAlignment="Right">Text:</Label>
+        <TextBox Grid.Column="1" Grid.Row="1" x:Name="Text" TextWrapping="Wrap" AcceptsReturn="True"/>
+        <Label Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right">Link:</Label>
+        <TextBox Grid.Column="1" Grid.Row="2" x:Name="Link"/>
+        <Label Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right">Image:</Label>
+        <Grid Grid.Column="1" Grid.Row="3" >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <TextBox Grid.Column="0" x:Name="Image" VerticalAlignment="Center"/>
-            <Button Grid.Column="1" HorizontalAlignment="Right" Click="LoadImageClick">Load</Button>
+            <Button Grid.Column="1" HorizontalAlignment="Left" Click="LoadImageClick" Margin="5,5,5,5" VerticalAlignment="Center">Load</Button>
         </Grid>
-        <TextBlock Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right" VerticalAlignment="Center">Additionals:</TextBlock>
-        <DataGrid Grid.Column="1" Grid.Row="5" x:Name="DataGrid" ItemsSource="{Binding}" ColumnWidth="1*"/>
-        <Button Grid.Column="0" Grid.Row="6" Click="AddClick" HorizontalAlignment="Left" VerticalAlignment="Center">Add</Button>
-        <Button Grid.Column="1" Grid.Row="6" Click="CancelClick" HorizontalAlignment="Right" VerticalAlignment="Center">Cancel</Button>
-
-
+        <Label Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Top">Additionals:</Label>
+        <DataGrid Grid.Column="1" Grid.Row="4" x:Name="DataGrid" ItemsSource="{Binding}" ColumnWidth="200" Margin="0,10,0,0"/>
+        <Button Grid.Column="0" Grid.Row="5" Click="AddClick" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,10">Add</Button>
+        <Button Grid.Column="1" Grid.Row="5" Click="CancelClick" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,10">Cancel</Button>
     </Grid>
 </controls:MetroWindow>
