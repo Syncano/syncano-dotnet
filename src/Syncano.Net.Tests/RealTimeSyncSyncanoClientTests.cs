@@ -753,7 +753,6 @@ namespace Syncano.Net.Tests
 
             //then
             result.ShouldNotBeNull();
-            result.ShouldNotBeEmpty();
         }
 
         [Fact]

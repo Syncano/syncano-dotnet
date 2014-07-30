@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Should;
 using Should.Core.Exceptions;
@@ -583,6 +581,7 @@ namespace Syncano.Net.Tests
 
             //then
             genericNotifications.ShouldNotBeEmpty();
+            genericNotifications.Any( n => n.Data.Count == 3).ShouldBeTrue();
         }
     }
 }
