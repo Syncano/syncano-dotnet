@@ -4,11 +4,12 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Windows;
 using System.Windows.Input;
-using Syncano.Net.Data;
 using Syncano.Net.DataRequests;
 using SyncanoSyncServer.Net;
 using System;
+using DataObject = Syncano.Net.Data.DataObject;
 
 namespace SampleWpfApplication
 {
@@ -27,6 +28,8 @@ namespace SampleWpfApplication
             ProjectId = "1625";
             CollectionId = "6490";
             FolderName = "Default";
+            SelectedHttp = -1;
+            SelectedSync = -1;
         }
 
         private async void Connect()
@@ -63,7 +66,7 @@ namespace SampleWpfApplication
             RefreshDataObjectsHttp();
             RefreshDataObjectsSync();
         }
-        public async void Cleanup()
+        private async void Cleanup()
         {
             if(_syncServer == null)
                 return;
@@ -72,7 +75,7 @@ namespace SampleWpfApplication
                 await _syncServer.RealTimeSync.UnsubscribeProject(ProjectId);
         }
 
-        public async void RefreshDataObjectsHttp()
+        private async void RefreshDataObjectsHttp()
         {
             var dataObjects =
                 await
@@ -87,7 +90,7 @@ namespace SampleWpfApplication
             foreach (var dataObject in dataObjects)
                 DataObjectsHttp.Add(dataObject);
         }
-        public async void RefreshDataObjectsSync()
+        private async void RefreshDataObjectsSync()
         {
             var dataObjects =
                 await
@@ -103,16 +106,22 @@ namespace SampleWpfApplication
                 DataObjectsSync.Add(dataObject);
         }
 
-        public async void AddDataObjectHttp(string title, string text, string link, string imagePath, ObservableCollection<AdditionalItem> additionalItems)
+        private async void AddDataObjectHttp()
         {
-            var request = CreateDataDefinitaionRequest(title, text, link, imagePath, additionalItems);
+            var dialog = new AddDataObjectWindow();
+            if (dialog.ShowDialog() != true)
+                return;
+            var request = CreateDataDefinitaionRequest(dialog.Title.Text, dialog.Text.Text, dialog.Link.Text, dialog.Image.Text, dialog.Additionals);
 
             await _syncano.DataObjects.New(request);
             RefreshDataObjectsHttp();
         }
-        public async void AddDataObjectSync(string title, string text, string link, string imagePath, ObservableCollection<AdditionalItem> additionalItems)
+        private async void AddDataObjectSync()
         {
-            var request = CreateDataDefinitaionRequest(title, text, link, imagePath, additionalItems);
+            var dialog = new AddDataObjectWindow();
+            if (dialog.ShowDialog() != true)
+                return;
+            var request = CreateDataDefinitaionRequest(dialog.Title.Text, dialog.Text.Text, dialog.Link.Text, dialog.Image.Text, dialog.Additionals);
 
             await _syncServer.DataObjects.New(request);
         }
@@ -147,10 +156,11 @@ namespace SampleWpfApplication
             return request;
         }
 
-        public async void DeleteObjectHttp(int index)
+        public async void DeleteObjectHttp()
         {
-            var dataObject = DataObjectsHttp[index];
+            var dataObject = DataObjectsHttp[SelectedHttp];
             DataObjectsHttp.Remove(dataObject);
+            SelectedHttp = -1;
 
             var request = new DataObjectSimpleQueryRequest
             {
@@ -162,11 +172,11 @@ namespace SampleWpfApplication
 
             await _syncano.DataObjects.Delete(request);
         }
-
-        public async void DeleteObjectSync(int index)
+        public async void DeleteObjectSync()
         {
-            var dataObject = DataObjectsSync[index];
+            var dataObject = DataObjectsSync[SelectedSync];
             DataObjectsHttp.Remove(dataObject);
+            SelectedSync = -1;
 
             var request = new DataObjectSimpleQueryRequest
             {
@@ -249,11 +259,57 @@ namespace SampleWpfApplication
             }
         }
 
+        private int _selectedHttp;
+        public int SelectedHttp
+        {
+            get { return _selectedHttp; }
+            set
+            {
+                _selectedHttp = value;
+                OnPropertyChanged("SelectedHttp");
+            }
+        }
+
+        private int _selectedSync;
+        public int SelectedSync
+        {
+            get { return _selectedSync; }
+            set
+            {
+                _selectedSync = value;
+                OnPropertyChanged("SelectedSync");
+            }
+        }
+
         public ICommand ConnectCommand
         {
             get { return new RelayCommand(Connect); }
         }
-
+        public ICommand RefreshHttpCommand
+        {
+            get { return new RelayCommand(RefreshDataObjectsHttp);}
+        }
+        public ICommand AddHttpCommand
+        {
+            get { return new RelayCommand(AddDataObjectHttp);}
+        }
+        public ICommand AddSynCommand
+        {
+            get { return new RelayCommand(AddDataObjectSync);}
+        }
+        public ICommand DeleteHttpCommand
+        {
+            get { return new RelayCommand(DeleteObjectHttp);}
+        }
+        public ICommand DeleteSyncCommand
+        {
+            get { return new RelayCommand(DeleteObjectSync);}
+        }
+        public ICommand WindowClosing
+        {
+            get { return new RelayCommand(Cleanup); }
+        }
+        
         public event PropertyChangedEventHandler PropertyChanged = null;
         protected virtual void OnPropertyChanged(string propertyName)
         {

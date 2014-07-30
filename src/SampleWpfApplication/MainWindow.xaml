@@ -4,9 +4,15 @@
                       xmlns:l="clr-namespace:SampleWpfApplication"
                       xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
-                      Title="Syncano.Net Sample WPF Application" Height="600" Width="800" Closing="Window_Closing"
-                      WindowState="Normal" d:DataContext="{d:DesignInstance l:MainWindowViewModel}">
+                      Title="Syncano.Net Sample WPF Application" Height="600" Width="800"
+                      WindowState="Normal" d:DataContext="{d:DesignInstance l:MainWindowViewModel}" DataContext="{StaticResource MainWindowViewModel}">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding WindowClosing}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <controls:MetroWindow.Resources>
         <l:IntToEnableConverter x:Key="EnableConverter"/>
     </controls:MetroWindow.Resources>
@@ -60,12 +66,12 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <DataGrid ItemsSource="{Binding DataObjectsHttp}" x:Name="DataGridHttp" IsReadOnly="True" />
+                <DataGrid ItemsSource="{Binding DataObjectsHttp}" SelectedIndex="{Binding SelectedHttp, Mode=TwoWay}" x:Name="DataGridHttp" IsReadOnly="True" />
 
                 <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Click="AddDataObjectHttpClick">Add Data Object</Button>
-                    <Button Click="RefreshDataobjectsClick">Refresh Data Objects</Button>
-                    <Button Click="DeleteHttpClick" IsEnabled="{Binding ElementName=DataGridHttp, Path=SelectedIndex, Converter={StaticResource EnableConverter}}">Delete</Button>
+                    <Button Command="{Binding AddHttpCommand}">Add Data Object</Button>
+                    <Button Command="{Binding RefreshHttpCommand}">Refresh Data Objects</Button>
+                    <Button Command="{Binding DeleteHttpCommand}" IsEnabled="{Binding ElementName=DataGridHttp, Path=SelectedIndex, Converter={StaticResource EnableConverter}}">Delete</Button>
                 </StackPanel>
             </Grid>
            
@@ -77,11 +83,11 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <DataGrid ItemsSource="{Binding DataObjectsSync}" x:Name="DataGridSync" IsReadOnly="True"/>
+                <DataGrid ItemsSource="{Binding DataObjectsSync}" SelectedIndex="{Binding SelectedSync, Mode=TwoWay}" x:Name="DataGridSync" IsReadOnly="True"/>
 
                 <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Click="AddDataObjectSyncClick">Add Data Object</Button>
-                    <Button Click="DeleteSyncHttp" IsEnabled="{Binding ElementName=DataGridSync, Path=SelectedIndex, Converter={StaticResource EnableConverter}}">Delete</Button>
+                    <Button Command="{Binding AddSynCommand}">Add Data Object</Button>
+                    <Button Command="{Binding DeleteSyncCommand}" IsEnabled="{Binding ElementName=DataGridSync, Path=SelectedIndex, Converter={StaticResource EnableConverter}}">Delete</Button>
                 </StackPanel>
             </Grid>
         </GroupBox>
