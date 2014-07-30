@@ -108,52 +108,34 @@ namespace SampleWpfApplication
 
         private async void AddDataObjectHttp()
         {
-            var dialog = new AddDataObjectWindow();
-            if (dialog.ShowDialog() != true)
+            var dialog = new AddDataObjectViewModel();
+            dialog.ShowDialog();
+
+            if(dialog.WasSuccess != true)
                 return;
-            var request = CreateDataDefinitaionRequest(dialog.Title.Text, dialog.Text.Text, dialog.Link.Text, dialog.Image.Text, dialog.Additionals);
+
+            var request = dialog.Request;
+            request.ProjectId = ProjectId;
+            request.CollectionId = CollectionId;
+            request.Folder = FolderName;
 
             await _syncano.DataObjects.New(request);
             RefreshDataObjectsHttp();
         }
         private async void AddDataObjectSync()
         {
-            var dialog = new AddDataObjectWindow();
-            if (dialog.ShowDialog() != true)
-                return;
-            var request = CreateDataDefinitaionRequest(dialog.Title.Text, dialog.Text.Text, dialog.Link.Text, dialog.Image.Text, dialog.Additionals);
+            var dialog = new AddDataObjectViewModel();
+            dialog.ShowDialog();
 
-            await _syncServer.DataObjects.New(request);
-        }
-        private DataObjectDefinitionRequest CreateDataDefinitaionRequest(string title, string text, string link,
-            string imagePath, ObservableCollection<AdditionalItem> additionalItems)
-        {
-            var request = new DataObjectDefinitionRequest();
+            if (dialog.WasSuccess != true)
+                return;
+
+            var request = dialog.Request;
             request.ProjectId = ProjectId;
             request.CollectionId = CollectionId;
             request.Folder = FolderName;
-            request.Title = title;
-            request.Text = text;
-            request.Link = link;
 
-            if (imagePath != "")
-                using (var f = new FileStream(imagePath, FileMode.Open, FileAccess.Read, FileShare.Read))
-                {
-                    using (var ms = new MemoryStream())
-                    {
-                        f.CopyTo(ms);
-                        byte[] imageBytes = ms.ToArray();
-
-                        // Convert byte[] to Base64 String
-                        string base64String = Convert.ToBase64String(imageBytes);
-                        request.ImageBase64 = base64String;
-                    }
-                }
-
-            request.Additional = new Dictionary<string, string>();
-            foreach (var item in additionalItems)
-                request.Additional.Add(item.Key, item.Value);
-            return request;
+            await _syncServer.DataObjects.New(request);
         }
 
         public async void DeleteObjectHttp()

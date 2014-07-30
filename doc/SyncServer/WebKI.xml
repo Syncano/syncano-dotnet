@@ -482,8 +482,8 @@
     <HelpKINode Title="DeleteDataNotification.Target Property " Url="html/fa23cdfe-6410-705c-e1c7-c9010917a746.htm" />
   </HelpKINode>
   <HelpKINode Title="Tcp enumeration member" Url="html/0578a20d-a073-7082-fece-85da74474469.htm" />
-  <HelpKINode Title="TimeStamp property" Url="html/2812f928-53c0-e85b-16c5-cfae9bdabe77.htm" />
   <HelpKINode Title="Timestamp property" Url="html/3dba971e-8e61-3c55-3038-ffc763156104.htm" />
+  <HelpKINode Title="TimeStamp property" Url="html/2812f928-53c0-e85b-16c5-cfae9bdabe77.htm" />
   <HelpKINode Title="Type property">
     <HelpKINode Title="ApiCommandRequest.Type Property " Url="html/5c96d427-da8d-34bb-c3d0-243ec1d383b7.htm" />
     <HelpKINode Title="BaseNotification.Type Property " Url="html/b4b71fbd-e801-a64a-cff1-e41dd37e01c7.htm" />
