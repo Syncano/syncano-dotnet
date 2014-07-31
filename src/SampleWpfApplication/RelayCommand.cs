@@ -30,5 +30,10 @@ namespace SampleWpfApplication
         }
 
         public event EventHandler CanExecuteChanged;
+
+        public void RaiseCanExecute()
+        {
+            CanExecuteChanged(this, new EventArgs());
+        }
     }
 }

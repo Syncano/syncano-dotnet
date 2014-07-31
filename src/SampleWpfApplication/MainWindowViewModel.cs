@@ -30,6 +30,8 @@ namespace SampleWpfApplication
             FolderName = "Default";
             SelectedHttp = -1;
             SelectedSync = -1;
+            _deleteHttpCommand = new RelayCommand(DeleteObjectHttp, () => SelectedHttp != -1);
+            _deleteSyncCommand = new RelayCommand(DeleteObjectSync, () => SelectedSync != -1);
         }
 
         private async void Connect()
@@ -249,9 +251,10 @@ namespace SampleWpfApplication
             {
                 _selectedHttp = value;
                 OnPropertyChanged("SelectedHttp");
+                if(_deleteHttpCommand != null)
+                    _deleteHttpCommand.RaiseCanExecute();
             }
         }
-
         private int _selectedSync;
         public int SelectedSync
         {
@@ -260,6 +263,8 @@ namespace SampleWpfApplication
             {
                 _selectedSync = value;
                 OnPropertyChanged("SelectedSync");
+                if(_deleteSyncCommand != null)
+                    _deleteSyncCommand.RaiseCanExecute();
             }
         }
 
@@ -279,13 +284,17 @@ namespace SampleWpfApplication
         {
             get { return new RelayCommand(AddDataObjectSync);}
         }
+
+        private RelayCommand _deleteHttpCommand;
         public ICommand DeleteHttpCommand
         {
-            get { return new RelayCommand(DeleteObjectHttp);}
+            get { return _deleteHttpCommand;}
         }
+
+        private RelayCommand _deleteSyncCommand;
         public ICommand DeleteSyncCommand
         {
-            get { return new RelayCommand(DeleteObjectSync);}
+            get { return _deleteSyncCommand;}
         }
         public ICommand WindowClosing
         {

@@ -14,7 +14,6 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <controls:MetroWindow.Resources>
-        <l:IntToEnableConverter x:Key="EnableConverter"/>
     </controls:MetroWindow.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -71,7 +70,7 @@
                 <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Command="{Binding AddHttpCommand}">Add Data Object</Button>
                     <Button Command="{Binding RefreshHttpCommand}">Refresh Data Objects</Button>
-                    <Button Command="{Binding DeleteHttpCommand}" IsEnabled="{Binding ElementName=DataGridHttp, Path=SelectedIndex, Converter={StaticResource EnableConverter}}">Delete</Button>
+                    <Button Command="{Binding DeleteHttpCommand}">Delete</Button>
                 </StackPanel>
             </Grid>
            
@@ -87,7 +86,7 @@
 
                 <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Command="{Binding AddSynCommand}">Add Data Object</Button>
-                    <Button Command="{Binding DeleteSyncCommand}" IsEnabled="{Binding ElementName=DataGridSync, Path=SelectedIndex, Converter={StaticResource EnableConverter}}">Delete</Button>
+                    <Button Command="{Binding DeleteSyncCommand}">Delete</Button>
                 </StackPanel>
             </Grid>
         </GroupBox>
