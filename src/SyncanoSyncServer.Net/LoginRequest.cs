@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Syncano.Net;
 
 namespace SyncanoSyncServer.Net
 {
@@ -30,5 +31,8 @@ namespace SyncanoSyncServer.Net
         /// </summary>
         [JsonProperty("session_id")]
         public string SessionId { get; set; }
+
+        [JsonProperty("user-agent")]
+        public string UserAgent { get { return VersionInfo.Identifier; } }
     }
 }

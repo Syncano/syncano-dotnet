@@ -33,6 +33,7 @@ namespace Syncano.Net.Http
             _apiKey = apiKey;
             _baseUrl = string.Format("https://{0}.syncano.com/api/", _instanceName);
             _client = new HttpClient(new HttpClientHandler() { AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip, UseCookies = true });
+            _client.DefaultRequestHeaders.UserAgent.ParseAdd(VersionInfo.Identifier);
         }
 
         private string CreateGetUri(string methodName, object query = null)
