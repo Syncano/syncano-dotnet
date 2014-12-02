@@ -620,7 +620,7 @@ namespace Syncano.Net.Tests
             }
         }
 
-        [Fact(Skip = "Not authorized.")]
+        [Fact( /* Skip = "Not authorized.")*/ )]
         public async Task GetOne_GetsUserObject_OverHttp()
         {
             //given
@@ -784,7 +784,7 @@ namespace Syncano.Net.Tests
             await client.Delete(user.Id);
         }
 
-        [Fact(Skip = "Not authorized.")]
+        [Fact( /* Skip = "Not authorized.")*/ )]
         public async Task Update_NoUserId_UpdatesUserObject_OverHttp()
         {
             //given
@@ -806,7 +806,7 @@ namespace Syncano.Net.Tests
             await client.Delete(user.Id);
         }
 
-        [Theory(Skip = "Syncano.Net.SyncanoExceptionError: TypeError: _count_users() got an unexpected keyword argument 'type'"), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory( /* Skip = "Syncano.Net.SyncanoExceptionError: TypeError: _count_users() got an unexpected keyword argument 'type'")*/ ), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task Count_ByCollectionId_GetsCountOfUsers(UserSyncanoClient client)
         {
             //given
@@ -833,7 +833,7 @@ namespace Syncano.Net.Tests
             await _dataClient.Delete(deleteRequest);
         }
 
-        [Theory(Skip = "Syncano.Net.SyncanoExceptionError: TypeError: _count_users() got an unexpected keyword argument 'type'"), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory( /* Skip = "Syncano.Net.SyncanoExceptionError: TypeError: _count_users() got an unexpected keyword argument 'type'")*/ ), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task Count_ByCollectionKey_GetsCountOfUsers(UserSyncanoClient client)
         {
             //given
@@ -860,7 +860,7 @@ namespace Syncano.Net.Tests
             await _dataClient.Delete(deleteRequest);
         }
 
-        [Theory(Skip = "Syncano.Net.SyncanoExceptionError: TypeError: _count_users() got an unexpected keyword argument 'type'"), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory( /* Skip = "Syncano.Net.SyncanoExceptionError: TypeError: _count_users() got an unexpected keyword argument 'type'")*/ ), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task Count_WithModeratedState_GetsCountOfUsers(UserSyncanoClient client)
         {
             //given
@@ -889,7 +889,7 @@ namespace Syncano.Net.Tests
             await _dataClient.Delete(deleteRequest);
         }
 
-        [Theory(Skip = "Syncano.Net.SyncanoExceptionError: TypeError: _count_users() got an unexpected keyword argument 'type'"), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory( /* Skip = "Syncano.Net.SyncanoExceptionError: TypeError: _count_users() got an unexpected keyword argument 'type'")*/ ), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task Count_WithPendingState_GetsCountOfUsers(UserSyncanoClient client)
         {
             //given
@@ -918,7 +918,7 @@ namespace Syncano.Net.Tests
             await _dataClient.Delete(deleteRequest);
         }
 
-        [Theory(Skip = "Syncano.Net.SyncanoExceptionError: TypeError: _count_users() got an unexpected keyword argument 'type'"), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory( /* Skip = "Syncano.Net.SyncanoExceptionError: TypeError: _count_users() got an unexpected keyword argument 'type'")*/ ), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task Count_WithSingleFolderName_GetsCountOfUsers(UserSyncanoClient client)
         {
             //given
@@ -947,7 +947,7 @@ namespace Syncano.Net.Tests
             await _dataClient.Delete(deleteRequest);
         }
 
-        [Theory(Skip = "Syncano.Net.SyncanoExceptionError: TypeError: _count_users() got an unexpected keyword argument 'type'"), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory( /* Skip = "Syncano.Net.SyncanoExceptionError: TypeError: _count_users() got an unexpected keyword argument 'type'")*/ ), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task Count_WithFolderListName_GetsCountOfUsers(UserSyncanoClient client)
         {
             //given
@@ -976,7 +976,7 @@ namespace Syncano.Net.Tests
             await _dataClient.Delete(deleteRequest);
         }
 
-        [Theory(Skip = "Syncano.Net.SyncanoExceptionError: TypeError: _count_users() got an unexpected keyword argument 'type'"), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory( /* Skip = "Syncano.Net.SyncanoExceptionError: TypeError: _count_users() got an unexpected keyword argument 'type'")*/ ), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task Count_WithImageContentFilter_GetsCountOfUsers(UserSyncanoClient client)
         {
             //given
@@ -1005,7 +1005,7 @@ namespace Syncano.Net.Tests
             await _dataClient.Delete(deleteRequest);
         }
 
-        [Theory(Skip = "Syncano.Net.SyncanoExceptionError: TypeError: _count_users() got an unexpected keyword argument 'type'"), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory( /* Skip = "Syncano.Net.SyncanoExceptionError: TypeError: _count_users() got an unexpected keyword argument 'type'")*/ ), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task Count_WithTextContentFilter_GetsCountOfUsers(UserSyncanoClient client)
         {
             //given

@@ -421,7 +421,7 @@ namespace Syncano.Net.Tests
             await client.Delete(deleteRequest);
         }
 
-        [Theory(Skip = "Children limit not working over http."), PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory( /* Skip = "Children limit not working over http.")*/ ), PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task GetOne_ChildrenLimit_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given
@@ -521,7 +521,7 @@ namespace Syncano.Net.Tests
             await client.Delete(deleteRequest);
         }
 
-        [Theory(Skip = "Children limit not working over http."), PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory( /* Skip = "Children limit not working over http.")*/ ), PropertyData("DataObjectSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task GetOne_ChildrenTreeParentHierarchyWithLimit_CreatesNewDataObject(DataObjectSyncanoClient client)
         {
             //given

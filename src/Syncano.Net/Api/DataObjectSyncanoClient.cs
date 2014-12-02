@@ -628,5 +628,10 @@ namespace Syncano.Net.Api
                     by_user = request.ByUser
                 }, "count");
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0} using {1}", typeof (DataObjectSyncanoClient), _syncanoClient.GetType());
+        }
     }
 }

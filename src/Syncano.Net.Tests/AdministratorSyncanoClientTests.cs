@@ -21,7 +21,7 @@ namespace Syncano.Net.Tests
             result.Count.ShouldEqual(4);
         }
 
-        [Theory(Skip = "Permission denied."), PropertyData("AdministratorSyncanoClients", PropertyType = typeof (SyncanoClientsProvider))]
+        [Theory( /* Skip = "Permission denied.")*/ ), PropertyData("AdministratorSyncanoClients", PropertyType = typeof (SyncanoClientsProvider))]
         public async Task New_CreatesNewAdmin(AdministratorSyncanoClient client)
         {
             //given
@@ -34,8 +34,10 @@ namespace Syncano.Net.Tests
             result.ShouldBeTrue();
 
             //cleanup
-            var admin = await client.GetOne(adminEmail: email);
-            await client.Delete(adminId: admin.Id);
+
+            //there is no api for canceling invitations.
+           /* var admin = await client.GetOne(adminEmail: email);
+            await client.Delete(adminId: admin.Id);*/
         }
 
         [Theory, PropertyData("AdministratorSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
@@ -125,7 +127,7 @@ namespace Syncano.Net.Tests
             result.Email.ShouldEqual(TestData.AdminEmail);
         }
 
-        [Fact(Skip = "Syncano admin permissionDenied error")]
+        [Theory, PropertyData("AdministratorSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task GetOne_ByAdminEmail_CreatesAdministrator(AdministratorSyncanoClient client)
         {
             //when
@@ -312,7 +314,7 @@ namespace Syncano.Net.Tests
             }
         }
 
-        [Theory(Skip = "Permission denied."), PropertyData("AdministratorSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
+        [Theory(  Skip = "Cannot be tested, as creating an admin send only an email" ), PropertyData("AdministratorSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
         public async Task Delete_DeletesAdmin(AdministratorSyncanoClient client)
         {
             //given
