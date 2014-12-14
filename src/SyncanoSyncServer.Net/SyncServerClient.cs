@@ -17,6 +17,7 @@ using Newtonsoft.Json.Linq;
 using ReactiveSockets;
 using Syncano.Net;
 using SyncanoSyncServer.Net.Notifications;
+using SyncanoSyncServer.Net.RealTimeSyncApi;
 
 namespace SyncanoSyncServer.Net
 {
@@ -102,33 +103,67 @@ namespace SyncanoSyncServer.Net
         {
             _client = new ReactiveClient("api.syncano.com", 8200, stream =>
             {
-                var ssl = new SslStream(stream);
-                ssl.AuthenticateAsClient("api.syncano.com");
-                return ssl;
+                _ssl = new SslStream(stream);
+                _ssl.AuthenticateAsClient("api.syncano.com");
+                return _ssl;
             });
 
             _newBytesSubscription = _client.Receiver.SubscribeOn(TaskPoolScheduler.Default).Subscribe(AddNewByte);
-
             _messagesSubscription = _messagesObservable.SubscribeOn(TaskPoolScheduler.Default).Subscribe(OnNewMessage);
+
+            _every10seconds = Observable.Interval(TimeSpan.FromSeconds(10)).SubscribeOn(TaskPoolScheduler.Default).Subscribe(_ => OnEvery10Seconds());
         }
 
-        private Regex _callResponseRegex = new Regex("\"type\":\"callresponse\"");
-        private Regex _newNotificationRegex = new Regex("\"type\":\"new\"");
-        private Regex _deleteNotificationRegex = new Regex("\"type\":\"delete\"");
-        private Regex _changeNotificationRegex = new Regex("\"type\":\"change\"");
+        private readonly ConcurrentDictionary<string, ISyncanoConversation> _conversationsByMessageId = new ConcurrentDictionary<string, ISyncanoConversation>();
 
-        private Regex _dataNotificationRegex = new Regex("\"object\":\"data\"");
-        private Regex _dataRelationNotificationRegex = new Regex("\"object\":\"datarelation\"");
-        private Regex _genericNotificationRegex = new Regex("\"object\":\"me\"");
+        private void OnEvery10Seconds()
+        {
+            var conversationsToRemove = _conversationsByMessageId.Values.Where(c => c.HasCompleted).Select(c => c.Request.MessageId.ToString()).ToList();
+
+            ISyncanoConversation conversation;
+            conversationsToRemove.ForEach(id => _conversationsByMessageId.TryRemove(id, out conversation));
+
+            foreach (var eachConversation in _conversationsByMessageId.Values)
+            {
+                eachConversation.VerifyTimeout();
+
+                if (eachConversation.WasTimeouted)
+                    RelaseOneSemaphoreEntry();
+            }
+        }
+
+
+        private readonly Regex _callResponseRegex = new Regex("\"type\":\"callresponse\",\"message_id\":(?<MessageId>\\d+)");
+        private readonly Regex _newNotificationRegex = new Regex("\"type\":\"new\"");
+        private readonly Regex _deleteNotificationRegex = new Regex("\"type\":\"delete\"");
+        private readonly Regex _changeNotificationRegex = new Regex("\"type\":\"change\"");
+
+        private readonly Regex _dataNotificationRegex = new Regex("\"object\":\"data\"");
+        private readonly Regex _dataRelationNotificationRegex = new Regex("\"object\":\"datarelation\"");
+        private readonly Regex _genericNotificationRegex = new Regex("\"object\":\"me\"");
 
         private void OnNewMessage(string message)
         {
-            Debug.WriteLine(message);
+            var match = _callResponseRegex.Match(message);
+            if (match.Success)
+            {
+                var messageId = match.Groups["MessageId"].Value;
 
-            if (_callResponseRegex.IsMatch(message))
-                return;
-
-            if (_dataNotificationRegex.IsMatch(message))
+                ISyncanoConversation conversation;
+                if (_conversationsByMessageId.TryGetValue(messageId, out conversation))
+                {
+                    try
+                    {
+                        if (!conversation.HasCompleted)
+                            conversation.SetResponse(message);
+                    }
+                    finally
+                    {
+                        RelaseOneSemaphoreEntry();
+                    }
+                }
+            }
+            else if (_dataNotificationRegex.IsMatch(message))
             {
                 if (_newNotificationRegex.IsMatch(message))
                     _newDataNotificationObservable.OnNext(JsonConvert.DeserializeObject<NewDataNotification>(message));
@@ -140,11 +175,13 @@ namespace SyncanoSyncServer.Net
                 if (_changeNotificationRegex.IsMatch(message))
                     _changeDataNotificationObservable.OnNext(
                         JsonConvert.DeserializeObject<ChangeDataNotification>(message));
-            }else if (_dataRelationNotificationRegex.IsMatch(message))
+            }
+            else if (_dataRelationNotificationRegex.IsMatch(message))
             {
                 _dataRelationNotificationObservable.OnNext(
                     JsonConvert.DeserializeObject<DataRelationNotification>(message));
-            }else if (_genericNotificationRegex.IsMatch(message))
+            }
+            else if (_genericNotificationRegex.IsMatch(message))
             {
                 _genericNotificationObservable.OnNext(JsonConvert.DeserializeObject<GenericNotification>(message));
             }
@@ -208,7 +245,7 @@ namespace SyncanoSyncServer.Net
                 .ToTask();
 
             _client.SendAsync(CreateRequest(request));
-          
+
             return t;
         }
 
@@ -230,20 +267,7 @@ namespace SyncanoSyncServer.Net
             return Interlocked.Add(ref _currentMessageId, 1);
         }
 
-
-        private JObject CheckResponseStatus(string response)
-        {
-            var json = JObject.Parse(response);
-            var result = json.SelectToken("result").Value<string>();
-            if (result == null)
-                throw new SyncanoException("Unexpected response: " + response);
-
-            if (result == "NOK")
-                throw new SyncanoException("Error: " + json.SelectToken("data").SelectToken("error").Value<string>());
-
-            return json;
-        }
-
+        
         private Task<T> SendCommandAsync<T>(ApiCommandRequest request, string contentToken)
         {
             return SendCommandAsync<T>(request, jo => jo.SelectToken("data").SelectToken(contentToken).ToObject<T>());
@@ -251,32 +275,12 @@ namespace SyncanoSyncServer.Net
 
         private Task<T> SendCommandAsync<T>(ApiCommandRequest request, Func<JToken, T> getResult)
         {
-            var t = _messagesObservable.Where(s => IsResponseToRequest(s, request))
-                .Select(m =>
-                {
-                    try
-                    {
-                        JObject jo = CheckResponseStatus(m);
-                        return getResult(jo);
-                    }
-                    catch (Exception e)
-                    {
-                        //Logger.Fatal("Failed to deserialize response: " + m, e);
-                        throw;
-                    }
-                }).FirstAsync().Timeout(TimeSpan.FromSeconds(30)).Finally(() =>
-                {
-                    if (!_isDisposing)
-                        _semaphore.Release();
-                }
-                ).ToTask();
+            var syncanoConversation = new SyncanoConversation<T>(request, getResult);
+            _conversationsByMessageId.TryAdd(syncanoConversation.Id, syncanoConversation);
 
+            SendRequestAsync(syncanoConversation);
 
-            var task = SendRequestAsync(request);
-            if (task.Exception != null)
-                throw task.Exception.InnerException;
-            
-            return t;
+            return syncanoConversation.ResponseObservable.ToTask();
         }
 
 
@@ -296,13 +300,13 @@ namespace SyncanoSyncServer.Net
                         {
                             if (eachProperty.GetValue(parameters) is Dictionary<string, string>)
                             {
-                                var dictionary = (Dictionary<string, string>)eachProperty.GetValue(parameters);
+                                var dictionary = (Dictionary<string, string>) eachProperty.GetValue(parameters);
                                 foreach (var item in dictionary)
                                     request.Params.Add(item.Key, item.Value);
                             }
                             else
                             {
-                                var dictionary = (Dictionary<string, object>)eachProperty.GetValue(parameters);
+                                var dictionary = (Dictionary<string, object>) eachProperty.GetValue(parameters);
                                 foreach (var item in dictionary)
                                     request.Params.Add(item.Key, item.Value);
                             }
@@ -315,36 +319,42 @@ namespace SyncanoSyncServer.Net
             return request;
         }
 
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(8);
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(8, 8);
         private IDisposable _messagesSubscription;
         private bool _isDisposing;
+        private IDisposable _every10seconds;
+        private SslStream _ssl;
 
-
-        private async Task SendRequestAsync(ApiCommandRequest request)
+        private void RelaseOneSemaphoreEntry()
         {
-            if (_isAuthenticated == false) throw new SyncanoException("Cannot send any Requests when not logged in");
+            if (!_isDisposing)
+                _semaphore.Release();
+        }
 
+        private async Task SendRequestAsync(ISyncanoConversation conversation)
+        {
+            if (_isAuthenticated == false) throw new SyncanoException("Cannot send any Requests when not authenticated");
 
-            await _semaphore.WaitAsync(TimeSpan.FromSeconds(30));
-            try
+            var result = await _semaphore.WaitAsync(TimeSpan.FromSeconds(20));
+            if (!result)
             {
-                await _client.SendAsync(CreateRequest(request));
+                conversation.SetError(new SyncanoException("Timeout - wait time in queue to send request has been exceeded"));
+                return;
             }
 
-
-            catch (Exception)
+            try
             {
-                if (!_isDisposing)
-                    _semaphore.Release();
+                await _client.SendAsync(CreateRequest(conversation.Request));
+                conversation.SetSent();
+            }
+            catch (Exception ex)
+            {
+                RelaseOneSemaphoreEntry();
+                conversation.SetError(ex);
                 throw;
             }
         }
-
-        private bool IsResponseToRequest(string s, ApiCommandRequest request)
-        {
-            return s.Contains(string.Format(",\"message_id\":{0}}}", request.MessageId));
-        }
-
+        
 
         private byte[] CreateRequest(ISyncanoRequest request)
         {
@@ -369,8 +379,23 @@ namespace SyncanoSyncServer.Net
             if (_messagesSubscription != null)
                 _messagesSubscription.Dispose();
 
+            if (_every10seconds != null)
+                _every10seconds.Dispose();
+
+            foreach (var syncanoConversation in _conversationsByMessageId)
+            {
+                if (!syncanoConversation.Value.HasCompleted)
+                    syncanoConversation.Value.SetError(new SyncanoException("SyncServerClient was disposed"));
+            }
+
             _semaphore.Dispose();
-            if (_client != null)
+
+            if (_ssl != null)
+            {
+                _ssl.Dispose();
+            }
+
+            if (_client != null && _client.IsConnected)
             {
                 _client.Dispose();
             }
