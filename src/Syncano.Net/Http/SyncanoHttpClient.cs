@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
@@ -69,13 +68,13 @@ namespace Syncano.Net.Http
             
             if (query != null)
             {
-                foreach (var each in Type.GetTypeFromHandle(query.GetType().TypeHandle).GetRuntimeProperties())
+                foreach (var each in query.GetType().GetProperties())
                 {
-                    if (each.GetValue(query) != null)
+                    if (each.GetValue( query,null) != null)
                     {
-                        if (each.GetValue(query).GetType().IsArray)
+                        if (each.GetValue(query, null).GetType().IsArray)
                         {
-                            var array = (Array)each.GetValue(query);
+                            var array = (Array)each.GetValue(query, null);
 
                             foreach (var item in array)
                             {
@@ -84,7 +83,7 @@ namespace Syncano.Net.Http
                         }
                         else
                         {
-                            sb.AppendFormat("&{0}={1}", each.Name, Uri.EscapeDataString(each.GetValue(query).ToString()));
+                            sb.AppendFormat("&{0}={1}", each.Name, Uri.EscapeDataString(each.GetValue(query, null).ToString()));
                         }
                     }
 
@@ -134,22 +133,22 @@ namespace Syncano.Net.Http
 
             if (query != null)
             {
-                foreach (var each in Type.GetTypeFromHandle(query.GetType().TypeHandle).GetRuntimeProperties())
+                foreach (var each in query.GetType().GetProperties())
                 {
-                    if (each.GetValue(query) != null)
+                    if (each.GetValue(query, null) != null)
                     {
-                        if (each.GetValue(query).GetType().IsArray)
+                        if (each.GetValue(query, null).GetType().IsArray)
                         {
-                            var array = (Array)each.GetValue(query);
+                            var array = (Array)each.GetValue(query, null);
 
                             foreach (var item in array)
                             {
                                 content.Add( new StringContent(item.ToString()),each.Name);
                             }
                         }
-                        else if (each.GetValue(query).GetType().IsConstructedGenericType && each.GetValue(query).GetType().GetGenericTypeDefinition() == typeof(Dictionary<,>))
+                        else if (each.GetValue(query, null).GetType().IsGenericTypeDefinition  && each.GetValue(query, null).GetType().GetGenericTypeDefinition() == typeof(Dictionary<,>))
                         {
-                            var dictionary = (Dictionary<string,string>)each.GetValue(query);
+                            var dictionary = (Dictionary<string, string>)each.GetValue(query, null);
                             foreach (var item in dictionary)
                             {
                                 content.Add(new StringContent(item.Value), item.Key);
@@ -157,7 +156,7 @@ namespace Syncano.Net.Http
                         }
                         else
                         {
-                            content.Add(new StringContent(each.GetValue(query).ToString()), each.Name);
+                            content.Add(new StringContent(each.GetValue(query, null).ToString()), each.Name);
                         }
                     }
 
