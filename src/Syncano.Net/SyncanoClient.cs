@@ -6,7 +6,7 @@ namespace Syncano.Net
     /// <summary>
     /// Main class of Syncano.Net. Provides api to perform all possible http operations on your Syncano instance.
     /// </summary>
-    public class Syncano
+    public class SyncanoClient
     {
         private readonly SyncanoHttpClient _httpClient;
 
@@ -15,7 +15,7 @@ namespace Syncano.Net
         /// </summary>
         /// <param name="instanceName">Name of Syncano instance.</param>
         /// <param name="apiKey">Api key of syncano instance.</param>
-        public Syncano(string instanceName, string apiKey)
+        public SyncanoClient(string instanceName, string apiKey)
         {
             _httpClient = new SyncanoHttpClient(instanceName, apiKey);
         }

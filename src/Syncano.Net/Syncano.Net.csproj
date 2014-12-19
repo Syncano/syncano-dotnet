@@ -68,7 +68,7 @@
     <Compile Include="Data\Project.cs" />
     <Compile Include="Api\ProjectSyncanoClient.cs" />
     <Compile Include="DataRequests\ManageCollactionTagsRequest.cs" />
-    <Compile Include="Syncano.cs" />
+    <Compile Include="SyncanoClient.cs" />
     <Compile Include="SyncanoException.cs" />
     <Compile Include="Data\Image.cs" />
     <Compile Include="Http\SyncanoHttpClient.cs" />

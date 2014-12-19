@@ -18,7 +18,7 @@ namespace Syncano.Net.Tests
 
         public UserSyncanoClientTests()
         {
-            var syncanoClient = new Syncano(TestData.InstanceName, TestData.BackendAdminApiKey);
+            var syncanoClient = new SyncanoClient(TestData.InstanceName, TestData.BackendAdminApiKey);
             _dataClient = syncanoClient.DataObjects;
         }
 

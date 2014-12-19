@@ -15,7 +15,7 @@ namespace SampleWpfApplication
 {
     public class MainWindowViewModel : INotifyPropertyChanged
     {
-        private Syncano.Net.Syncano _syncano;
+        private Syncano.Net.SyncanoClient _syncanoClient;
         private SyncServer _syncServer;
 
         public MainWindowViewModel()
@@ -62,7 +62,7 @@ namespace SampleWpfApplication
             });
 
             //Create Http connection object
-            _syncano = new Syncano.Net.Syncano(this.InstanceName, this.ApiKey);
+            _syncanoClient = new Syncano.Net.SyncanoClient(this.InstanceName, this.ApiKey);
 
             //Load existing objects
             RefreshDataObjectsHttp();
@@ -81,7 +81,7 @@ namespace SampleWpfApplication
         {
             var dataObjects =
                 await
-                    _syncano.DataObjects.Get(new DataObjectRichQueryRequest()
+                    _syncanoClient.DataObjects.Get(new DataObjectRichQueryRequest()
                     {
                         ProjectId = ProjectId,
                         CollectionId = CollectionId,
@@ -121,7 +121,7 @@ namespace SampleWpfApplication
             request.CollectionId = CollectionId;
             request.Folder = FolderName;
 
-            await _syncano.DataObjects.New(request);
+            await _syncanoClient.DataObjects.New(request);
             RefreshDataObjectsHttp();
         }
         private async void AddDataObjectSync()
@@ -154,7 +154,7 @@ namespace SampleWpfApplication
                 DataId = dataObject.Id
             };
 
-            await _syncano.DataObjects.Delete(request);
+            await _syncanoClient.DataObjects.Delete(request);
         }
         public async void DeleteObjectSync()
         {
