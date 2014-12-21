@@ -19,6 +19,15 @@ namespace SyncanoSyncServer.Net
         /// </summary>
         [JsonProperty("result")]
         public string Result { get; set; }
+
+
+        /// <summary>
+        /// description of an error
+        /// </summary>
+        [JsonProperty("error")]
+        public string Error { get; set; }
+
+        
         
     }
 }

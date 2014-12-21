@@ -251,15 +251,13 @@ namespace SyncanoSyncServer.Net
 
         private static LoginResult ToLoginResult(string s)
         {
-            if (s.Contains("\"result\":\"OK\""))
-            {
-                var response = JsonConvert.DeserializeObject<LoginResponse>(s);
-                return new LoginResult(true);
-            }
+           var response =   JsonConvert.DeserializeObject<LoginResponse>(s);
+
+            if (response.Result == "OK")
+                return new LoginResult(true, response.Error);
             else
-            {
-                return new LoginResult(false);
-            }
+                return new LoginResult(false, response.Error);
+
         }
 
         private long GetMessageId()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Should;
@@ -11,7 +12,7 @@ using Xunit;
 
 namespace Syncano.Net.Tests
 {
-    public class RealTimeSyncSyncanoClientTests
+    public class RealTimeSyncSyncanoClientTests:IDisposable
     {
         private SyncServer _syncServer;
         private Connection _currentConnection;
@@ -25,8 +26,15 @@ namespace Syncano.Net.Tests
         private async Task PrepareSyncServer()
         {
             _syncServer = new SyncServer(TestData.InstanceName, TestData.BackendAdminApiKey);
-            await _syncServer.Start();
+            var loginResult = await _syncServer.Start();
+            Debug.WriteLine("SyncServer login result: {0}, Info:{1}", loginResult.WasSuccessful, loginResult.Reason);
             _currentConnection = (await _syncServer.RealTimeSync.GetConnections())[0];
+        }
+
+        public void Dispose()
+        {
+            if(_syncServer != null)
+                _syncServer.Stop();
         }
 
         [Fact]
