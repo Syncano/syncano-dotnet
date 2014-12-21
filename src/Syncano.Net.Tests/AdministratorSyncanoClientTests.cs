@@ -112,7 +112,7 @@ namespace Syncano.Net.Tests
 
             //then
             result.ShouldNotBeEmpty();
-            result.Count.ShouldEqual(2);
+            result.Count.ShouldBeGreaterThanOrEqualTo(1);
             result.Any(a => a.Role.Id == "1").ShouldBeTrue();
         }
 

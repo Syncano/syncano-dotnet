@@ -146,7 +146,7 @@ namespace Syncano.Net.Http
                                 content.Add( new StringContent(item.ToString()),each.Name);
                             }
                         }
-                        else if (each.GetValue(query, null).GetType().IsGenericTypeDefinition  && each.GetValue(query, null).GetType().GetGenericTypeDefinition() == typeof(Dictionary<,>))
+                        else if (each.GetValue(query, null) is Dictionary<string,string>)
                         {
                             var dictionary = (Dictionary<string, string>)each.GetValue(query, null);
                             foreach (var item in dictionary)

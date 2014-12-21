@@ -12,7 +12,7 @@ using Xunit;
 
 namespace Syncano.Net.Tests
 {
-    public class RealTimeSyncSyncanoClientTests:IDisposable
+    public class RealTimeSyncSyncanoClientTests : IDisposable
     {
         private SyncServer _syncServer;
         private Connection _currentConnection;
@@ -28,12 +28,22 @@ namespace Syncano.Net.Tests
             _syncServer = new SyncServer(TestData.InstanceName, TestData.BackendAdminApiKey);
             var loginResult = await _syncServer.Start();
             Debug.WriteLine("SyncServer login result: {0}, Info:{1}", loginResult.WasSuccessful, loginResult.Reason);
+            var subscriptions = await _syncServer.RealTimeSync.GetSubscriptions();
+            if (subscriptions.Count > 0)
+            {
+                if (subscriptions.Any(s => s.Type == "Project"))
+                    await _syncServer.RealTimeSync.UnsubscribeProject(TestData.ProjectId);
+                if (subscriptions.Any(s => s.Type == "Collection"))
+                    await _syncServer.RealTimeSync.UnsubscribeCollection(TestData.ProjectId, TestData.CollectionId);
+            }
+
+
             _currentConnection = (await _syncServer.RealTimeSync.GetConnections())[0];
         }
 
         public void Dispose()
         {
-            if(_syncServer != null)
+            if (_syncServer != null)
                 _syncServer.Stop();
         }
 
@@ -537,7 +547,7 @@ namespace Syncano.Net.Tests
 
             //then
             result.ShouldNotBeEmpty();
-            result.Any( s => s.Id == TestData.ProjectId && s.Context == Context.Session).ShouldBeTrue();
+            result.Any(s => s.Id == TestData.ProjectId && s.Context == Context.Session).ShouldBeTrue();
 
             //cleanup
             await _syncServer.RealTimeSync.UnsubscribeProject(TestData.ProjectId);
@@ -570,7 +580,7 @@ namespace Syncano.Net.Tests
 
             //then
             result.ShouldNotBeEmpty();
-            result.Any( s => s.Id == TestData.ProjectId).ShouldBeTrue();
+            result.Any(s => s.Id == TestData.ProjectId).ShouldBeTrue();
 
             //cleanup
             await _syncServer.RealTimeSync.UnsubscribeProject(TestData.ProjectId);
@@ -677,7 +687,7 @@ namespace Syncano.Net.Tests
         public async Task NotificationSend_WithApiKeyId()
         {
             //when
-            var result = await _syncServer.RealTimeSync.SendNotification(apiClientId:TestData.UserApiClientId);
+            var result = await _syncServer.RealTimeSync.SendNotification(apiClientId: TestData.UserApiClientId);
 
             //then
             result.ShouldBeTrue();
@@ -799,7 +809,7 @@ namespace Syncano.Net.Tests
             //then
             result.ShouldNotBeNull();
             result.ShouldNotBeEmpty();
-            result.All( n => int.Parse(n.Id) > int.Parse(list[0].Id)).ShouldBeTrue();
+            result.All(n => int.Parse(n.Id) > int.Parse(list[0].Id)).ShouldBeTrue();
         }
 
         [Fact]
@@ -891,7 +901,7 @@ namespace Syncano.Net.Tests
             //then
             result.ShouldNotBeNull();
             result.ShouldNotBeEmpty();
-            result.Any( c => c.Source == Source.Tcp).ShouldBeTrue();
+            result.Any(c => c.Source == Source.Tcp).ShouldBeTrue();
             result.Any(c => c.ApiClientId == TestData.BackendAdminApiId).ShouldBeTrue();
         }
 
@@ -1314,7 +1324,7 @@ namespace Syncano.Net.Tests
             var list = await _syncServer.RealTimeSync.GetConnections(TestData.BackendAdminApiId);
             var connection = list[0];
             var newName = "newConnectionName";
-            
+
 
             //when
             var result = await _syncServer.RealTimeSync.UpdateConnection(connection.Uuid, newName);
