@@ -226,7 +226,8 @@ namespace SyncanoSyncServer.Net
         /// </summary>
         public void Disconnect()
         {
-            _client.Disconnect();
+            if(_client.IsConnected)
+                _client.Disconnect();
         }
 
         /// <summary>
