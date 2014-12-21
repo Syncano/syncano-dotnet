@@ -1,0 +1,6 @@
+<Project DefaultTargets="RunUnitTest" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask AssemblyFile=".\packages\xunit.runners.1.9.2\tools\xunit.runner.msbuild.dll" TaskName="Xunit.Runner.MSBuild.xunit"/>
+<Target Name="RunUnitTest">
+    <xunit Assembly=".\Syncano.Net.Tests\bin\Release\Syncano.Net.Tests.dll" />
+</Target>
+</Project>
