@@ -120,7 +120,7 @@ namespace Syncano.Net.Tests
         public async Task New_CreatesNewUserObject(UserSyncanoClient client)
         {
             //given
-            const string name = "newUserName";
+            string name = "newUserName" + Guid.NewGuid().GetHashCode();
 
             //when
             var user = await client.New(name);
@@ -137,7 +137,7 @@ namespace Syncano.Net.Tests
         public async Task New_WithNick_CreatesNewUserObject(UserSyncanoClient client)
         {
             //given
-            const string name = "newUserName";
+            string name = "newUserName" + Guid.NewGuid().GetHashCode();
             const string nick = "newUserNick";
 
             //when
@@ -156,7 +156,7 @@ namespace Syncano.Net.Tests
         public async Task New_WithPassword_CreatesNewUserObject(UserSyncanoClient client)
         {
             //given
-            const string name = "newUserName";
+            string name = "newUserName" + Guid.NewGuid().GetHashCode();
             const string password = "abcde123";
 
             //when
@@ -174,7 +174,7 @@ namespace Syncano.Net.Tests
         public async Task New_WithAvatar_CreatesNewUserObject(UserSyncanoClient client)
         {
             //given
-            const string name = "newUserName";
+            string name = "newUserName" + Guid.NewGuid().GetHashCode();
             string avatar = TestData.ImageToBase64("smallSampleImage.png");
 
             //when
@@ -195,7 +195,7 @@ namespace Syncano.Net.Tests
             //given
             var syncClient = new SyncServer(TestData.InstanceName, TestData.BackendAdminApiKey);
             await syncClient.Start();
-            const string name = "newUserName";
+            string name = "newUserName" + Guid.NewGuid().GetHashCode();
             string avatar = TestData.ImageToBase64("sampleImage.jpg");
 
             try
@@ -663,7 +663,7 @@ namespace Syncano.Net.Tests
         public async Task Update_NewName_UpdatesUserObject(UserSyncanoClient client)
         {
             //given
-            const string name = "newUserName";
+            string name = "newUserName" + Guid.NewGuid().GetHashCode();
             const string password = "abcde123";
             const string newName = "evenNewerUserName";
             var user = await client.New(name, password);
@@ -684,7 +684,7 @@ namespace Syncano.Net.Tests
         public async Task Update_NewNick_UpdatesUserObject(UserSyncanoClient client)
         {
             //given
-            const string name = "newUserName";
+            string name = "newUserName" + Guid.NewGuid().GetHashCode();
             const string password = "abcde123";
             const string newNick = "newNick";
             var user = await client.New(name, password);
@@ -705,7 +705,7 @@ namespace Syncano.Net.Tests
         public async Task Update_NewPassword_UpdatesUserObject(UserSyncanoClient client)
         {
             //given
-            const string name = "newUserName";
+            string name = "newUserName" + Guid.NewGuid().GetHashCode();
             const string password = "abcde123";
             const string newPassword = "qwerty123";
             var user = await client.New(name, password);
@@ -725,7 +725,7 @@ namespace Syncano.Net.Tests
         public async Task Update_NewAvatar_UpdatesUserObject(UserSyncanoClient client)
         {
             //given
-            const string name = "newUserName";
+            string name = "newUserName" + Guid.NewGuid().GetHashCode();
             const string password = "abcde123";
             var user = await client.New(name, password);
 
@@ -768,7 +768,7 @@ namespace Syncano.Net.Tests
         public async Task Update_DeleteAvatar_UpdatesUserObject(UserSyncanoClient client)
         {
             //given
-            const string name = "newUserName";
+            string name = "newUserName" + Guid.NewGuid().GetHashCode();
             const string password = "abcde123";
             var user = await client.New(name, password, avatar: TestData.ImageToBase64("smallSampleImage.png"));
 
@@ -789,7 +789,7 @@ namespace Syncano.Net.Tests
         {
             //given
             var client = new UserSyncanoClient(new SyncanoHttpClient(TestData.InstanceName, TestData.UserApiKey));
-            const string name = "newUserName";
+            string name = "newUserName" + Guid.NewGuid().GetHashCode();
             const string password = "abcde123";
             const string newName = "evenNewerUserName";
             var user = await client.New(name, password);
@@ -1144,7 +1144,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_ByUserId_DeletesUserObject(UserSyncanoClient client)
         {
             //given
-            const string name = "newUserName";
+            string name = "newUserName" + Guid.NewGuid().GetHashCode();
             const string password = "abcde123";
             var user = await client.New(name, password);
 
@@ -1159,7 +1159,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_ByUserId_WithNick_DeletesUserObject(UserSyncanoClient client)
         {
             //given
-            const string name = "newUserName";
+            string name = "newUserName" + Guid.NewGuid().GetHashCode();
             const string nick = "newUserNick";
             const string password = "abcde123";
             var user = await client.New(name, password, nick);
@@ -1175,7 +1175,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_ByUserId_WithPassword_DeletesUserObject(UserSyncanoClient client)
         {
             //given
-            const string name = "newUserName";
+            string name = "newUserName" + Guid.NewGuid().GetHashCode();
             const string password = "abcde123";
             var user = await client.New(name, password);
 
@@ -1190,7 +1190,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_ByUserId_WithAvatar_DeletesUserObject(UserSyncanoClient client)
         {
             //given
-            const string name = "newUserName";
+            string name = "newUserName" + Guid.NewGuid().GetHashCode();
             const string password = "abcde123";
             var avatar = TestData.ImageToBase64("smallSampleImage.png");
             var user = await client.New(name, password, avatar: avatar);
@@ -1206,7 +1206,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_ByUserName_DeletesUserObject(UserSyncanoClient client)
         {
             //given
-            const string name = "newUserName";
+            string name = "newUserName" + Guid.NewGuid().GetHashCode();
             const string password = "abcde123";
             var user = await client.New(name, password);
 
@@ -1221,7 +1221,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_ByUserName_WithNick_DeletesUserObject(UserSyncanoClient client)
         {
             //given
-            const string name = "newUserName";
+            string name = "newUserName" + Guid.NewGuid().GetHashCode();
             const string nick = "newUserNick";
             const string password = "abcde123";
             var user = await client.New(name, password, nick);
@@ -1237,7 +1237,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_ByUserName_WithPassword_DeletesUserObject(UserSyncanoClient client)
         {
             //given
-            const string name = "newUserName";
+            string name = "newUserName" + Guid.NewGuid().GetHashCode();
             const string password = "abcde123";
             var user = await client.New(name, password);
 
@@ -1252,7 +1252,7 @@ namespace Syncano.Net.Tests
         public async Task Delete_ByUserName_WithAvatar_CreatesNewUserObject(UserSyncanoClient client)
         {
             //given
-            const string name = "newUserName";
+            string name = "newUserName" + Guid.NewGuid().GetHashCode();
             const string password = "abcde123";
             var avatar = TestData.ImageToBase64("smallSampleImage.png");
             var user = await client.New(name, password, avatar: avatar);
