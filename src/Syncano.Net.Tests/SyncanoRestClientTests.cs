@@ -29,8 +29,8 @@ namespace Syncano.Net.Tests
         public const string RoleId = "4";
         public const string RoleName = "Viewer";
 
-        public const string AdminId = "1115";
-        public const string AdminEmail = "albertwolant@gmail.com";
+        public const string AdminId = "4947";
+        public const string AdminEmail = "syncano_unittest@outlook.com";
 
         public static string ImageToBase64(string path)
         {
