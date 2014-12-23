@@ -11,7 +11,7 @@ using Xunit;
 
 namespace Syncano.Net.Tests
 {
-    public class SyncServerSubscriptionTests
+    public class SyncServerSubscriptionTests:IDisposable
     {
 
         private SyncServer _syncSubscriber;
@@ -32,6 +32,17 @@ namespace Syncano.Net.Tests
 
             _syncServer = new SyncServer(TestData.InstanceName, TestData.BackendAdminApiKey);
             await _syncServer.Start();
+        }
+
+        public void Dispose()
+        {
+            if(_syncServer != null)
+                _syncServer.Stop();
+
+
+            if (_syncSubscriber != null)
+                _syncSubscriber.Stop();
+
         }
 
         private static async Task WaitForNotifications()
