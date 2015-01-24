@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Syncano.Net.Data;
 
 namespace Syncano.Net.DataRequests
@@ -21,7 +22,7 @@ namespace Syncano.Net.DataRequests
         /// <summary>
         /// Used for paginating. Note: has no effect on returned data object's children. To paginate results ordered by created_at, id or updated_at: pass value of newest (when order is asc) or oldest (when order is desc) known value from the results in relevant type. E.g. when sorted by created_at, pass string with datetime with created_at value you want to filter from.
         /// </summary>
-        public string Since { get; set; }
+        public DateTime Since { get; set; }
 
         /// <summary>
         /// If specified, will only return data with id lower than max_id (older).
