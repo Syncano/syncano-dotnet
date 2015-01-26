@@ -96,6 +96,7 @@
     <Compile Include="DataObjectSyncanoClientAddChildRemoveChildTests.cs" />
     <Compile Include="DataObjectSyncanoClientAddParentRemoveParentTests.cs" />
     <Compile Include="DataObjectSyncanoClientNewDeleteTests.cs" />
+    <Compile Include="DataObjectSyncanoClientQueryTests.cs" />
     <Compile Include="DataObjectSyncanoClientTests.cs" />
     <Compile Include="DataObjectSyncanoClientUpdateMergeTests.cs" />
     <Compile Include="FolderSyncanoClientTests.cs" />

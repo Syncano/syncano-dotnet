@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using Syncano.Net.Data;
 
 namespace Syncano.Net.DataRequests
@@ -22,7 +24,7 @@ namespace Syncano.Net.DataRequests
         /// <summary>
         /// Used for paginating. Note: has no effect on returned data object's children. To paginate results ordered by created_at, id or updated_at: pass value of newest (when order is asc) or oldest (when order is desc) known value from the results in relevant type. E.g. when sorted by created_at, pass string with datetime with created_at value you want to filter from.
         /// </summary>
-        public DateTime Since { get; set; }
+        public DateTime? Since { get; set; }
 
         /// <summary>
         /// If specified, will only return data with id lower than max_id (older).
@@ -75,5 +77,50 @@ namespace Syncano.Net.DataRequests
         public List<string> ChildIds { get; set; }
 
 
+        private readonly Dictionary<string, string> _dataFieldFilters = new Dictionary<string, string>();
+
+        /// <summary>
+        /// Date field Filters. To add user <see cref="AddDataFieldFilter"/>
+        /// </summary>
+        public ReadOnlyCollection<KeyValuePair<string, string>> DataFieldFilters
+        {
+            get { return new ReadOnlyCollection<KeyValuePair<string, string>>(_dataFieldFilters.ToList()); }
+        }
+
+
+        /// <summary>
+        /// Adds filters for special fields: DataOne,DataTwo and DataThree
+        /// </summary>
+        /// <param name="specialField"></param>
+        /// <param name="operatorName"></param>
+        /// <param name="value"></param>
+        public void AddDataFieldFilter(DataObjectSpecialField specialField, DataObjectOperator operatorName, long value)
+        {
+            string specialFieldName = specialField == DataObjectSpecialField.DataOne ? "data1" : (specialField == DataObjectSpecialField.DataTwo) ? "data2" : "data3";
+
+            string operatorString = "";
+            switch (operatorName)
+            {
+                case DataObjectOperator.Equals:
+                    operatorString = "eq";
+                    break;
+                case DataObjectOperator.GreaterThan:
+                    operatorString = "gt";
+                    break;
+                case DataObjectOperator.GreaterThanOrEquals:
+                    operatorString = "gte";
+                    break;
+                case DataObjectOperator.LowerThan:
+                    operatorString = "lt";
+                    break;
+                case DataObjectOperator.LowerThanOrEquals:
+                    operatorString = "lte";
+                    break;
+                case DataObjectOperator.NotEquals:
+                    operatorString = "neq";
+                    break;
+            }
+            _dataFieldFilters.Add(string.Format("{0}__{1}", specialFieldName, operatorString), value.ToString());
+        }
     }
 }

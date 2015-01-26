@@ -34,7 +34,73 @@
         /// <summary>
         /// Order by update date.
         /// </summary>
-        UpdatedAt
+        UpdatedAt,
+        /// <summary>
+        /// Order by values in field DataOne
+        /// </summary>
+        DataOne,
+        /// <summary>
+        /// Order by values in field DataTwo
+        /// </summary>
+        DataTwo,
+        /// <summary>
+        /// Order by values in field DataThree
+        /// </summary>
+        DataThree
+    }
+
+
+    /// <summary>
+    /// Possible keys to order data objects by.
+    /// </summary>
+    public enum DataObjectOperator
+    {
+
+        /// <summary>
+        /// Equals
+        /// </summary>
+        Equals,
+        /// <summary>
+        /// Not Equals
+        /// </summary>
+        NotEquals,
+        /// <summary>
+        /// Lower Than
+        /// </summary>
+        LowerThan,
+        /// <summary>
+        /// Lower Than or equals
+        /// </summary>
+        LowerThanOrEquals,
+        /// <summary>
+        /// Greater Than
+        /// </summary>
+        GreaterThan,
+        /// <summary>
+        /// Greater Than or equals
+        /// </summary>
+        GreaterThanOrEquals,
+        
+    }
+
+    /// <summary>
+    /// Possible fields to add additional filters for.
+    /// </summary>
+    public enum DataObjectSpecialField
+    {
+
+        /// <summary>
+        /// Field DataOne
+        /// </summary>
+        DataOne,
+        /// <summary>
+        /// Field DataTwo
+        /// </summary>
+        DataTwo,
+        /// <summary>
+        /// Field DataThree
+        /// </summary>
+        DataThree
     }
 
     /// <summary>
@@ -62,6 +128,18 @@
 
                 case DataObjectOrderBy.UpdatedAt:
                     result = "updated_at";
+                    break;
+
+                case DataObjectOrderBy.DataOne:
+                    result = "data1";
+                    break;
+
+                case DataObjectOrderBy.DataTwo:
+                    result = "data2";
+                    break;
+
+                case DataObjectOrderBy.DataThree:
+                    result = "data3";
                     break;
 
                 default:

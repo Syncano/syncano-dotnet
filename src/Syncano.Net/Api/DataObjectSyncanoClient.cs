@@ -161,30 +161,34 @@ namespace Syncano.Net.Api
             if (request.ChildId != null)
                 childIds.Add(request.ChildId);
 
+            var parameters = new
+            {
+                project_id = request.ProjectId,
+                collection_id = request.CollectionId,
+                collection_key = request.CollectionKey,
+                data_ids = dataIds.Count == 0 ? null : dataIds.ToArray(),
+                state = request.State.ToString(),
+                folders = folders.Count == 0 ? null : folders.ToArray(),
+                since = request.Since,
+                max_id = request.MaxId,
+                limit = request.Limit,
+                order = DataObjectOrderStringConverter.GetString(request.Order),
+                order_by = DataObjectOrderByStringConverter.GetString(request.OrderBy),
+                filter = request.Filter == null ? null : request.Filter.ToString(),
+                include_children = request.IncludeChildren,
+                depth = request.Depth,
+                children_limit = request.ChildrenLimit,
+                parent_ids = parentIds.ToArray(),
+                child_ids = childIds.ToArray(),
+                by_user = request.ByUser,
+                dataFilters = request.DataFieldFilters.ToDictionary(pair =>  pair.Key, pair => pair.Value)
+            };
+
+            
             return
                 await
                     _syncanoClient.PostAsync<List<DataObject>>("data.get",
-                        new
-                        {
-                            project_id = request.ProjectId,
-                            collection_id = request.CollectionId,
-                            collection_key = request.CollectionKey,
-                            data_ids = dataIds.Count == 0 ? null : dataIds.ToArray(),
-                            state = request.State.ToString(),
-                            folders = folders.Count == 0 ? null : folders.ToArray(),
-                            since = request.Since,
-                            max_id = request.MaxId,
-                            limit = request.Limit,
-                            order = DataObjectOrderStringConverter.GetString(request.Order),
-                            order_by = DataObjectOrderByStringConverter.GetString(request.OrderBy),
-                            filter = request.Filter == null ? null : request.Filter.ToString(),
-                            include_children = request.IncludeChildren,
-                            depth = request.Depth,
-                            children_limit = request.ChildrenLimit,
-                            parent_ids = parentIds.ToArray(),
-                            child_ids = childIds.ToArray(),
-                            by_user = request.ByUser
-                        }, "data");
+                        parameters, "data");
         }
 
         /// <summary>
