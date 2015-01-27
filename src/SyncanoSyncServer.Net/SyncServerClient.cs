@@ -277,7 +277,11 @@ namespace SyncanoSyncServer.Net
             var syncanoConversation = new SyncanoConversation<T>(request, getResult);
             _conversationsByMessageId.TryAdd(syncanoConversation.Id, syncanoConversation);
 
-            SendRequestAsync(syncanoConversation);
+            SendRequestAsync(syncanoConversation).ContinueWith(task =>
+            {
+                if(task.IsFaulted)
+                    syncanoConversation.SetError(new SyncanoException("Failed to send request", task.Exception.Flatten()));
+            });
 
             return syncanoConversation.ResponseObservable.ToTask();
         }
