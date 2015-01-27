@@ -46,16 +46,19 @@ namespace Syncano.Net.Http
         {
             var sb = new StringBuilder(_baseUrl);
             sb.Append(methodName);
-            if (_authKey != null)
-            {
-                sb.Append("?auth_key=");
-                sb.Append(_authKey);
-            }
+
             sb.Append("?api_key=");
             sb.Append(_apiKey);
+
+            if (_authKey != null)
+            {
+                sb.Append("&auth_key=");
+                sb.Append(_authKey);
+            }
+
             if (_sessionId != null)
             {
-                sb.Append("?session_id=");
+                sb.Append("&session_id=");
                 sb.Append(_sessionId);
             }
             

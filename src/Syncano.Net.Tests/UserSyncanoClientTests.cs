@@ -629,7 +629,7 @@ namespace Syncano.Net.Tests
             await httpClient.Login(TestData.UserName, TestData.UserPassword);
 
             //when
-            var result = await httpClient.GetOne();
+            var result = await httpClient.GetOne(userName:TestData.UserName);
 
             //then
             result.ShouldNotBeNull();
@@ -788,22 +788,17 @@ namespace Syncano.Net.Tests
         public async Task Update_NoUserId_UpdatesUserObject_OverHttp()
         {
             //given
-            var client = new UserSyncanoClient(new SyncanoHttpClient(TestData.InstanceName, TestData.UserApiKey));
-            string name = "newUserName" + Guid.NewGuid().GetHashCode();
-            const string password = "abcde123";
-            const string newName = "evenNewerUserName";
-            var user = await client.New(name, password);
+            var httpClient =
+             new UserSyncanoClient(new SyncanoHttpClient(TestData.InstanceName, TestData.UserApiKey));
+            await httpClient.Login(TestData.UserName, TestData.UserPassword);
 
+            
             //when
-            var newUser = await client.Update(currentPassword: password);
+            var user = await httpClient.Update(currentPassword: TestData.UserPassword);
 
             //then
-            newUser.ShouldNotBeNull();
-            newUser.Id.ShouldEqual(user.Id);
-            newUser.Name.ShouldEqual(newName);
-
-            //cleanup
-            await client.Delete(user.Id);
+            user.Name.ShouldEqual(TestData.UserName);
+           
         }
 
         [Theory( /* Skip = "Syncano.Net.SyncanoExceptionError: TypeError: _count_users() got an unexpected keyword argument 'type'")*/ ), PropertyData("UserSyncanoClients", PropertyType = typeof(SyncanoClientsProvider))]
