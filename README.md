@@ -6,8 +6,8 @@ Syncano.Net is a .Net library that provides communication with Syncano ([www.syn
 
 To get started you have to obtain Syncano Instance name and Api Key. This credentials will allow you to connect to Syncano. Basically you have two options to connect:
 
-- over Http using Syncano.Net (Portable Class Library)
-- over Tcp using SyncanoSyncServer.Net
+- over Http using Syncano.Net (Portable Class Library) - [Install-Package Syncano.Net.Http](https://www.nuget.org/packages/Syncano.Net.Http/)
+- over Tcp using SyncanoSyncServer.Net - [Install-Package Syncano.Net.Tcp](https://www.nuget.org/packages/Syncano.Net.Tcp/)
 
 
 ##Syncano Rest Api
@@ -17,7 +17,7 @@ To connect to Syncano Rest Api you can use class Syncano.
 
 
     //Create Syncano class
-    Syncano syncano = new Syncano(instanceName, apiKey);
+    var syncano = new SyncanoClient(instanceName, apiKey);
    
     //Create new project
     Project project = await syncano.Projects.New("MyNewProject", "This is my first project in Syncano.");
