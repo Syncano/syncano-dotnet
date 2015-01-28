@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>Syncano.Net.Tcp</id>
+        <version>1.0.5</version>
+        <title>Syncano.Net Tcp</title>
+        <authors>Syncano</authors>
+        <projectUrl>https://github.com/Syncano/syncano-dotnet</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Syncano.Net provides communication with Syncano (www.syncano.com) via tcp</description>
+        <summary />
+        <dependencies>
+            <dependency id="ReactiveSockets" version="0.2.6" />
+            <dependency id="Syncano.Net.Http" version="1.0.5" />
+        </dependencies>
+    </metadata>
+</package>
