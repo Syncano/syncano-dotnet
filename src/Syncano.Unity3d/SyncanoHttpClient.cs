@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Net;
-using System.Net.Http;
-using System.Reflection;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Syncano4.Shared;
 
-namespace Syncano4.Net
+namespace Syncano4.Unity3d
 {
     public class SyncanoHttpClient : ISyncanoHttpClient
     {
         private readonly string _apiKey;
-        private readonly HttpClient _client;
+        private readonly WebClient _client;
         private readonly string _baseUrl;
 
         /// <summary>
@@ -26,8 +22,8 @@ namespace Syncano4.Net
         {
             _apiKey = apiKey;
             _baseUrl = string.Format("https://syncanotest1-env.elasticbeanstalk.com/v1/");
-            _client = new HttpClient();
-        }
+            _client = new WebClient();
+   }
 
         private string CreateGetUri(string methodName, object query = null)
         {
@@ -45,10 +41,19 @@ namespace Syncano4.Net
             return sb.ToString();
         }
 
-        public Task<string> GetAsync(string methodName, object parameters)
+        public string Get(string methodName, object parameters)
         {
-            return _client.GetStringAsync(CreateGetUri(methodName, parameters));
+            var request = (HttpWebRequest) WebRequest.Create(CreateBaseUri(methodName));
+            request.Method = WebRequestMethods.Http.Get;
+            var response = (HttpWebResponse) request.GetResponse();
 
+            using (var s = response.GetResponseStream())
+            {
+                using(var r = new StreamReader(s))
+                {
+                    return r.ReadToEnd(); 
+                }
+            }
         }
 
 
@@ -58,7 +63,7 @@ namespace Syncano4.Net
 
             if (query != null)
             {
-                foreach (var each in query.GetType().GetRuntimeProperties())
+                foreach (var each in query.GetType().GetProperties())
                 {
                     if (each.GetValue(query, null) != null)
                     {
@@ -82,4 +87,7 @@ namespace Syncano4.Net
             return sb.ToString();
         }
     }
+
+ 
+  
 }

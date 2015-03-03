@@ -3,13 +3,13 @@
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
     <HasSharedItems>true</HasSharedItems>
-    <SharedGUID>32c2f55b-58a7-454f-b013-98d7d2aaa174</SharedGUID>
+    <SharedGUID>3005743c-cafd-4bb7-9f83-55c8c2d1dc78</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>Syncano4.Shared</Import_RootNamespace>
+    <Import_RootNamespace>Syncano4.Tests.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Instance.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ISyncanoHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Test.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestData.cs" />
   </ItemGroup>
 </Project>
