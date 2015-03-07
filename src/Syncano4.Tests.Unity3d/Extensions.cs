@@ -6,7 +6,7 @@ namespace Syncano4.Tests.Unity3d
 {
     public static class Extensions
     {
-        public static Task<List<Instance>> GetAsync(this SyncanoInstances instances)
+        public static Task<IList<Instance>> GetAsync(this SyncanoInstances instances)
         {
             return Task.FromResult(instances.Get());
         }

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Should;
 using Syncano4.Shared;
+using Shouldly;
 
 #if Unity3d
     using Syncano4.Unity3d;
@@ -18,7 +19,7 @@ using Xunit;
 
 namespace Syncano4.Tests.Shared
 {
-    public class Tests
+    public class SyncanoInstancesTests
     {
 
         public ISyncanoHttpClient GetClient()
@@ -33,7 +34,9 @@ namespace Syncano4.Tests.Shared
             var i = new SyncanoInstances(GetClient());
             var instances = await i.GetAsync();
 
-            instances.ShouldNotBeEmpty();
+
+            instances.ShouldAllBe(ins => ins.Name != null);
+            instances.ShouldAllBe(ins => ins.CreatedAt > DateTime.Today.AddYears(-1));
         }
     }
 }

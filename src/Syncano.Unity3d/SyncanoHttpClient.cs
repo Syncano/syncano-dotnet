@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using Newtonsoft.Json;
 using Syncano4.Shared;
 
 namespace Syncano4.Unity3d
@@ -54,6 +55,14 @@ namespace Syncano4.Unity3d
                     return r.ReadToEnd(); 
                 }
             }
+        }
+
+        public  IList<T> Get<T>(string methodName, object parameters)
+        {
+            var content = Get(methodName, parameters);
+
+            return JsonConvert.DeserializeObject<SyncanoResponse<T>>(content).Objects;
+
         }
 
 

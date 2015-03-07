@@ -7,6 +7,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Syncano4.Shared;
 
 namespace Syncano4.Net
@@ -45,12 +47,24 @@ namespace Syncano4.Net
             return sb.ToString();
         }
 
-        public Task<string> GetAsync(string methodName, object parameters)
+        public async Task<string> GetAsync(string methodName, object parameters)
         {
-            return _client.GetStringAsync(CreateGetUri(methodName, parameters));
+             var response = await _client.GetAsync(CreateGetUri(methodName, parameters));
+             var content = await response.Content.ReadAsStringAsync();
 
+            var json = JObject.Parse(content);
+            return json.SelectToken("result").Value<string>();
         }
 
+
+        public async Task<IList<T>> GetAsync<T>(string methodName, object parameters)
+        {
+            var response = await _client.GetAsync(CreateGetUri(methodName, parameters));
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<SyncanoResponse<T>>(content).Objects;
+            
+        }
 
         private string CreateParametersString(object query)
         {

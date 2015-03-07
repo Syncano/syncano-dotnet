@@ -11,5 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Instance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISyncanoHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SyncanoInstances.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SyncanoResponse.cs" />
   </ItemGroup>
 </Project>
