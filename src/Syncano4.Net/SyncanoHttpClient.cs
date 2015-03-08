@@ -47,7 +47,7 @@ namespace Syncano4.Net
             return sb.ToString();
         }
 
-        public async Task<string> GetAsync(string methodName, object parameters)
+        public async Task<string> GetAsync(string methodName, IDictionary<string, object> parameters )
         {
              var response = await _client.GetAsync(CreateGetUri(methodName, parameters));
              var content = await response.Content.ReadAsStringAsync();
@@ -57,7 +57,7 @@ namespace Syncano4.Net
         }
 
 
-        public async Task<IList<T>> GetAsync<T>(string methodName, object parameters)
+        public async Task<IList<T>> GetAsync<T>(string methodName, IDictionary<string, object> parameters )
         {
             var response = await _client.GetAsync(CreateGetUri(methodName, parameters));
             var content = await response.Content.ReadAsStringAsync();
@@ -65,6 +65,22 @@ namespace Syncano4.Net
             return JsonConvert.DeserializeObject<SyncanoResponse<T>>(content).Objects;
             
         }
+
+   
+
+        public async Task<T> PostAsync<T>(string endpoint, IDictionary<string, object> parameters )
+        {
+
+            var postContent = new FormUrlEncodedContent(parameters.ToDictionary(p => p.Key, p => Uri.EscapeDataString(p.Value.ToString())));
+            var response = await _client.PostAsync(CreateGetUri(endpoint, null), postContent);
+            if (response.StatusCode != HttpStatusCode.Created)
+            {
+                throw new SyncanoException(await response.Content.ReadAsStringAsync());
+            }
+            return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
+        }
+
+       
 
         private string CreateParametersString(object query)
         {
