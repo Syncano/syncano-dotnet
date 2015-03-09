@@ -45,13 +45,14 @@ namespace Syncano4.Unity3d
         public string Get(string methodName, IDictionary<string, object> parameters)
         {
             var request = CreateRequest(methodName, WebRequestMethods.Http.Get);
-            var response = (HttpWebResponse) request.GetResponse();
-
-            using (var s = response.GetResponseStream())
+            using (var response = (HttpWebResponse) request.GetResponse())
             {
-                using (var r = new StreamReader(s))
+                using (var s = response.GetResponseStream())
                 {
-                    return r.ReadToEnd();
+                    using (var r = new StreamReader(s))
+                    {
+                        return r.ReadToEnd();
+                    }
                 }
             }
         }
@@ -98,10 +99,20 @@ namespace Syncano4.Unity3d
                 requestStream.Write(postBytes, 0, postBytes.Length);
                 requestStream.Flush();
             }
-            HttpWebResponse response;
+            HttpWebResponse response = null;
             try
             {
-                 response = (HttpWebResponse) request.GetResponse();
+                response = (HttpWebResponse) request.GetResponse();
+                string responseString = null;
+                using (var s = response.GetResponseStream())
+                {
+                    using (var r = new StreamReader(s))
+                    {
+                        responseString = r.ReadToEnd();
+                    }
+                }
+
+                return JsonConvert.DeserializeObject<T>(responseString);
             }
             catch (WebException e)
             {
@@ -115,19 +126,11 @@ namespace Syncano4.Unity3d
                 }
                 throw new SyncanoException(e.Status + ", " + message);
             }
-
-
-            string responseString = null;
-            using (var s = response.GetResponseStream())
+            finally
             {
-                using (var r = new StreamReader(s))
-                {
-                    responseString = r.ReadToEnd();
-                }
+                if (response != null)
+                    response.Close();
             }
-
-
-            return JsonConvert.DeserializeObject<T>(responseString);
         }
 
 
