@@ -124,7 +124,7 @@ namespace Syncano4.Unity3d
                         message = r.ReadToEnd();
                     }
                 }
-                throw new SyncanoException(e.Status + ", " + message);
+                throw new SyncanoException(message);
             }
             finally
             {

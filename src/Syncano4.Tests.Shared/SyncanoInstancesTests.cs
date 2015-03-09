@@ -60,9 +60,11 @@ namespace Syncano4.Tests.Shared
             var instance = await i.AddAsync(name, "desc of " + name);
 
             //when
-            Should.Throw<SyncanoException>(async () => { var newI = await i.AddAsync(name, "desc of " + name); });
+            var ex = Should.Throw<SyncanoException>(async () => { var newI = await i.AddAsync(name, "desc of " + name); });
 
-         
+            //then
+            ex.Message.ShouldContain("Instance with this Name already exists");
+          
         }
     }
 }
