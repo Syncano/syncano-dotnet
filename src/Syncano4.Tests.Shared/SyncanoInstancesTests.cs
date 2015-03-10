@@ -33,6 +33,7 @@ namespace Syncano4.Tests.Shared
 
             instances.ShouldAllBe(ins => ins.Name != null);
             instances.ShouldAllBe(ins => ins.CreatedAt > DateTime.Today.AddYears(-1));
+            instances.ShouldAllBe(ins => ins.Links.Keys.Count > 0);
         }
 
         [Fact]

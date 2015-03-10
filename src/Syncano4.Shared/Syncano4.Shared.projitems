@@ -9,8 +9,10 @@
     <Import_RootNamespace>Syncano4.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ClassDefinitions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Instance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISyncanoHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SyncanoClass.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SyncanoException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SyncanoInstances.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SyncanoResponse.cs" />

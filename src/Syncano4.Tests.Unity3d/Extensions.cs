@@ -11,6 +11,11 @@ namespace Syncano4.Tests.Unity3d
             return Task.FromResult(instances.Get());
         }
 
+        public static Task<IList<SyncanoClass>> GetAsync(this ClassDefinitions instances)
+        {
+            return Task.FromResult(instances.Get());
+        }
+
         public static Task<Instance> AddAsync(this SyncanoInstances instances, string name, string description)
         {
             return Task.FromResult(instances.Add(name, description));

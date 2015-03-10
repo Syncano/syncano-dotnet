@@ -27,7 +27,7 @@ namespace Syncano4.Net
         public SyncanoHttpClient(string apiKey)
         {
             _apiKey = apiKey;
-            _baseUrl = string.Format("https://syncanotest1-env.elasticbeanstalk.com/v1/");
+            _baseUrl = string.Format("https://syncanotest1-env.elasticbeanstalk.com");
             _client = new HttpClient();
         }
 
@@ -42,7 +42,7 @@ namespace Syncano4.Net
         {
             var sb = new StringBuilder(_baseUrl);
             sb.Append(methodName);
-            sb.Append("/?api_key=");
+            sb.Append("?api_key=");
             sb.Append(_apiKey);
             return sb.ToString();
         }

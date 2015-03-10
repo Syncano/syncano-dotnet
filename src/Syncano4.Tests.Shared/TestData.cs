@@ -12,5 +12,6 @@
 
         public const string AccountEmail = "syncano4_unittest@outlook.com";
         public const string AccountKey = "a1546d926e32a940a57cc6dc68a22fc40a3ae7f6";
+        public const string InstanceName = "testinstance2";
     }
 }
