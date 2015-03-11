@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
-
-#if dotNet 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+#if dotNet
 using System.Threading.Tasks;
-#endif
 
+#endif
 
 namespace Syncano4.Shared
 {
@@ -18,11 +19,27 @@ namespace Syncano4.Shared
             _httpClient = httpClient;
         }
 
+        private static string ToJson(IList<SyncanoFieldSchema> schema)
+        {
+          //  var jsonSerializerSettings = new JsonSerializerSettings();
+           // jsonSerializerSettings.Converters.Add(new StringEnumConverter() { CamelCaseText = true, AllowIntegerValues = true});
+
+            var schemaJson = JsonConvert.SerializeObject(schema);
+            return schemaJson;
+        }
+
 
 #if Unity3d
         public IList<SyncanoClass> Get()
         {
             return _httpClient.Get<SyncanoClass>(_link, null);
+        }
+
+        public SyncanoClass Add(string name, string description, IList<SyncanoFieldSchema> schema)
+        {
+            
+            var parameters = new Dictionary<string, object>() { { "name", name }, { "description", description }, {"schema", ToJson(schema)} };
+            return _httpClient.Post<SyncanoClass>("/v1/instances/", parameters);
         }
 
        
@@ -34,7 +51,13 @@ namespace Syncano4.Shared
             return _httpClient.GetAsync<SyncanoClass>(_link, null);
         }
 
-      
+        public Task<SyncanoClass> AddAsync(string name, string description, IList<SyncanoFieldSchema> schema)
+        {
+            var parameters = new Dictionary<string, object>() {{"name", name}, {"description", description}, {"schema", ToJson(schema)}};
+            return _httpClient.PostAsync<SyncanoClass>(_link, parameters);
+        }
+
+
 #endif
     }
 }

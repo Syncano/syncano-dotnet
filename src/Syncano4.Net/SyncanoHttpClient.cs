@@ -71,7 +71,7 @@ namespace Syncano4.Net
         public async Task<T> PostAsync<T>(string endpoint, IDictionary<string, object> parameters )
         {
 
-            var postContent = new FormUrlEncodedContent(parameters.ToDictionary(p => p.Key, p => Uri.EscapeDataString(p.Value.ToString())));
+            var postContent = new FormUrlEncodedContent(parameters.ToDictionary(p => p.Key, p => p.Value.ToString()));
             var response = await _client.PostAsync(CreateGetUri(endpoint, null), postContent);
             if (response.StatusCode != HttpStatusCode.Created)
             {

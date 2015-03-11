@@ -38,6 +38,32 @@ namespace Syncano4.Tests.Shared
             
         }
 
+
+        [Fact]
+        public async Task Add()
+        {
+            //given
+            var classDefintions = new ClassDefinitions("/v1/instances/testinstance2/classes/", GetClient());
+            var schema = new List<SyncanoFieldSchema>()
+            {
+                new SyncanoFieldSchema() {Name = "myid", Type = SyncanoFieldType.Integer},
+                new SyncanoFieldSchema() {Name = "name", Type = SyncanoFieldType.String},
+                new SyncanoFieldSchema() {Name = "createdat", Type = SyncanoFieldType.Datetime},
+                new SyncanoFieldSchema() {Name = "ischecked", Type = SyncanoFieldType.Boolean},
+               new SyncanoFieldSchema() {Name = "float", Type = SyncanoFieldType.Float},
+                new SyncanoFieldSchema() {Name = "longtext", Type = SyncanoFieldType.Text},
+            };
+
+            //when
+            
+            var classDef = await classDefintions.AddAsync("ClassUnitTest_" + Guid.NewGuid().ToString(), "generated in unit test", schema);
+
+            //then
+            classDef.Schema.ShouldBeSubsetOf(schema);
+            classDef.Schema.Count.ShouldBe(schema.Count);
+
+        }
+
       
     }
 }
