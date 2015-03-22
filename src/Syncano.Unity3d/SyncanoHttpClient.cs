@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -22,7 +23,7 @@ namespace Syncano4.Unity3d
         public SyncanoHttpClient(string apiKey)
         {
             _apiKey = apiKey;
-            _baseUrl = string.Format("https://syncanotest1-env.elasticbeanstalk.com/v1/");
+            _baseUrl = string.Format("https://syncanotest1-env.elasticbeanstalk.com");
             _client = new WebClient();
         }
 
@@ -37,7 +38,7 @@ namespace Syncano4.Unity3d
         {
             var sb = new StringBuilder(_baseUrl);
             sb.Append(methodName);
-            sb.Append("/?api_key=");
+            sb.Append("?api_key=");
             sb.Append(_apiKey);
             return sb.ToString();
         }
@@ -70,7 +71,7 @@ namespace Syncano4.Unity3d
 
             return JsonConvert.DeserializeObject<SyncanoResponse<T>>(content).Objects;
         }
-
+        
 
         public T Post<T>(string endpoint, IDictionary<string, object> parameters)
         {
@@ -89,7 +90,7 @@ namespace Syncano4.Unity3d
                     firstParam = false;
                 }
 
-                sb.AppendFormat("{0}={1}", parameter.Key, Uri.EscapeDataString(parameter.Value.ToString()));
+                sb.AppendFormat("{0}={1}", parameter.Key, Uri.EscapeDataString(parameter.Value.ToString())/*.Replace("%20","+")*/);
             }
             var postBytes = Encoding.UTF8.GetBytes(sb.ToString());
             request.ContentLength = postBytes.Length;

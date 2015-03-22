@@ -39,7 +39,7 @@ namespace Syncano4.Shared
         {
             
             var parameters = new Dictionary<string, object>() { { "name", name }, { "description", description }, {"schema", ToJson(schema)} };
-            return _httpClient.Post<SyncanoClass>("/v1/instances/", parameters);
+            return _httpClient.Post<SyncanoClass>(_link, parameters);
         }
 
        

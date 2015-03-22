@@ -56,7 +56,7 @@ namespace Syncano4.Tests.Shared
 
             //when
             
-            var classDef = await classDefintions.AddAsync("ClassUnitTest_" + Guid.NewGuid().ToString(), "generated in unit test", schema);
+            var classDef = await classDefintions.AddAsync("ClassUnitTest_" + Guid.NewGuid().ToString(), "generated in unittest", schema);
 
             //then
             classDef.Schema.ShouldBeSubsetOf(schema);
