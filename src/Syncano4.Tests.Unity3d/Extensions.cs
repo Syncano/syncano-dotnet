@@ -26,5 +26,10 @@ namespace Syncano4.Tests.Unity3d
             return Task.FromResult(instances.Add(name, description));
         }
 
+        public static Task<T> AddAsync<T>(this SyncanoDataObjects instances, T dataobject)
+        {
+            return Task.FromResult(instances.Add(dataobject));
+        }
+
     }
 }

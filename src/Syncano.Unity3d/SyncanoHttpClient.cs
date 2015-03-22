@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using Newtonsoft.Json;
@@ -81,7 +82,7 @@ namespace Syncano4.Unity3d
             StringBuilder sb = new StringBuilder();
 
             bool firstParam = true;
-            foreach (var parameter in parameters)
+            foreach (var parameter in parameters.Where(p => p.Value != null))
             {
                 if (!firstParam)
                     sb.Append("&");
@@ -90,7 +91,7 @@ namespace Syncano4.Unity3d
                     firstParam = false;
                 }
 
-                sb.AppendFormat("{0}={1}", parameter.Key, Uri.EscapeDataString(parameter.Value.ToString())/*.Replace("%20","+")*/);
+                sb.AppendFormat("{0}={1}", parameter.Key, parameter.Value is DateTime ? ((DateTime)parameter.Value).ToString("yyyy-MM-ddThh:mm:ss.ffffffZ") : Uri.EscapeDataString(parameter.Value.ToString())/*.Replace("%20","+")*/);
             }
             var postBytes = Encoding.UTF8.GetBytes(sb.ToString());
             request.ContentLength = postBytes.Length;

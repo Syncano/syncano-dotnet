@@ -20,7 +20,6 @@ namespace Syncano4.Shared
 
         [JsonProperty("schema")]
         public IList<SyncanoFieldSchema> Schema { get; set; }
-
     }
 
     public class CamelCaseStringEnumConverter : StringEnumConverter

@@ -71,7 +71,7 @@ namespace Syncano4.Net
         public async Task<T> PostAsync<T>(string endpoint, IDictionary<string, object> parameters )
         {
 
-            var postContent = new FormUrlEncodedContent(parameters.ToDictionary(p => p.Key, p => p.Value.ToString()));
+            var postContent = new FormUrlEncodedContent(parameters.Where(p => p.Value != null).ToDictionary(p => p.Key, p => p.Value is DateTime ? ((DateTime)p.Value).ToString("yyyy-MM-ddThh:mm:ss.ffffffZ") : p.Value.ToString()));
             var response = await _client.PostAsync(CreateGetUri(endpoint, null), postContent);
             if (response.StatusCode != HttpStatusCode.Created)
             {
@@ -79,9 +79,7 @@ namespace Syncano4.Net
             }
             return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
         }
-
-       
-
+        
         private string CreateParametersString(object query)
         {
             var sb = new StringBuilder();

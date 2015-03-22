@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 #if dotNet
 using System.Threading.Tasks;
 
@@ -60,4 +62,5 @@ namespace Syncano4.Shared
 
 #endif
     }
+
 }
