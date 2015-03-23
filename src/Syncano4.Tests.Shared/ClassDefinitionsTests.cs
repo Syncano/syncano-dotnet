@@ -99,11 +99,35 @@ namespace Syncano4.Tests.Shared
             var objects = new SyncanoDataObjects(classDef,GetClient());
 
             //when
-            var a = await objects.AddAsync(new TestObject() { Name = "Name 1", CreatedAt = DateTime.UtcNow});
+            var expectedObject  = new TestObject() { Name = "Name 1", CreatedAt = DateTime.UtcNow};
+            var newTestObject = await objects.AddAsync(expectedObject);
+            
+            //then
+
+            newTestObject.CreatedAt.ShouldBe(expectedObject.CreatedAt,TimeSpan.FromTicks(10));
+            newTestObject.Name.ShouldBe(expectedObject.Name);
+        }
 
 
+        [Fact]
+        public async Task ListObjects()
+        {
+            //given
+            var classDefintions = new ClassDefinitions("/v1/instances/testinstance2/classes/", GetClient());
+            var classDef = await classDefintions.AddAsync("ClassUnitTest_" + Guid.NewGuid().ToString(), "generated in unittest", TestObject.GetSchema());
+            var objects = new SyncanoDataObjects(classDef, GetClient());
+
+            for (int i = 0; i < 20; i++)
+            {
+               await objects.AddAsync(new TestObject() { Name = "Name " + i, CreatedAt = DateTime.UtcNow, MyId = i});
+            }
+
+            //when
+            var list = await objects.GetAsync<TestObject>(pageSize: 10);
 
             //then
+            list.Count.ShouldBe(10);
+            list.ShouldAllBe(t => t.MyId < 10);
 
         }
     }

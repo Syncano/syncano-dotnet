@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -31,7 +32,7 @@ namespace Syncano4.Net
             _client = new HttpClient();
         }
 
-        private string CreateGetUri(string methodName, object query = null)
+        private string CreateGetUri(string methodName, IDictionary<string, object> query = null)
         {
             var sb = new StringBuilder(CreateBaseUri(methodName));
             sb.Append(CreateParametersString(query));
@@ -70,8 +71,7 @@ namespace Syncano4.Net
 
         public async Task<T> PostAsync<T>(string endpoint, IDictionary<string, object> parameters )
         {
-
-            var postContent = new FormUrlEncodedContent(parameters.Where(p => p.Value != null).ToDictionary(p => p.Key, p => p.Value is DateTime ? ((DateTime)p.Value).ToString("yyyy-MM-ddThh:mm:ss.ffffffZ") : p.Value.ToString()));
+            var postContent = new FormUrlEncodedContent(parameters.Where(p => p.Value != null).ToDictionary(p => p.Key, p => p.Value is DateTime ? ((DateTime)p.Value).ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ") : p.Value.ToString()));
             var response = await _client.PostAsync(CreateGetUri(endpoint, null), postContent);
             if (response.StatusCode != HttpStatusCode.Created)
             {
@@ -79,29 +79,29 @@ namespace Syncano4.Net
             }
             return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
         }
-        
-        private string CreateParametersString(object query)
+
+        private string CreateParametersString(IDictionary<string, object> query)
         {
             var sb = new StringBuilder();
 
             if (query != null)
             {
-                foreach (var each in query.GetType().GetRuntimeProperties())
+                foreach (var each in query)
                 {
-                    if (each.GetValue(query, null) != null)
+                    if (each.Value != null)
                     {
-                        if (each.GetValue(query, null).GetType().IsArray)
+                        if (each.Value.GetType().IsArray)
                         {
-                            var array = (Array) each.GetValue(query, null);
+                            var array = (Array) each.Value;
 
                             foreach (var item in array)
                             {
-                                sb.AppendFormat("&{0}={1}", each.Name, Uri.EscapeDataString(item.ToString()));
+                                sb.AppendFormat("&{0}={1}", each.Key, Uri.EscapeDataString(item.ToString()));
                             }
                         }
                         else
                         {
-                            sb.AppendFormat("&{0}={1}", each.Name, Uri.EscapeDataString(each.GetValue(query, null).ToString()));
+                            sb.AppendFormat("&{0}={1}", each.Key, Uri.EscapeDataString(each.Value.ToString()));
                         }
                     }
                 }

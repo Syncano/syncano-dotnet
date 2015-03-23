@@ -1,6 +1,11 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
+
+
+#if dotNet
+using System.Threading.Tasks;
+#endif
+
 
 namespace Syncano4.Shared
 {
@@ -26,9 +31,9 @@ namespace Syncano4.Shared
 
 
 #if Unity3d
-        public IList<SyncanoClass> Get()
+        public IList<T> Get<T>(int pageSize = 10)
         {
-            return _httpClient.Get<SyncanoClass>(_link, null);
+            return _httpClient.Get<T>(_link, new Dictionary<string, object>() { {"page_size", pageSize }});
         }
 
         public T Add<T>(T dataObject)
@@ -43,9 +48,9 @@ namespace Syncano4.Shared
 #endif
 
 #if dotNet
-        public Task<IList<SyncanoClass>> GetAsync()
+          public Task<IList<T>> GetAsync<T>(int pageSize = 10)
         {
-            return _httpClient.GetAsync<SyncanoClass>(_link, null);
+            return _httpClient.GetAsync<T>(_link, new Dictionary<string, object>() { {"page_size", pageSize }});
         }
 
         public Task<T> AddAsync<T>(T dataObject)

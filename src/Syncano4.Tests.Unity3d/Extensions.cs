@@ -31,5 +31,10 @@ namespace Syncano4.Tests.Unity3d
             return Task.FromResult(instances.Add(dataobject));
         }
 
+        public static Task<IList<T>> GetAsync<T>(this SyncanoDataObjects instances, int pageSize)
+        {
+            return Task.FromResult(instances.Get<T>(pageSize:pageSize));
+        }
+
     }
 }

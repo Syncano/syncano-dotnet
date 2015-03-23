@@ -27,26 +27,43 @@ namespace Syncano4.Unity3d
             _baseUrl = string.Format("https://syncanotest1-env.elasticbeanstalk.com");
             _client = new WebClient();
         }
-
-        private string CreateGetUri(string methodName, object query = null)
-        {
-            var sb = new StringBuilder(CreateBaseUri(methodName));
-            sb.Append(CreateParametersString(query));
-            return sb.ToString();
-        }
-
-        private string CreateBaseUri(string methodName)
+        
+        private string CreateBaseUri(string methodName, IDictionary<string, object> parameters)
         {
             var sb = new StringBuilder(_baseUrl);
             sb.Append(methodName);
             sb.Append("?api_key=");
             sb.Append(_apiKey);
+
+            if (parameters != null)
+            {
+                foreach (var each in parameters)
+                {
+                    if (each.Value != null)
+                    {
+                        if (each.Value.GetType().IsArray)
+                        {
+                            var array = (Array)each.Value;
+
+                            foreach (var item in array)
+                            {
+                                sb.AppendFormat("&{0}={1}", each.Key, Uri.EscapeDataString(item.ToString()));
+                            }
+                        }
+                        else
+                        {
+                            sb.AppendFormat("&{0}={1}", each.Key, Uri.EscapeDataString(each.Value.ToString()));
+                        }
+                    }
+                }
+            }
+
             return sb.ToString();
         }
 
         public string Get(string methodName, IDictionary<string, object> parameters)
         {
-            var request = CreateRequest(methodName, WebRequestMethods.Http.Get);
+            var request = CreateRequest(methodName, WebRequestMethods.Http.Get, parameters);
             using (var response = (HttpWebResponse) request.GetResponse())
             {
                 using (var s = response.GetResponseStream())
@@ -59,9 +76,9 @@ namespace Syncano4.Unity3d
             }
         }
 
-        private HttpWebRequest CreateRequest(string methodName, string httpMethod)
+        private HttpWebRequest CreateRequest(string methodName, string httpMethod, IDictionary<string, object> parameters)
         {
-            var request = (HttpWebRequest) WebRequest.Create(CreateBaseUri(methodName));
+            var request = (HttpWebRequest)WebRequest.Create(CreateBaseUri(methodName, parameters));
             request.Method = httpMethod;
             return request;
         }
@@ -76,7 +93,7 @@ namespace Syncano4.Unity3d
 
         public T Post<T>(string endpoint, IDictionary<string, object> parameters)
         {
-            var request = CreateRequest(endpoint, WebRequestMethods.Http.Post);
+            var request = CreateRequest(endpoint, WebRequestMethods.Http.Post, null);
             request.ContentType = "application/x-www-form-urlencoded";
 
             StringBuilder sb = new StringBuilder();
@@ -91,7 +108,7 @@ namespace Syncano4.Unity3d
                     firstParam = false;
                 }
 
-                sb.AppendFormat("{0}={1}", parameter.Key, parameter.Value is DateTime ? ((DateTime)parameter.Value).ToString("yyyy-MM-ddThh:mm:ss.ffffffZ") : Uri.EscapeDataString(parameter.Value.ToString())/*.Replace("%20","+")*/);
+                sb.AppendFormat("{0}={1}", parameter.Key, parameter.Value is DateTime ? ((DateTime)parameter.Value).ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ") : Uri.EscapeDataString(parameter.Value.ToString())/*.Replace("%20","+")*/);
             }
             var postBytes = Encoding.UTF8.GetBytes(sb.ToString());
             request.ContentLength = postBytes.Length;
