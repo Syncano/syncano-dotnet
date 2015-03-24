@@ -10,57 +10,26 @@ using System.Threading.Tasks;
 
 namespace Syncano4.Shared
 {
-    public class ClassDefinitions
+    public class CreateSyncanoClassArgs : IArgs
     {
-        private readonly string _link;
-        private readonly ISyncanoHttpClient _httpClient;
+        public string Name { get; set; }
 
-        public ClassDefinitions(string link, ISyncanoHttpClient httpClient)
+        public string Description { get; set; }
+
+        public IList<SyncanoFieldSchema> Schema {get; set; }
+
+        public IDictionary<string, object> ToDictionary()
         {
-            _link = link;
-            _httpClient = httpClient;
+             var schemaJson = JsonConvert.SerializeObject(this.Schema);
+            return new Dictionary<string, object>() { { "name", this.Name }, { "description", this.Description }, {"schema", schemaJson} };
         }
+    }
 
-        private static string ToJson(IList<SyncanoFieldSchema> schema)
+    public class ClassDefinitions : SyncanoRepository<SyncanoClass, CreateSyncanoClassArgs>
+    {
+        public ClassDefinitions(string link, ISyncanoHttpClient httpClient) : base(link, httpClient)
         {
-          //  var jsonSerializerSettings = new JsonSerializerSettings();
-           // jsonSerializerSettings.Converters.Add(new StringEnumConverter() { CamelCaseText = true, AllowIntegerValues = true});
-
-            var schemaJson = JsonConvert.SerializeObject(schema);
-            return schemaJson;
         }
-
-
-#if Unity3d
-        public IList<SyncanoClass> Get()
-        {
-            return _httpClient.Get<SyncanoClass>(_link, null);
-        }
-
-        public SyncanoClass Add(string name, string description, IList<SyncanoFieldSchema> schema)
-        {
-            
-            var parameters = new Dictionary<string, object>() { { "name", name }, { "description", description }, {"schema", ToJson(schema)} };
-            return _httpClient.Post<SyncanoClass>(_link, parameters);
-        }
-
-       
-#endif
-
-#if dotNet
-        public Task<IList<SyncanoClass>> GetAsync()
-        {
-            return _httpClient.GetAsync<SyncanoClass>(_link, null);
-        }
-
-        public Task<SyncanoClass> AddAsync(string name, string description, IList<SyncanoFieldSchema> schema)
-        {
-            var parameters = new Dictionary<string, object>() {{"name", name}, {"description", description}, {"schema", ToJson(schema)}};
-            return _httpClient.PostAsync<SyncanoClass>(_link, parameters);
-        }
-
-
-#endif
     }
 
 }

@@ -38,7 +38,7 @@ namespace Syncano4.Tests.Shared
             classes.ShouldAllBe(c => c.Name != null);
         }
 
-        public class TestObject
+        public class TestObject:DataObject
         {
             [JsonProperty("myid")]
             public long MyId { get; set; }
@@ -46,8 +46,8 @@ namespace Syncano4.Tests.Shared
             [JsonProperty("name")]
             public string Name { get; set; }
 
-            [JsonProperty("createdat")]
-            public DateTime CreatedAt { get; set; }
+            [JsonProperty("current_time")]
+            public DateTime CurrentTime { get; set; }
 
             [JsonProperty("ischecked")]
             public bool IsChecked { get; set; }
@@ -64,7 +64,7 @@ namespace Syncano4.Tests.Shared
                 {
                     new SyncanoFieldSchema() {Name = "myid", Type = SyncanoFieldType.Integer},
                     new SyncanoFieldSchema() {Name = "name", Type = SyncanoFieldType.String},
-                    new SyncanoFieldSchema() {Name = "createdat", Type = SyncanoFieldType.Datetime},
+                    new SyncanoFieldSchema() {Name = "current_time", Type = SyncanoFieldType.Datetime},
                     new SyncanoFieldSchema() {Name = "ischecked", Type = SyncanoFieldType.Boolean},
                     new SyncanoFieldSchema() {Name = "float", Type = SyncanoFieldType.Float},
                     new SyncanoFieldSchema() {Name = "longtext", Type = SyncanoFieldType.Text},
@@ -82,7 +82,12 @@ namespace Syncano4.Tests.Shared
 
             //when
 
-            var classDef = await classDefintions.AddAsync("ClassUnitTest_" + Guid.NewGuid().ToString(), "generated in unittest", schema);
+            var classDef = await classDefintions.AddAsync(new CreateSyncanoClassArgs()
+            {
+                Name = "ClassUnitTest_" + Guid.NewGuid().ToString(),
+                Description = "generated in unittest",
+                Schema = schema
+            });
 
             //then
             classDef.Schema.ShouldBeSubsetOf(schema);
@@ -95,16 +100,25 @@ namespace Syncano4.Tests.Shared
         {
             //given
             var classDefintions = new ClassDefinitions("/v1/instances/testinstance2/classes/", GetClient());
-            var classDef = await classDefintions.AddAsync("ClassUnitTest_" + Guid.NewGuid().ToString(), "generated in unittest", TestObject.GetSchema());
-            var objects = new SyncanoDataObjects(classDef,GetClient());
+            var classDef = await classDefintions.AddAsync(new CreateSyncanoClassArgs()
+            {
+                Name = "ClassUnitTest_" + Guid.NewGuid().ToString(),
+                Description = "generated in unittest",
+                Schema = TestObject.GetSchema()
+            });
+            var objects = new SyncanoDataObjects<TestObject>(classDef, GetClient());
 
             //when
-            var expectedObject  = new TestObject() { Name = "Name 1", CreatedAt = DateTime.UtcNow};
+            var expectedObject = new TestObject() { Name = "Name 1", CurrentTime = DateTime.UtcNow };
             var newTestObject = await objects.AddAsync(expectedObject);
-            
-            //then
 
-            newTestObject.CreatedAt.ShouldBe(expectedObject.CreatedAt,TimeSpan.FromTicks(10));
+            //then
+            newTestObject.Id.ShouldBeGreaterThan(0);
+            newTestObject.Revision.ShouldBeGreaterThan(0);
+            newTestObject.UpdatedAt.ShouldBeGreaterThanOrEqualTo(DateTime.UtcNow.AddSeconds(-5));
+            newTestObject.CreatedAt.ShouldBeGreaterThanOrEqualTo(DateTime.UtcNow.AddSeconds(-5));
+
+            newTestObject.CurrentTime.ShouldBe(expectedObject.CurrentTime, TimeSpan.FromTicks(10));
             newTestObject.Name.ShouldBe(expectedObject.Name);
         }
 
@@ -114,21 +128,25 @@ namespace Syncano4.Tests.Shared
         {
             //given
             var classDefintions = new ClassDefinitions("/v1/instances/testinstance2/classes/", GetClient());
-            var classDef = await classDefintions.AddAsync("ClassUnitTest_" + Guid.NewGuid().ToString(), "generated in unittest", TestObject.GetSchema());
-            var objects = new SyncanoDataObjects(classDef, GetClient());
+            var classDef = await classDefintions.AddAsync(new CreateSyncanoClassArgs()
+            {
+                Name = "ClassUnitTest_" + Guid.NewGuid().ToString(),
+                Description = "generated in unittest",
+                Schema = TestObject.GetSchema()
+            });
+            var objects = new SyncanoDataObjects<TestObject>(classDef, GetClient());
 
             for (int i = 0; i < 20; i++)
             {
-               await objects.AddAsync(new TestObject() { Name = "Name " + i, CreatedAt = DateTime.UtcNow, MyId = i});
+                await objects.AddAsync(new TestObject() {Name = "Name " + i, CurrentTime = DateTime.UtcNow, MyId = i});
             }
 
             //when
-            var list = await objects.GetAsync<TestObject>(pageSize: 10);
+            var list = await objects.GetAsync(pageSize: 10);
 
             //then
             list.Count.ShouldBe(10);
             list.ShouldAllBe(t => t.MyId < 10);
-
         }
     }
 }
