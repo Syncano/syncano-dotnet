@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Syncano4.Shared
 {
-    public class SyncanoInstances : SyncanoRepository<Instance, CreateInstanceArgs>
+    public class SyncanoInstances : SyncanoRepository<Instance, NewInstance>
     {
 
         public SyncanoInstances(ISyncanoHttpClient httpClient)
@@ -14,7 +14,6 @@ namespace Syncano4.Shared
         {
         }
  
-
         
     }
 }

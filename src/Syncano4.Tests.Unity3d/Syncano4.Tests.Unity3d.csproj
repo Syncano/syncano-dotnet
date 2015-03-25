@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SyncanoExamples.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

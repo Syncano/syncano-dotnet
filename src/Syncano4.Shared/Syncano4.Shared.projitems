@@ -10,10 +10,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ClassDefinitions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)CreateInstanceArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NewInstance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Instance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISyncanoHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Syncano.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SyncanoClass.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SyncanoDataObjects.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SyncanoException.cs" />

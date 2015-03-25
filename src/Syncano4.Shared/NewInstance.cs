@@ -2,7 +2,7 @@
 
 namespace Syncano4.Shared
 {
-    public class CreateInstanceArgs : IArgs
+    public class NewInstance : IArgs
     {
         public string Name { get; set; }
 

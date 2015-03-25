@@ -44,7 +44,7 @@ namespace Syncano4.Tests.Shared
             string name = "unittest" + Guid.NewGuid().ToString();
 
             //when
-            var instance = await i.AddAsync(new CreateInstanceArgs() { Name = name, Description = "desc of " + name});
+            var instance = await i.AddAsync(new NewInstance() { Name = name, Description = "desc of " + name});
 
             //then
             instance.Name.ShouldBe(name);
@@ -58,10 +58,10 @@ namespace Syncano4.Tests.Shared
             //given
             var i = new SyncanoInstances(GetClient());
             string name = "unittest" + Guid.NewGuid().ToString();
-            var instance = await i.AddAsync(new CreateInstanceArgs() { Name = name, Description = "desc of " + name });
+            var instance = await i.AddAsync(new NewInstance() { Name = name, Description = "desc of " + name });
 
             //when
-            var ex = Should.Throw<SyncanoException>(async () => { var newI = await i.AddAsync(new CreateInstanceArgs() {Name = name, Description = "desc of " + name}); });
+            var ex = Should.Throw<SyncanoException>(async () => { var newI = await i.AddAsync(new NewInstance() {Name = name, Description = "desc of " + name}); });
 
             //then
             ex.Message.ShouldContain("Instance with this Name already exists");
