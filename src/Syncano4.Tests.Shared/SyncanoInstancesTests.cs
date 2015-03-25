@@ -25,16 +25,38 @@ namespace Syncano4.Tests.Shared
 
 
         [Fact]
-        public async Task Get()
+        public async Task List()
         {
             var i = new SyncanoInstances(GetClient());
-            var instances = await i.GetAsync();
+            var instances = await i.ListAsync();
 
 
             instances.ShouldAllBe(ins => ins.Name != null);
             instances.ShouldAllBe(ins => ins.CreatedAt > DateTime.Today.AddYears(-1));
             instances.ShouldAllBe(ins => ins.Links.Keys.Count > 0);
         }
+
+
+
+        [Fact]
+        public async Task Get()
+        {
+            //given
+            var i = new SyncanoInstances(GetClient());
+            string name = "unittest" + Guid.NewGuid().ToString();
+            var instance = await i.AddAsync(new NewInstance() { Name = name, Description = "desc of " + name });
+
+            //when
+            var fetchedInstance = await i.GetAsync(instance.Name);
+
+            //then
+            fetchedInstance.Name.ShouldBe(instance.Name);
+            fetchedInstance.CreatedAt.ShouldBe(instance.CreatedAt);
+            fetchedInstance.Description.ShouldBe(instance.Description);
+
+
+        }
+
 
         [Fact]
         public async Task Add()

@@ -6,7 +6,7 @@ using System.Text;
 using Syncano4.Unity3d;
 #endif
 
-#if dotNet
+#if dotNET
 using Syncano4.Net;
 #endif
 
@@ -24,7 +24,7 @@ namespace Syncano4.Shared
             _httpClient = new SyncanoHttpClient(authkey);
             #endif
 
-            #if dotNet
+            #if dotNET
             _httpClient = new SyncanoHttpClient(authkey);
             #endif
         }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 
 
-#if dotNet
+#if dotNET
 using System.Threading.Tasks;
 #endif
 
@@ -31,21 +31,21 @@ namespace Syncano4.Shared
 
 
 #if Unity3d
-        public IList<T> Get(int pageSize = 10)
+        public IList<T> List(int pageSize = 10)
         {
-            return Get(new Dictionary<string, object>() { {"page_size", pageSize }});
+            return List(new Dictionary<string, object>() { {"page_size", pageSize }});
         }
        
 #endif
 
-#if dotNet
-          public Task<IList<T>> GetAsync(int pageSize = 10)
+#if dotNET
+          public Task<IList<T>> ListAsync(int pageSize = 10)
         {
-            return GetAsync(new Dictionary<string, object>() { {"page_size", pageSize }});
+            return ListAsync(new Dictionary<string, object>() { {"page_size", pageSize }});
         }
 
 #endif
 
-      
+
     }
 }

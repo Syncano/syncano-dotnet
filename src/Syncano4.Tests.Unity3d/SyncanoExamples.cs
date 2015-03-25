@@ -13,7 +13,7 @@ namespace Syncano4.Tests.Unity3d
         {
             //given
             string authKey = "a1546d926e32a940a57cc6dc68a22fc40a3ae7f6";
-            string instanceName = "UnityLibraryDemo" + DateTime.Now.Ticks; //just to be unique for test
+            string instanceName = "unity3d_demo_" + DateTime.Now.Ticks; //just to be unique for test
 
             //use syncano
             var syncano = new Syncano(authKey);
@@ -37,7 +37,7 @@ namespace Syncano4.Tests.Unity3d
             var syncano = new Syncano(authKey);
 
             //get instance
-            var instance = syncano.Instances.Get() (new NewInstance() { Name = instanceName, Description = "My sample instance" });
+            var instance = syncano.Instances.List() (new NewInstance() { Name = instanceName, Description = "My sample instance" });
 
             //instance created
             instance.Name.ShouldBe(instanceName);

@@ -6,10 +6,15 @@ namespace Syncano4.Tests.Unity3d
 {
     public static class Extensions
     {
- 
-        public static Task<IList<T>> GetAsync<T, K>(this SyncanoRepository<T, K> repo) where K : IArgs
+
+        public static Task<IList<T>> ListAsync<T, K>(this SyncanoRepository<T, K> repo) where K : IArgs
         {
-            return Task.FromResult(repo.Get());
+            return Task.FromResult(repo.List());
+        }
+
+        public static Task<T> GetAsync<T, K>(this SyncanoRepository<T, K> repo, string identifier) where K : IArgs
+        {
+            return Task.FromResult(repo.Get(identifier));
         }
 
         public static Task<T> AddAsync<T,K>(this SyncanoRepository<T,K> repo, K args) where K:IArgs
@@ -18,9 +23,9 @@ namespace Syncano4.Tests.Unity3d
         }
 
 
-        public static Task<IList<T>> GetAsync<T>(this SyncanoDataObjects<T> repo, int pageSize) where T : DataObject
+        public static Task<IList<T>> ListAsync<T>(this SyncanoDataObjects<T> repo, int pageSize) where T : DataObject
         {
-            return Task.FromResult(repo.Get(pageSize));
+            return Task.FromResult((repo).List(pageSize));
         }
        
     }

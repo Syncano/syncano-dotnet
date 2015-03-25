@@ -32,7 +32,7 @@ namespace Syncano4.Tests.Shared
             var classDefintions = new ClassDefinitions("/v1/instances/testinstance2/classes/", GetClient());
 
             //when
-            var classes = await classDefintions.GetAsync();
+            var classes = await classDefintions.ListAsync();
 
             //then
             classes.ShouldAllBe(c => c.Name != null);
@@ -142,7 +142,7 @@ namespace Syncano4.Tests.Shared
             }
 
             //when
-            var list = await objects.GetAsync(pageSize: 10);
+            var list = await objects.ListAsync(pageSize: 10);
 
             //then
             list.Count.ShouldBe(10);

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-#if dotNet
+#if dotNET
 using System.Threading.Tasks;
 
 #endif
@@ -16,8 +16,7 @@ namespace Syncano4.Shared
 
     public class SyncanoRepository<T, K> where K : IArgs
     {
-
-         private readonly string _link;
+        private readonly string _link;
         private readonly ISyncanoHttpClient _httpClient;
 
         public SyncanoRepository(string link, ISyncanoHttpClient httpClient)
@@ -33,14 +32,21 @@ namespace Syncano4.Shared
 
 
 #if Unity3d
-        public IList<T> Get()
+
+        public T Get(string identifier)
         {
-            return Get(null);
+           return _httpClient.Get<T>(string.Format("{0}{1}/", _link, identifier));
         }
 
-        public IList<T> Get(IDictionary<string,object> parameters)
+
+        public IList<T> List()
         {
-            return _httpClient.Get<T>(_link, parameters);
+            return List(null);
+        }
+
+        public IList<T> List(IDictionary<string, object> parameters)
+        {
+            return _httpClient.List<T>(_link, parameters);
         }
 
         public T Add(K addArgs)
@@ -51,15 +57,22 @@ namespace Syncano4.Shared
 
 #endif
 
-#if dotNet
-        public Task<IList<T>> GetAsync()
+#if dotNET
+
+        public Task<T> GetAsync(string identifier)
         {
-            return _httpClient.GetAsync<T>(_link, null);
+            return _httpClient.GetAsync<T>(string.Format("{0}{1}/", _link, identifier));
+        }
+        
+
+        public Task<IList<T>> ListAsync()
+        {
+            return _httpClient.ListAsync<T>(_link, null);
         }
 
-          public Task<IList<T>> GetAsync(IDictionary<string,object> parameters)
+          public Task<IList<T>> ListAsync(IDictionary<string,object> parameters)
         {
-            return _httpClient.GetAsync<T>(_link, parameters);
+            return _httpClient.ListAsync<T>(_link, parameters);
         }
 
         public Task<T> AddAsync(K addArgs)

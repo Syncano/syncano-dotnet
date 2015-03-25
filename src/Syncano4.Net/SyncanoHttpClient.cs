@@ -48,30 +48,38 @@ namespace Syncano4.Net
             return sb.ToString();
         }
 
-        public async Task<string> GetAsync(string methodName, IDictionary<string, object> parameters )
+        public async Task<string> GetAsync(string methodName, IDictionary<string, object> parameters)
         {
-             var response = await _client.GetAsync(CreateGetUri(methodName, parameters));
-             var content = await response.Content.ReadAsStringAsync();
+            var response = await _client.GetAsync(CreateGetUri(methodName, parameters));
+            var content = await response.Content.ReadAsStringAsync();
 
             var json = JObject.Parse(content);
             return json.SelectToken("result").Value<string>();
         }
 
 
-        public async Task<IList<T>> GetAsync<T>(string methodName, IDictionary<string, object> parameters )
+        public async Task<IList<T>> ListAsync<T>(string methodName, IDictionary<string, object> parameters)
         {
             var response = await _client.GetAsync(CreateGetUri(methodName, parameters));
             var content = await response.Content.ReadAsStringAsync();
 
             return JsonConvert.DeserializeObject<SyncanoResponse<T>>(content).Objects;
-            
         }
 
-   
-
-        public async Task<T> PostAsync<T>(string endpoint, IDictionary<string, object> parameters )
+        public async Task<T> GetAsync<T>(string methodName)
         {
-            var postContent = new FormUrlEncodedContent(parameters.Where(p => p.Value != null).ToDictionary(p => p.Key, p => p.Value is DateTime ? ((DateTime)p.Value).ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ") : p.Value.ToString()));
+            var response = await _client.GetAsync(CreateGetUri(methodName, null));
+            var content = await response.Content.ReadAsStringAsync();
+
+            return JsonConvert.DeserializeObject<T>(content);
+        }
+
+
+        public async Task<T> PostAsync<T>(string endpoint, IDictionary<string, object> parameters)
+        {
+            var postContent =
+                new FormUrlEncodedContent(parameters.Where(p => p.Value != null)
+                    .ToDictionary(p => p.Key, p => p.Value is DateTime ? ((DateTime) p.Value).ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ") : p.Value.ToString()));
             var response = await _client.PostAsync(CreateGetUri(endpoint, null), postContent);
             if (response.StatusCode != HttpStatusCode.Created)
             {
