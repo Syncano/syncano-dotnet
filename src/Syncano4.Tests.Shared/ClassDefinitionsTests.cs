@@ -58,16 +58,16 @@ namespace Syncano4.Tests.Shared
             [JsonProperty("longtext")]
             public string LongText { get; set; }
 
-            public static List<SyncanoFieldSchema> GetSchema()
+            public static List<FieldDef> GetSchema()
             {
-                return new List<SyncanoFieldSchema>()
+                return new List<FieldDef>()
                 {
-                    new SyncanoFieldSchema() {Name = "myid", Type = SyncanoFieldType.Integer},
-                    new SyncanoFieldSchema() {Name = "name", Type = SyncanoFieldType.String},
-                    new SyncanoFieldSchema() {Name = "current_time", Type = SyncanoFieldType.Datetime},
-                    new SyncanoFieldSchema() {Name = "ischecked", Type = SyncanoFieldType.Boolean},
-                    new SyncanoFieldSchema() {Name = "float", Type = SyncanoFieldType.Float},
-                    new SyncanoFieldSchema() {Name = "longtext", Type = SyncanoFieldType.Text},
+                    new FieldDef() {Name = "myid", Type = FieldType.Integer},
+                    new FieldDef() {Name = "name", Type = FieldType.String},
+                    new FieldDef() {Name = "current_time", Type = FieldType.Datetime},
+                    new FieldDef() {Name = "ischecked", Type = FieldType.Boolean},
+                    new FieldDef() {Name = "float", Type = FieldType.Float},
+                    new FieldDef() {Name = "longtext", Type = FieldType.Text},
                 };
             }
         }
@@ -82,7 +82,7 @@ namespace Syncano4.Tests.Shared
 
             //when
 
-            var classDef = await classDefintions.AddAsync(new CreateSyncanoClassArgs()
+            var classDef = await classDefintions.AddAsync(new NewClass()
             {
                 Name = "ClassUnitTest_" + Guid.NewGuid().ToString(),
                 Description = "generated in unittest",
@@ -100,7 +100,7 @@ namespace Syncano4.Tests.Shared
         {
             //given
             var classDefintions = new ClassDefinitions("/v1/instances/testinstance2/classes/", GetClient());
-            var classDef = await classDefintions.AddAsync(new CreateSyncanoClassArgs()
+            var classDef = await classDefintions.AddAsync(new NewClass()
             {
                 Name = "ClassUnitTest_" + Guid.NewGuid().ToString(),
                 Description = "generated in unittest",
@@ -128,7 +128,7 @@ namespace Syncano4.Tests.Shared
         {
             //given
             var classDefintions = new ClassDefinitions("/v1/instances/testinstance2/classes/", GetClient());
-            var classDef = await classDefintions.AddAsync(new CreateSyncanoClassArgs()
+            var classDef = await classDefintions.AddAsync(new NewClass()
             {
                 Name = "ClassUnitTest_" + Guid.NewGuid().ToString(),
                 Description = "generated in unittest",

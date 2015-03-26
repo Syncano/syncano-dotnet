@@ -13,55 +13,53 @@ namespace Syncano4.Tests.Unity3d
         {
             //given
             string authKey = "a1546d926e32a940a57cc6dc68a22fc40a3ae7f6";
-            string instanceName = "unity3d_demo_" + DateTime.Now.Ticks; //just to be unique for test
+            string instanceNameToCreate = "unity3d_demo_" + DateTime.Now.Ticks; //just to be unique for test
 
-            //use syncano
-            var syncano = new Syncano(authKey);
-
-            //add instance
-            var instance = syncano.Instances.Add(new NewInstance() {Name = instanceName, Description = "My sample instance"});
+            //add instanace using instance administration
+            var newInstance = Syncano.Using(authKey)
+                                        .Administration
+                                        .Instances.Add(new NewInstance() { Name = instanceNameToCreate, Description = "My sample instance" });
 
             //instance created
-            instance.Name.ShouldBe(instanceName);
+            newInstance.Name.ShouldBe(instanceNameToCreate);
         }
-
-
-       /* [Fact]
+        
+        [Fact]
         public void CreateSchema()
         {
             //given an existingInstance
             string existingInstance = TestFactory.CreateInstance();
             string authKey = "a1546d926e32a940a57cc6dc68a22fc40a3ae7f6";
 
-            //use syncano
-            var syncano = new Syncano(authKey);
+            //switch to instance 
+            var instanceResources = Syncano.Using(authKey).ResourcesFor(existingInstance);
 
-            //get instance
-            var instance = syncano.Instances.List() (new NewInstance() { Name = instanceName, Description = "My sample instance" });
+            //create class with two simple properties.  (at this moment manual mapping is required - this will change in the near future )
+             var classDef = instanceResources.Schema.Add(
+                new NewClass("sample_class", 
+                    new FieldDef() {Name = "order", Type = FieldType.Integer},
+                    new FieldDef() {Name = "name", Type = FieldType.String})
+                    );
 
-            //instance created
-            instance.Name.ShouldBe(instanceName);
-        }*/
-
-
-       
-        
+            //verify
+            classDef.Name.ShouldBe("sample_class");
+            classDef.Schema.ShouldContain(new FieldDef() { Name = "order", Type = FieldType.Integer });
+            classDef.Schema.ShouldContain(new FieldDef() { Name = "name", Type = FieldType.String });
+        }
     }
 
     public class TestFactory
     {
-       static string _authKey = TestData.AccountKey;
+        private static string _authKey = TestData.AccountKey;
 
         public static string CreateInstance()
         {
-            
             string instanceName = "UnityLibraryDemo" + DateTime.Now.Ticks; //just to be unique for test
 
             var syncano = new Syncano(_authKey);
-            var instance = syncano.Instances.Add(new NewInstance() { Name = instanceName, Description = "My sample instance" });
+            var instance = syncano.Administration.Instances.Add(new NewInstance() {Name = instanceName, Description = "My sample instance"});
 
             return instance.Name;
         }
-
     }
 }

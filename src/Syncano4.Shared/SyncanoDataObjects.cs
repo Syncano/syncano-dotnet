@@ -20,7 +20,7 @@ namespace Syncano4.Shared
 
      
 
-        private static string ToJson(IList<SyncanoFieldSchema> schema)
+        private static string ToJson(IList<FieldDef> schema)
         {
             //  var jsonSerializerSettings = new JsonSerializerSettings();
             // jsonSerializerSettings.Converters.Add(new StringEnumConverter() { CamelCaseText = true, AllowIntegerValues = true});

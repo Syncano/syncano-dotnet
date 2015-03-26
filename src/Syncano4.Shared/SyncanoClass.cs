@@ -19,7 +19,7 @@ namespace Syncano4.Shared
         public string ObjectsCount { get; set; }
 
         [JsonProperty("schema")]
-        public IList<SyncanoFieldSchema> Schema { get; set; }
+        public IList<FieldDef> Schema { get; set; }
     }
 
     public class CamelCaseStringEnumConverter : StringEnumConverter
@@ -32,11 +32,11 @@ namespace Syncano4.Shared
 
     
 
-    public class SyncanoFieldSchema : IEquatable<SyncanoFieldSchema>
+    public class FieldDef : IEquatable<FieldDef>
     {
         [JsonProperty("type")]
         [JsonConverter(typeof(CamelCaseStringEnumConverter))]
-        public SyncanoFieldType Type { get; set; }
+        public FieldType Type { get; set; }
 
 
         [JsonProperty("name")]
@@ -49,7 +49,7 @@ namespace Syncano4.Shared
         [JsonProperty("target", NullValueHandling=NullValueHandling.Ignore) ]
         public string Target { get; set; }
 
-        public bool Equals(SyncanoFieldSchema other)
+        public bool Equals(FieldDef other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -61,7 +61,7 @@ namespace Syncano4.Shared
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((SyncanoFieldSchema) obj);
+            return Equals((FieldDef) obj);
         }
 
         public override int GetHashCode()
@@ -81,7 +81,7 @@ namespace Syncano4.Shared
         }
     }
 
-    public enum SyncanoFieldType
+    public enum FieldType
     {
         Text, String, Integer, Float, Boolean, Datetime, File, Reference
     }

@@ -10,26 +10,37 @@ using System.Threading.Tasks;
 
 namespace Syncano4.Shared
 {
-    public class CreateSyncanoClassArgs : IArgs
+    public class NewClass : IArgs
     {
+        public NewClass()
+        {
+            
+        }
+        public NewClass(string name, params FieldDef[] fields)
+        {
+            this.Name = name;
+
+            if (fields != null)
+                this.Schema = new List<FieldDef>(fields);
+        }
+
         public string Name { get; set; }
 
         public string Description { get; set; }
 
-        public IList<SyncanoFieldSchema> Schema {get; set; }
+        public IList<FieldDef> Schema { get; set; }
 
         public IDictionary<string, object> ToDictionary()
         {
-             var schemaJson = JsonConvert.SerializeObject(this.Schema);
-            return new Dictionary<string, object>() { { "name", this.Name }, { "description", this.Description }, {"schema", schemaJson} };
+            var schemaJson = JsonConvert.SerializeObject(this.Schema);
+            return new Dictionary<string, object>() {{"name", this.Name}, {"description", this.Description}, {"schema", schemaJson}};
         }
     }
 
-    public class ClassDefinitions : SyncanoRepository<SyncanoClass, CreateSyncanoClassArgs>
+    public class ClassDefinitions : SyncanoRepository<SyncanoClass, NewClass>
     {
         public ClassDefinitions(string link, ISyncanoHttpClient httpClient) : base(link, httpClient)
         {
         }
     }
-
 }
