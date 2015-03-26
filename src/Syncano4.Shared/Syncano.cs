@@ -73,6 +73,22 @@ namespace Syncano4.Shared
         {
             get { return new ClassDefinitions(_instance.Links["classes"], _httpClient); }
         }
+
+        #if Unity3d
+        public SyncanoDataObjects<T> Objects<T>() where T : DataObject
+        {
+            var classDef = this.Schema.Get(typeof (T).Name);
+            return new SyncanoDataObjects<T>(classDef,_httpClient);
+        }
+        #endif
+
+#if dotNET
+         public async Task<SyncanoDataObjects<T>> Objects<T>() where T : DataObject
+        {
+            var classDef = await this.Schema.GetAsync(typeof (T).Name);
+            return new SyncanoDataObjects<T>(classDef,_httpClient);
+        }
+#endif
     }
 
     public class Administration

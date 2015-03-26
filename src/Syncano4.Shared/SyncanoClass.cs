@@ -18,6 +18,10 @@ namespace Syncano4.Shared
         [JsonProperty("objects_count")]
         public string ObjectsCount { get; set; }
 
+
+        [JsonProperty("links")]
+        public Dictionary<string, string> Links { get; private set; }
+
         [JsonProperty("schema")]
         public IList<FieldDef> Schema { get; set; }
     }

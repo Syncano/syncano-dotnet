@@ -26,6 +26,7 @@ namespace Syncano4.Unity3d
             _apiKey = apiKey;
             _baseUrl = string.Format("https://syncanotest1-env.elasticbeanstalk.com");
             _client = new WebClient();
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
         }
         
         private string CreateBaseUri(string methodName, IDictionary<string, object> parameters)

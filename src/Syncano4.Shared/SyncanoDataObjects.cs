@@ -14,7 +14,7 @@ namespace Syncano4.Shared
 
 
         public SyncanoDataObjects(SyncanoClass syncanoClass, ISyncanoHttpClient httpClient)
-            : base(string.Format(@"/v1/instances/testinstance2/classes/{0}/objects/", syncanoClass.Name), httpClient)
+            : base(syncanoClass.Links["objects"], httpClient)
         {
         }
 
