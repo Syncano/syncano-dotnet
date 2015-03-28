@@ -39,11 +39,16 @@ namespace Syncano4.Net
             return sb.ToString();
         }
 
-        private string CreateBaseUri(string methodName)
+        private string CreateBaseUri(string link)
         {
             var sb = new StringBuilder(_baseUrl);
-            sb.Append(methodName);
-            sb.Append("?api_key=");
+            sb.Append(link);
+            if (link.Contains("?"))
+                sb.Append("&");
+            else
+                sb.Append("?");
+
+            sb.Append("api_key=");
             sb.Append(_apiKey);
             return sb.ToString();
         }
@@ -58,12 +63,12 @@ namespace Syncano4.Net
         }
 
 
-        public async Task<IList<T>> ListAsync<T>(string methodName, IDictionary<string, object> parameters)
+        public async Task<SyncanoResponse<T>> ListAsync<T>(string methodName, IDictionary<string, object> parameters)
         {
             var response = await _client.GetAsync(CreateGetUri(methodName, parameters));
             var content = await response.Content.ReadAsStringAsync();
 
-            return JsonConvert.DeserializeObject<SyncanoResponse<T>>(content).Objects;
+            return JsonConvert.DeserializeObject<SyncanoResponse<T>>(content);
         }
 
         public async Task<T> GetAsync<T>(string methodName)

@@ -65,15 +65,20 @@ namespace Syncano4.Shared
         }
         
 
-        public Task<IList<T>> ListAsync()
+        public async Task<IList<T>> ListAsync()
         {
-            return _httpClient.ListAsync<T>(_link, null);
+            return (await _httpClient.ListAsync<T>(_link, null)).Objects;
         }
 
-          public Task<IList<T>> ListAsync(IDictionary<string,object> parameters)
+          public async Task<IList<T>> ListAsync(IDictionary<string,object> parameters)
         {
-            return _httpClient.ListAsync<T>(_link, parameters);
+            return (await _httpClient.ListAsync<T>(_link, parameters)).Objects;
         }
+
+          public  Task<SyncanoResponse<T>> PageableListAsync(IDictionary<string, object> parameters)
+          {
+              return _httpClient.ListAsync<T>(_link, parameters);
+          }
 
         public Task<T> AddAsync(K addArgs)
         {

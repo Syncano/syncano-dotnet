@@ -148,5 +148,36 @@ namespace Syncano4.Tests.Shared
             list.Count.ShouldBe(10);
             list.ShouldAllBe(t => t.MyId < 10);
         }
+
+
+        [Fact]
+        public async Task ListObjects_Pageable()
+        {
+            //given
+            var classDefintions = new ClassDefinitions("/v1/instances/testinstance2/classes/", GetClient());
+            var classDef = await classDefintions.AddAsync(new NewClass()
+            {
+                Name = "ClassUnitTest_" + Guid.NewGuid().ToString(),
+                Description = "generated in unittest",
+                Schema = TestObject.GetSchema()
+            });
+            var objects = new SyncanoDataObjects<TestObject>(classDef, GetClient());
+
+            for (int i = 0; i < 20; i++)
+            {
+                await objects.AddAsync(new TestObject() { Name = "Name " + i, CurrentTime = DateTime.UtcNow, MyId = i });
+            }
+
+            //when
+            var page1 = await objects.PageableListAsync(pageSize: 10);
+            var page2 = await page1.GetNext();
+
+            //then
+            page1.Current.Count.ShouldBe(10);
+            page1.Current.ShouldAllBe(t => t.MyId < 10);
+
+            page2.Current.Count.ShouldBe(10);
+            page2.Current.ShouldAllBe(t => t.MyId < 20 && t.MyId >= 10 );
+        }
     }
 }

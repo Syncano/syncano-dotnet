@@ -84,6 +84,7 @@ namespace Syncano4.Tests.Unity3d
             //verify
             addedObject.Id.ShouldBeGreaterThan(0);
             addedObject.CreatedAt.ShouldBe(DateTime.UtcNow, TimeSpan.FromSeconds(2));
+            addedObject.Name.ShouldBe("Demo object 1");
 
             objectList.Count.ShouldBe(1);
         }

@@ -19,7 +19,7 @@ namespace Syncano4.Shared
 
 #if dotNET
         Task<string> GetAsync(string methodName, IDictionary<string, object> parameters);
-        Task<IList<T>> ListAsync<T>(string methodName, IDictionary<string, object> parameters);
+        Task<SyncanoResponse<T>> ListAsync<T>(string methodName, IDictionary<string, object> parameters);
 
         Task<T> GetAsync<T>(string link);
 
