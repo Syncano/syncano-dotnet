@@ -84,12 +84,13 @@ namespace Syncano4.Unity3d
             return request;
         }
 
-        public IList<T> List<T>(string methodName, IDictionary<string, object> parameters)
+        public SyncanoResponse<T> List<T>(string methodName, IDictionary<string, object> parameters)
         {
             var content = Get(methodName, parameters);
 
-            return JsonConvert.DeserializeObject<SyncanoResponse<T>>(content).Objects;
+            return JsonConvert.DeserializeObject<SyncanoResponse<T>>(content);
         }
+        
 
         public T Get<T>(string link)
         {

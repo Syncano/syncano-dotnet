@@ -11,7 +11,8 @@ namespace Syncano4.Shared
         string Get(string methodName, IDictionary<string,object> parameters);
 
         T Get<T>(string link);
-        IList<T> List<T>(string methodName, IDictionary<string, object> parameters);
+
+        SyncanoResponse<T> List<T>(string link, IDictionary<string, object> parameters);
 
         T Post<T>(string instances, IDictionary<string, object> parameters);
 #endif
@@ -19,6 +20,7 @@ namespace Syncano4.Shared
 
 #if dotNET
         Task<string> GetAsync(string methodName, IDictionary<string, object> parameters);
+
         Task<SyncanoResponse<T>> ListAsync<T>(string methodName, IDictionary<string, object> parameters);
 
         Task<T> GetAsync<T>(string link);

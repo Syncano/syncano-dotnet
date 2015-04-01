@@ -46,8 +46,13 @@ namespace Syncano4.Shared
 
         public IList<T> List(IDictionary<string, object> parameters)
         {
-            return _httpClient.List<T>(_link, parameters);
+            return _httpClient.List<T>(_link, parameters).Objects;
         }
+
+         public  SyncanoResponse<T> PageableList(IDictionary<string, object> parameters)
+          {
+              return _httpClient.List<T>(_link, parameters);
+          }
 
         public T Add(K addArgs)
         {

@@ -27,6 +27,17 @@ namespace Syncano4.Tests.Unity3d
         {
             return Task.FromResult((repo).List(pageSize));
         }
+
+
+        public static Task<PageableResult<T>> PageableListAsync<T>(this SyncanoDataObjects<T> repo, int pageSize) where T : DataObject
+        {
+            return Task.FromResult((repo).PageableList(pageSize));
+        }
+
+        public static Task<PageableResult<T>> GetNextAsync<T>(this PageableResult<T> result)
+        {
+            return Task.FromResult(result.GetNext());
+        }
        
     }
 }

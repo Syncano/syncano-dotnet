@@ -170,7 +170,9 @@ namespace Syncano4.Tests.Shared
 
             //when
             var page1 = await objects.PageableListAsync(pageSize: 10);
-            var page2 = await page1.GetNext();
+
+
+            var page2 = await page1.GetNextAsync();
 
             //then
             page1.Current.Count.ShouldBe(10);
