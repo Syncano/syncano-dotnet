@@ -14,6 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Instance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISyncanoHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SchemaMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Syncano.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SyncanoClass.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SyncanoDataObjects.cs" />
