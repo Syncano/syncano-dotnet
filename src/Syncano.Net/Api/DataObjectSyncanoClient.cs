@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Syncano.Net.Data;
@@ -55,16 +56,16 @@ namespace Syncano.Net.Api
 
         private void AssertAditionals(Dictionary<string, string> additionals)
         {
-            if(additionals == null)
+            if (additionals == null)
                 return;
 
-            if(additionals.Count > MaxAdditionalsCount)
+            if (additionals.Count > MaxAdditionalsCount)
                 throw new ArgumentException();
 
-            if(additionals.Any( a => a.Key.Length > MaxAdditionalKeyLenght))
+            if (additionals.Any(a => a.Key.Length > MaxAdditionalKeyLenght))
                 throw new ArgumentException();
 
-            if(additionals.Any(( a => a.Value.Length > MaxAdditionalValueLenght)))
+            if (additionals.Any((a => a.Value.Length > MaxAdditionalValueLenght)))
                 throw new ArgumentException();
         }
 
@@ -77,16 +78,16 @@ namespace Syncano.Net.Api
         /// <returns>New DataObject object.</returns>
         public Task<DataObject> New(DataObjectDefinitionRequest request)
         {
-            if(request.ProjectId == null)
+            if (request.ProjectId == null)
                 throw new ArgumentNullException();
 
-            if(request.CollectionId == null && request.CollectionKey == null)
+            if (request.CollectionId == null && request.CollectionKey == null)
                 throw new ArgumentNullException();
 
-            if(request.Text != null && request.Text.Length > MaxTextLenght)
+            if (request.Text != null && request.Text.Length > MaxTextLenght)
                 throw new ArgumentException();
 
-            if(request.Title != null && request.Title.Length > MaxTitleLenght)
+            if (request.Title != null && request.Title.Length > MaxTitleLenght)
                 throw new ArgumentException();
 
             AssertAditionals(request.Additional);
@@ -169,7 +170,7 @@ namespace Syncano.Net.Api
                 data_ids = dataIds.Count == 0 ? null : dataIds.ToArray(),
                 state = request.State.ToString(),
                 folders = folders.Count == 0 ? null : folders.ToArray(),
-                since = request.Since,
+                since = request.Since == null ? request.SinceId == null ? null : request.SinceId.Value.ToString(CultureInfo.InvariantCulture) : request.Since.Value.ToString(),
                 max_id = request.MaxId,
                 limit = request.Limit,
                 order = DataObjectOrderStringConverter.GetString(request.Order),
@@ -181,10 +182,10 @@ namespace Syncano.Net.Api
                 parent_ids = parentIds.ToArray(),
                 child_ids = childIds.ToArray(),
                 by_user = request.ByUser,
-                dataFilters = request.DataFieldFilters.ToDictionary(pair =>  pair.Key, pair => pair.Value)
+                dataFilters = request.DataFieldFilters.ToDictionary(pair => pair.Key, pair => pair.Value)
             };
 
-            
+
             return
                 await
                     _syncanoClient.PostAsync<List<DataObject>>("data.get",
@@ -215,7 +216,7 @@ namespace Syncano.Net.Api
             if (collectionId == null && collectionKey == null)
                 throw new ArgumentNullException();
 
-            if(childrenLimit < 0 || childrenLimit > MaxVauluesPerRequest)
+            if (childrenLimit < 0 || childrenLimit > MaxVauluesPerRequest)
                 throw new ArgumentException();
 
             return _syncanoClient.GetAsync<DataObject>("data.get_one",
@@ -400,7 +401,7 @@ namespace Syncano.Net.Api
             if (request.DataId != null)
                 dataIds.Add(request.DataId);
 
-            if(dataIds.Count < 1)
+            if (dataIds.Count < 1)
                 throw new ArgumentException();
 
             return await _syncanoClient.GetAsync<List<DataObject>>("data.copy", new
@@ -503,7 +504,7 @@ namespace Syncano.Net.Api
             if (collectionId == null && collectionKey == null)
                 throw new ArgumentNullException();
 
-            if(dataId == null || childId == null)
+            if (dataId == null || childId == null)
                 throw new ArgumentNullException();
 
             return _syncanoClient.GetAsync("data.add_child",
@@ -561,7 +562,7 @@ namespace Syncano.Net.Api
         /// <returns>Boolen value indicating success of method.</returns>
         public Task<bool> Delete(DataObjectSimpleQueryRequest request)
         {
-            if(request.ProjectId == null)
+            if (request.ProjectId == null)
                 throw new ArgumentNullException();
 
             if (request.CollectionId == null && request.CollectionKey == null)
@@ -573,7 +574,7 @@ namespace Syncano.Net.Api
             var dataIds = request.DataIds == null ? new List<string>() : new List<string>(request.DataIds);
             if (dataIds.Count + (request.DataId != null ? 1 : 0) > MaxVauluesPerRequest)
                 throw new ArgumentException();
-            if(request.DataId != null)
+            if (request.DataId != null)
                 dataIds.Add(request.DataId);
 
             var folders = request.Folders == null ? new List<string>() : new List<string>(request.Folders);
@@ -592,7 +593,7 @@ namespace Syncano.Net.Api
                     data_ids = dataIds.Count == 0 ? null : dataIds.ToArray(),
                     state = request.State.ToString(),
                     folders = folders.Count == 0 ? null : folders.ToArray(),
-                    filter =  request.Filter == null ? null : request.Filter.ToString(),
+                    filter = request.Filter == null ? null : request.Filter.ToString(),
                     by_user = request.ByUser,
                     limit = request.Limit
                 });
@@ -635,7 +636,7 @@ namespace Syncano.Net.Api
 
         public override string ToString()
         {
-            return string.Format("{0} using {1}", typeof (DataObjectSyncanoClient), _syncanoClient.GetType());
+            return string.Format("{0} using {1}", typeof(DataObjectSyncanoClient), _syncanoClient.GetType());
         }
     }
 }

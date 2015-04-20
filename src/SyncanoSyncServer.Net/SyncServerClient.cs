@@ -31,6 +31,12 @@ namespace SyncanoSyncServer.Net
         private string _sessionId = null;
         private string _authKey = null;
 
+        private Subject<NewDataNotification> _newDataNotificationObservable = new Subject<NewDataNotification>();
+        private Subject<DeleteDataNotification> _deleteDataNotificationObservable = new Subject<DeleteDataNotification>();
+        private Subject<ChangeDataNotification> _changeDataNotificationObservable = new Subject<ChangeDataNotification>();
+        private Subject<DataRelationNotification> _dataRelationNotificationObservable = new Subject<DataRelationNotification>();
+        private Subject<GenericNotification> _genericNotificationObservable = new Subject<GenericNotification>();
+
         /// <summary>
         /// Observable where you can subscribe on incoming messages as string objects.
         /// </summary>
@@ -38,12 +44,6 @@ namespace SyncanoSyncServer.Net
         {
             get { return _messagesObservable; }
         }
-
-        private Subject<NewDataNotification> _newDataNotificationObservable = new Subject<NewDataNotification>();
-        private Subject<DeleteDataNotification> _deleteDataNotificationObservable = new Subject<DeleteDataNotification>();
-        private Subject<ChangeDataNotification> _changeDataNotificationObservable = new Subject<ChangeDataNotification>();
-        private Subject<DataRelationNotification> _dataRelationNotificationObservable = new Subject<DataRelationNotification>();
-        private Subject<GenericNotification> _genericNotificationObservable = new Subject<GenericNotification>();
 
         /// <summary>
         /// Observable providing notifications about new DataObjects in Syncano Instance.
@@ -226,7 +226,7 @@ namespace SyncanoSyncServer.Net
         /// </summary>
         public void Disconnect()
         {
-            if(_client.IsConnected)
+            if (_client.IsConnected)
                 _client.Disconnect();
         }
 
@@ -238,7 +238,7 @@ namespace SyncanoSyncServer.Net
         /// <returns>Task performing login operation and returning LoginResult object.</returns>
         public Task<LoginResult> Login(string apiKey, string instanceName)
         {
-            var request = new LoginRequest {InstanceName = instanceName, ApiKey = apiKey, AuthKey = _authKey, SessionId = _sessionId};
+            var request = new LoginRequest { InstanceName = instanceName, ApiKey = apiKey, AuthKey = _authKey, SessionId = _sessionId };
 
             var t = _messagesObservable.FirstAsync().Select(ToLoginResult)
                 .FirstAsync().Timeout(TimeSpan.FromSeconds(10))
@@ -252,7 +252,7 @@ namespace SyncanoSyncServer.Net
 
         private static LoginResult ToLoginResult(string s)
         {
-           var response =   JsonConvert.DeserializeObject<LoginResponse>(s);
+            var response = JsonConvert.DeserializeObject<LoginResponse>(s);
 
             if (response.Result == "OK")
                 return new LoginResult(true, response.Error);
@@ -266,7 +266,7 @@ namespace SyncanoSyncServer.Net
             return Interlocked.Add(ref _currentMessageId, 1);
         }
 
-        
+
         private Task<T> SendCommandAsync<T>(ApiCommandRequest request, string contentToken)
         {
             return SendCommandAsync<T>(request, jo => jo.SelectToken("data").SelectToken(contentToken).ToObject<T>());
@@ -279,7 +279,7 @@ namespace SyncanoSyncServer.Net
 
             SendRequestAsync(syncanoConversation).ContinueWith(task =>
             {
-                if(task.IsFaulted)
+                if (task.IsFaulted)
                     syncanoConversation.SetError(new SyncanoException("Failed to send request", task.Exception.Flatten()));
             });
 
@@ -299,17 +299,17 @@ namespace SyncanoSyncServer.Net
                     if (eachProperty.GetValue(parameters) != null)
                     {
                         if (eachProperty.GetValue(parameters).GetType().IsConstructedGenericType &&
-                            eachProperty.GetValue(parameters).GetType().GetGenericTypeDefinition() == typeof (Dictionary<,>))
+                            eachProperty.GetValue(parameters).GetType().GetGenericTypeDefinition() == typeof(Dictionary<,>))
                         {
                             if (eachProperty.GetValue(parameters) is Dictionary<string, string>)
                             {
-                                var dictionary = (Dictionary<string, string>) eachProperty.GetValue(parameters);
+                                var dictionary = (Dictionary<string, string>)eachProperty.GetValue(parameters);
                                 foreach (var item in dictionary)
                                     request.Params.Add(item.Key, item.Value);
                             }
                             else
                             {
-                                var dictionary = (Dictionary<string, object>) eachProperty.GetValue(parameters);
+                                var dictionary = (Dictionary<string, object>)eachProperty.GetValue(parameters);
                                 foreach (var item in dictionary)
                                     request.Params.Add(item.Key, item.Value);
                             }
@@ -322,7 +322,8 @@ namespace SyncanoSyncServer.Net
             return request;
         }
 
-        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(8, 8);
+        private const int _semaphoreMaxCount = 8;
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(_semaphoreMaxCount, _semaphoreMaxCount);
         private IDisposable _messagesSubscription;
         private bool _isDisposing;
         private IDisposable _every10seconds;
@@ -330,8 +331,12 @@ namespace SyncanoSyncServer.Net
 
         private void RelaseOneSemaphoreEntry()
         {
-            if (!_isDisposing)
+            // _semaphore.CurrentCount shows how many slots are empty
+            // We can realease a slot if any was taken
+            if (!_isDisposing && _semaphore.CurrentCount < _semaphoreMaxCount)
+            {
                 _semaphore.Release();
+            }
         }
 
         private async Task SendRequestAsync(ISyncanoConversation conversation)
@@ -357,14 +362,14 @@ namespace SyncanoSyncServer.Net
                 throw;
             }
         }
-        
+
 
         private byte[] CreateRequest(ISyncanoRequest request)
         {
             string cmd = JsonConvert.SerializeObject(request) + "\n";
 
             var messageBytes = Encoding.UTF8.GetBytes(cmd);
-            if (messageBytes.Length > 128*1024)
+            if (messageBytes.Length > 128 * 1024)
                 throw new SyncanoException("Request size exceeded, maximum size 128Kb");
 
             return messageBytes;

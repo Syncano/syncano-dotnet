@@ -27,6 +27,11 @@ namespace Syncano.Net.DataRequests
         public DateTime? Since { get; set; }
 
         /// <summary>
+        /// Used for paginating. Note: To paginate data by id you need to specify ordering by id (OrderBy = DataObjectOrderBy.Id).
+        /// </summary>
+        public long? SinceId { get; set; }
+
+        /// <summary>
         /// If specified, will only return data with id lower than max_id (older).
         /// </summary>
         public string MaxId { get; set; }
