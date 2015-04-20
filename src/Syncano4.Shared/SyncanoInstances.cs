@@ -10,7 +10,7 @@ namespace Syncano4.Shared
     {
 
         public SyncanoInstances(ISyncanoHttpClient httpClient)
-            : base("/v1/instances/", httpClient)
+            : base( i =>  "/v1/instances/", null, httpClient)
         {
         }
  

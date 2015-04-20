@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
@@ -39,7 +40,7 @@ namespace Syncano4.Shared
 
     public class ClassDefinitions : SyncanoRepository<SyncanoClass, NewClass>
     {
-        public ClassDefinitions(string link, ISyncanoHttpClient httpClient) : base(link, httpClient)
+        public ClassDefinitions(Func<LazyLinkProvider, string> getLink, LazyLinkProvider lazyLinkProvider,  ISyncanoHttpClient httpClient) : base(getLink, lazyLinkProvider,  httpClient)
         {
         }
     }

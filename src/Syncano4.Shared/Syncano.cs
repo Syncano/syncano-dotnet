@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 #if Unity3d
 using Syncano4.Unity3d;
+
 #endif
 #if dotNET
 using Syncano4.Net;
 using System.Threading.Tasks;
 #endif
-
 
 namespace Syncano4.Shared
 {
@@ -25,14 +25,7 @@ namespace Syncano4.Shared
         public Syncano(string authkey)
         {
             _authkey = authkey;
-
-#if Unity3d
             _httpClient = new SyncanoHttpClient(authkey);
-            #endif
-
-#if dotNET
-            _httpClient = new SyncanoHttpClient(authkey);
-#endif
         }
 
         public Administration Administration
@@ -40,55 +33,69 @@ namespace Syncano4.Shared
             get { return new Administration(_httpClient); }
         }
 
-
-#if Unity3d
         public InstanceResources ResourcesFor(string existingInstance)
         {
-            var instance = this.Administration.Instances.Get(existingInstance);
-            return new InstanceResources(_httpClient, instance);
+            return new InstanceResources(_httpClient, new LazyLinkProvider(this, _httpClient, existingInstance));
+        }
+    }
+
+    public class LazyLinkProvider
+    {
+        private readonly Syncano _syncano;
+        private readonly ISyncanoHttpClient _httpClient;
+        private readonly string _instanceName;
+        private Instance _instance;
+
+        public LazyLinkProvider(Syncano syncano, ISyncanoHttpClient httpClient, string instanceName)
+        {
+            _syncano = syncano;
+            _httpClient = httpClient;
+            _instanceName = instanceName;
+        }
+
+#if Unity3d
+        public void Initialize()
+        {
+            _instance = _syncano.Administration.Instances.Get(_instanceName);
         }
 #endif
 
 #if dotNET
-        public async Task<InstanceResources> ResourcesFor(string existingInstance)
+          public async Task Initialize()
         {
-            var instance = await this.Administration.Instances.GetAsync(existingInstance);
-            return new InstanceResources(_httpClient, instance);
+            _instance = await  _syncano.Administration.Instances.GetAsync(_instanceName); ;
+
+
         }
 #endif
+
+        public Dictionary<string,string> Links
+        {
+            get { return _instance.Links; }
+        }
     }
 
     public class InstanceResources
     {
         private readonly ISyncanoHttpClient _httpClient;
-        private readonly Instance _instance;
+        private readonly LazyLinkProvider _lazyLinkProvider;
 
-        public InstanceResources(ISyncanoHttpClient httpClient, Instance instance)
+        public InstanceResources(ISyncanoHttpClient httpClient, LazyLinkProvider lazyLinkProvider)
         {
             _httpClient = httpClient;
-            _instance = instance;
+            _lazyLinkProvider = lazyLinkProvider;
         }
 
         public ClassDefinitions Schema
         {
-            get { return new ClassDefinitions(_instance.Links["classes"], _httpClient); }
+            get { return new ClassDefinitions(i => i.Links["classes"], _lazyLinkProvider, _httpClient); }
         }
-
-        #if Unity3d
+        
         public SyncanoDataObjects<T> Objects<T>() where T : DataObject
         {
-            var classDef = this.Schema.Get(typeof (T).Name);
-            return new SyncanoDataObjects<T>(classDef,_httpClient);
+            //var classDef = this.Schema.Get(typeof (T).Name);
+            return new SyncanoDataObjects<T>(null, _httpClient);
         }
-        #endif
-
-#if dotNET
-         public async Task<SyncanoDataObjects<T>> Objects<T>() where T : DataObject
-        {
-            var classDef = await this.Schema.GetAsync(typeof (T).Name);
-            return new SyncanoDataObjects<T>(classDef,_httpClient);
-        }
-#endif
     }
 
     public class Administration

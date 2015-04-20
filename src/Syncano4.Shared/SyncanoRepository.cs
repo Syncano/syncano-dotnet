@@ -16,13 +16,15 @@ namespace Syncano4.Shared
 
     public class SyncanoRepository<T, K> where K : IArgs
     {
-        private readonly string _link;
+        private readonly Func<LazyLinkProvider, string> _getLink;
         private readonly ISyncanoHttpClient _httpClient;
+        private LazyLinkProvider _lazyLinkProvider;
 
-        public SyncanoRepository(string link, ISyncanoHttpClient httpClient)
+        public SyncanoRepository(Func<LazyLinkProvider, string> getLink, LazyLinkProvider lazyLinkProvider, ISyncanoHttpClient httpClient)
         {
-            _link = link;
+            _getLink = getLink;
             _httpClient = httpClient;
+            _lazyLinkProvider = lazyLinkProvider;
         }
 
         protected ISyncanoHttpClient HttpClient
@@ -35,7 +37,7 @@ namespace Syncano4.Shared
 
         public T Get(string identifier)
         {
-           return _httpClient.Get<T>(string.Format("{0}{1}/", _link, identifier));
+            return _httpClient.Get<T>(string.Format("{0}{1}/", _getLink(_lazyLinkProvider), identifier));
         }
 
 
@@ -46,48 +48,65 @@ namespace Syncano4.Shared
 
         public IList<T> List(IDictionary<string, object> parameters)
         {
-            return _httpClient.List<T>(_link, parameters).Objects;
+            return _httpClient.List<T>(_getLink(GetLazyLinkProvider()), parameters).Objects;
         }
 
-         public  SyncanoResponse<T> PageableList(IDictionary<string, object> parameters)
-          {
-              return _httpClient.List<T>(_link, parameters);
-          }
+        private LazyLinkProvider GetLazyLinkProvider()
+        {
+            if (_lazyLinkProvider == null)
+                return null;
+
+            _lazyLinkProvider.Initialize();
+            return _lazyLinkProvider;
+        }
+
+        public SyncanoResponse<T> PageableList(IDictionary<string, object> parameters)
+        {
+            return _httpClient.List<T>(_getLink(GetLazyLinkProvider()), parameters);
+        }
 
         public T Add(K addArgs)
         {
-            return _httpClient.Post<T>(_link, addArgs.ToDictionary());
+            return _httpClient.Post<T>(_getLink(GetLazyLinkProvider()), addArgs.ToDictionary());
         }
 
 
 #endif
 
 #if dotNET
-
-        public Task<T> GetAsync(string identifier)
+         private async Task<LazyLinkProvider> GetLazyLinkProvider()
         {
-            return _httpClient.GetAsync<T>(string.Format("{0}{1}/", _link, identifier));
+         if (_lazyLinkProvider == null)
+                return null;
+
+            await _lazyLinkProvider.Initialize();
+            return _lazyLinkProvider;
+        }
+
+        public async Task<T> GetAsync(string identifier)
+        {
+            return await _httpClient.GetAsync<T>(string.Format("{0}{1}/", _getLink(await GetLazyLinkProvider()), identifier));
         }
         
 
         public async Task<IList<T>> ListAsync()
         {
-            return (await _httpClient.ListAsync<T>(_link, null)).Objects;
+            return (await _httpClient.ListAsync<T>(_getLink(await GetLazyLinkProvider()), null)).Objects;
         }
 
           public async Task<IList<T>> ListAsync(IDictionary<string,object> parameters)
         {
-            return (await _httpClient.ListAsync<T>(_link, parameters)).Objects;
+            return (await _httpClient.ListAsync<T>(_getLink(await GetLazyLinkProvider()), parameters)).Objects;
         }
 
-          public  Task<SyncanoResponse<T>> PageableListAsync(IDictionary<string, object> parameters)
+          public async  Task<SyncanoResponse<T>> PageableListAsync(IDictionary<string, object> parameters)
           {
-              return _httpClient.ListAsync<T>(_link, parameters);
+              return await _httpClient.ListAsync<T>(_getLink(await GetLazyLinkProvider()), parameters);
           }
 
-        public Task<T> AddAsync(K addArgs)
+          public async Task<T> AddAsync(K addArgs)
         {
-            return _httpClient.PostAsync<T>(_link, addArgs.ToDictionary());
+            return await _httpClient.PostAsync<T>(_getLink(await GetLazyLinkProvider()), addArgs.ToDictionary());
         }
 
 

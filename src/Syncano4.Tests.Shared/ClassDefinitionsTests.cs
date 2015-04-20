@@ -19,9 +19,9 @@ namespace Syncano4.Tests.Shared
 {
     public class ClassDefinitionsTests
     {
-        public ISyncanoHttpClient GetClient()
+        public  InstanceResources GetInstance()
         {
-            return new SyncanoHttpClient(TestData.AccountKey);
+            return  Syncano.Using(TestData.AccountKey).ResourcesFor(TestData.InstanceName);
         }
 
 
@@ -29,7 +29,7 @@ namespace Syncano4.Tests.Shared
         public async Task Get()
         {
             //given
-            var classDefintions = new ClassDefinitions("/v1/instances/testinstance2/classes/", GetClient());
+            var classDefintions = (GetInstance()).Schema;
 
             //when
             var classes = await classDefintions.ListAsync();
@@ -77,7 +77,7 @@ namespace Syncano4.Tests.Shared
         public async Task Add()
         {
             //given
-            var classDefintions = new ClassDefinitions("/v1/instances/testinstance2/classes/", GetClient());
+            var classDefintions = (GetInstance()).Schema;
             var schema = TestObject.GetSchema();
 
             //when
@@ -99,14 +99,14 @@ namespace Syncano4.Tests.Shared
         public async Task AddObject()
         {
             //given
-            var classDefintions = new ClassDefinitions("/v1/instances/testinstance2/classes/", GetClient());
+            var classDefintions = (GetInstance()).Schema;
             var classDef = await classDefintions.AddAsync(new NewClass()
             {
                 Name = "ClassUnitTest_" + Guid.NewGuid().ToString(),
                 Description = "generated in unittest",
                 Schema = TestObject.GetSchema()
             });
-            var objects = new SyncanoDataObjects<TestObject>(classDef, GetClient());
+            var objects = (GetInstance()).Objects<TestObject>();
 
             //when
             var expectedObject = new TestObject() { Name = "Name 1", CurrentTime = DateTime.UtcNow };
@@ -127,14 +127,14 @@ namespace Syncano4.Tests.Shared
         public async Task ListObjects()
         {
             //given
-            var classDefintions = new ClassDefinitions("/v1/instances/testinstance2/classes/", GetClient());
+            var classDefintions = (GetInstance()).Schema;
             var classDef = await classDefintions.AddAsync(new NewClass()
             {
                 Name = "ClassUnitTest_" + Guid.NewGuid().ToString(),
                 Description = "generated in unittest",
                 Schema = TestObject.GetSchema()
             });
-            var objects = new SyncanoDataObjects<TestObject>(classDef, GetClient());
+            var objects = (GetInstance()).Objects<TestObject>();
 
             for (int i = 0; i < 20; i++)
             {
@@ -154,14 +154,14 @@ namespace Syncano4.Tests.Shared
         public async Task ListObjects_Pageable()
         {
             //given
-            var classDefintions = new ClassDefinitions("/v1/instances/testinstance2/classes/", GetClient());
+            var classDefintions = (GetInstance()).Schema;
             var classDef = await classDefintions.AddAsync(new NewClass()
             {
                 Name = "ClassUnitTest_" + Guid.NewGuid().ToString(),
                 Description = "generated in unittest",
                 Schema = TestObject.GetSchema()
             });
-            var objects = new SyncanoDataObjects<TestObject>(classDef, GetClient());
+            var objects = (GetInstance()).Objects<TestObject>();
 
             for (int i = 0; i < 20; i++)
             {

@@ -10,7 +10,7 @@ namespace Syncano4.Shared
     public class SyncanoDataObjects<T> : SyncanoRepository<T, T> where T : DataObject
     {
         public SyncanoDataObjects(SyncanoClass syncanoClass, ISyncanoHttpClient httpClient)
-            : base(syncanoClass.Links["objects"], httpClient)
+            : base(i => syncanoClass.Links["objects"], null, httpClient)
         {
         }
 

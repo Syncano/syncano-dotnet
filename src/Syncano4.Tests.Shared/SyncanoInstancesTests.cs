@@ -18,16 +18,18 @@ namespace Syncano4.Tests.Shared
 {
     public class SyncanoInstancesTests
     {
-        public ISyncanoHttpClient GetClient()
+        public async Task<SyncanoInstances> GetInstanceAdminstration()
         {
-            return new SyncanoHttpClient(TestData.AccountKey);
+            return Syncano.Using(TestData.AccountKey).Administration.Instances;
         }
+
+        
 
 
         [Fact]
         public async Task List()
         {
-            var i = new SyncanoInstances(GetClient());
+            var i = await GetInstanceAdminstration();
             var instances = await i.ListAsync();
 
 
@@ -42,7 +44,7 @@ namespace Syncano4.Tests.Shared
         public async Task Get()
         {
             //given
-            var i = new SyncanoInstances(GetClient());
+            var i = await GetInstanceAdminstration();
             string name = "unittest" + Guid.NewGuid().ToString();
             var instance = await i.AddAsync(new NewInstance() { Name = name, Description = "desc of " + name });
 
@@ -62,7 +64,7 @@ namespace Syncano4.Tests.Shared
         public async Task Add()
         {
             //given
-            var i = new SyncanoInstances(GetClient());
+            var i = await GetInstanceAdminstration();
             string name = "unittest" + Guid.NewGuid().ToString();
 
             //when
@@ -78,7 +80,7 @@ namespace Syncano4.Tests.Shared
         public async Task Add_uniqnessviolated_throws()
         {
             //given
-            var i = new SyncanoInstances(GetClient());
+            var i = await GetInstanceAdminstration();
             string name = "unittest" + Guid.NewGuid().ToString();
             var instance = await i.AddAsync(new NewInstance() { Name = name, Description = "desc of " + name });
 
