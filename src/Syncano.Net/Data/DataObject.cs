@@ -119,6 +119,10 @@ namespace Syncano.Net.Data
         [JsonProperty("children")]
         public List<DataObject> Children { get; set; }
 
-
+        /// <summary>
+        /// Only present if parent_ids is defined, provides information about which parent connection was used. Takes only values from parent_ids list
+        /// </summary>
+        [JsonProperty("parent_id")]
+        public string ParentId { get; set; }
     }
 }
