@@ -18,7 +18,7 @@ namespace Syncano4.Tests.Shared
 {
     public class SyncanoInstancesTests
     {
-        public async Task<SyncanoInstances> GetInstanceAdminstration()
+        public  SyncanoInstances GetInstanceAdminstration()
         {
             return Syncano.Using(TestData.AccountKey).Administration.Instances;
         }
@@ -29,7 +29,7 @@ namespace Syncano4.Tests.Shared
         [Fact]
         public async Task List()
         {
-            var i = await GetInstanceAdminstration();
+            var i =  GetInstanceAdminstration();
             var instances = await i.ListAsync();
 
 
@@ -44,7 +44,7 @@ namespace Syncano4.Tests.Shared
         public async Task Get()
         {
             //given
-            var i = await GetInstanceAdminstration();
+            var i =  GetInstanceAdminstration();
             string name = "unittest" + Guid.NewGuid().ToString();
             var instance = await i.AddAsync(new NewInstance() { Name = name, Description = "desc of " + name });
 
@@ -64,7 +64,7 @@ namespace Syncano4.Tests.Shared
         public async Task Add()
         {
             //given
-            var i = await GetInstanceAdminstration();
+            var i =  GetInstanceAdminstration();
             string name = "unittest" + Guid.NewGuid().ToString();
 
             //when
@@ -80,7 +80,7 @@ namespace Syncano4.Tests.Shared
         public async Task Add_uniqnessviolated_throws()
         {
             //given
-            var i = await GetInstanceAdminstration();
+            var i =  GetInstanceAdminstration();
             string name = "unittest" + Guid.NewGuid().ToString();
             var instance = await i.AddAsync(new NewInstance() { Name = name, Description = "desc of " + name });
 

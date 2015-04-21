@@ -33,7 +33,13 @@ namespace Syncano4.Unity3d
         {
             var sb = new StringBuilder(_baseUrl);
             sb.Append(methodName);
-            sb.Append("?api_key=");
+
+            if (methodName.Contains("?"))
+                sb.Append("&");
+            else
+                sb.Append("?");
+
+            sb.Append("api_key=");
             sb.Append(_apiKey);
 
             if (parameters != null)

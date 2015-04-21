@@ -9,8 +9,8 @@ namespace Syncano4.Shared
 {
     public class SyncanoDataObjects<T> : SyncanoRepository<T, T> where T : DataObject
     {
-        public SyncanoDataObjects(SyncanoClass syncanoClass, ISyncanoHttpClient httpClient)
-            : base(i => syncanoClass.Links["objects"], null, httpClient)
+        public SyncanoDataObjects(InstanceResources instanceResources, string objectName, ISyncanoHttpClient httpClient)
+            : base(i => i.Links["objects"], new SchemaLazyLinkProvider(instanceResources, objectName), httpClient)
         {
         }
 

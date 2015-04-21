@@ -43,6 +43,7 @@ namespace Syncano4.Net
         {
             var sb = new StringBuilder(_baseUrl);
             sb.Append(link);
+
             if (link.Contains("?"))
                 sb.Append("&");
             else

@@ -9,11 +9,16 @@
     <Import_RootNamespace>Syncano4.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Administration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ClassDefinitions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ILazyLinkProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InstanceResources.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InstanceLazyLinkProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NewInstance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Instance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISyncanoHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SchemaLazyLinkProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Syncano.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SyncanoClass.cs" />

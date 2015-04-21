@@ -19,9 +19,13 @@ namespace Syncano4.Tests.Shared
 {
     public class ClassDefinitionsTests
     {
-        public  InstanceResources GetInstance()
+        public InstanceResources CreateInstance()
         {
-            return  Syncano.Using(TestData.AccountKey).ResourcesFor(TestData.InstanceName);
+            var syncano = Syncano.Using(TestData.AccountKey);
+            var name = "UnitTest_" + DateTime.UtcNow.ToFileTime();
+            syncano.Administration.Instances.AddAsync(new NewInstance() {Name = name}).Wait(TimeSpan.FromSeconds(20));
+
+            return syncano.ResourcesFor(name);
         }
 
 
@@ -29,7 +33,7 @@ namespace Syncano4.Tests.Shared
         public async Task Get()
         {
             //given
-            var classDefintions = (GetInstance()).Schema;
+            var classDefintions = CreateInstance().Schema;
 
             //when
             var classes = await classDefintions.ListAsync();
@@ -38,7 +42,7 @@ namespace Syncano4.Tests.Shared
             classes.ShouldAllBe(c => c.Name != null);
         }
 
-        public class TestObject:DataObject
+        public class TestObject : DataObject
         {
             [JsonProperty("myid")]
             public long MyId { get; set; }
@@ -77,7 +81,7 @@ namespace Syncano4.Tests.Shared
         public async Task Add()
         {
             //given
-            var classDefintions = (GetInstance()).Schema;
+            var classDefintions = CreateInstance().Schema;
             var schema = TestObject.GetSchema();
 
             //when
@@ -99,17 +103,18 @@ namespace Syncano4.Tests.Shared
         public async Task AddObject()
         {
             //given
-            var classDefintions = (GetInstance()).Schema;
+            var instanceResources = CreateInstance();
+            var classDefintions = instanceResources.Schema;
             var classDef = await classDefintions.AddAsync(new NewClass()
             {
-                Name = "ClassUnitTest_" + Guid.NewGuid().ToString(),
+                Name = "TestObject",
                 Description = "generated in unittest",
                 Schema = TestObject.GetSchema()
             });
-            var objects = (GetInstance()).Objects<TestObject>();
+            var objects = instanceResources.Objects<TestObject>();
 
             //when
-            var expectedObject = new TestObject() { Name = "Name 1", CurrentTime = DateTime.UtcNow };
+            var expectedObject = new TestObject() {Name = "Name 1", CurrentTime = DateTime.UtcNow};
             var newTestObject = await objects.AddAsync(expectedObject);
 
             //then
@@ -127,14 +132,15 @@ namespace Syncano4.Tests.Shared
         public async Task ListObjects()
         {
             //given
-            var classDefintions = (GetInstance()).Schema;
+            var instanceResources = CreateInstance();
+            var classDefintions = instanceResources.Schema;
             var classDef = await classDefintions.AddAsync(new NewClass()
             {
-                Name = "ClassUnitTest_" + Guid.NewGuid().ToString(),
+                Name = typeof(TestObject).Name,
                 Description = "generated in unittest",
                 Schema = TestObject.GetSchema()
             });
-            var objects = (GetInstance()).Objects<TestObject>();
+            var objects = instanceResources.Objects<TestObject>();
 
             for (int i = 0; i < 20; i++)
             {
@@ -154,18 +160,19 @@ namespace Syncano4.Tests.Shared
         public async Task ListObjects_Pageable()
         {
             //given
-            var classDefintions = (GetInstance()).Schema;
+            var instanceResources = CreateInstance();
+            var classDefintions = instanceResources.Schema;
             var classDef = await classDefintions.AddAsync(new NewClass()
             {
-                Name = "ClassUnitTest_" + Guid.NewGuid().ToString(),
+                Name = typeof(TestObject).Name,
                 Description = "generated in unittest",
                 Schema = TestObject.GetSchema()
             });
-            var objects = (GetInstance()).Objects<TestObject>();
+            var objects = instanceResources.Objects<TestObject>();
 
             for (int i = 0; i < 20; i++)
             {
-                await objects.AddAsync(new TestObject() { Name = "Name " + i, CurrentTime = DateTime.UtcNow, MyId = i });
+                await objects.AddAsync(new TestObject() {Name = "Name " + i, CurrentTime = DateTime.UtcNow, MyId = i});
             }
 
             //when
@@ -179,7 +186,7 @@ namespace Syncano4.Tests.Shared
             page1.Current.ShouldAllBe(t => t.MyId < 10);
 
             page2.Current.Count.ShouldBe(10);
-            page2.Current.ShouldAllBe(t => t.MyId < 20 && t.MyId >= 10 );
+            page2.Current.ShouldAllBe(t => t.MyId < 20 && t.MyId >= 10);
         }
     }
 }

@@ -16,15 +16,15 @@ namespace Syncano4.Shared
 
     public class SyncanoRepository<T, K> where K : IArgs
     {
-        private readonly Func<LazyLinkProvider, string> _getLink;
+        private readonly Func<ILazyLinkProvider, string> _getLink  ;
         private readonly ISyncanoHttpClient _httpClient;
-        private LazyLinkProvider _lazyLinkProvider;
+        private ILazyLinkProvider _instanceLazyLinkProvider;
 
-        public SyncanoRepository(Func<LazyLinkProvider, string> getLink, LazyLinkProvider lazyLinkProvider, ISyncanoHttpClient httpClient)
+        public SyncanoRepository(Func<ILazyLinkProvider, string> getLink, ILazyLinkProvider instanceLazyLinkProvider, ISyncanoHttpClient httpClient)
         {
             _getLink = getLink;
             _httpClient = httpClient;
-            _lazyLinkProvider = lazyLinkProvider;
+            _instanceLazyLinkProvider = instanceLazyLinkProvider;
         }
 
         protected ISyncanoHttpClient HttpClient
@@ -37,7 +37,7 @@ namespace Syncano4.Shared
 
         public T Get(string identifier)
         {
-            return _httpClient.Get<T>(string.Format("{0}{1}/", _getLink(_lazyLinkProvider), identifier));
+            return _httpClient.Get<T>(string.Format("{0}{1}/", _getLink(GetLazyLinkProvider()), identifier));
         }
 
 
@@ -51,13 +51,13 @@ namespace Syncano4.Shared
             return _httpClient.List<T>(_getLink(GetLazyLinkProvider()), parameters).Objects;
         }
 
-        private LazyLinkProvider GetLazyLinkProvider()
+        private ILazyLinkProvider GetLazyLinkProvider()
         {
-            if (_lazyLinkProvider == null)
+            if (_instanceLazyLinkProvider == null)
                 return null;
 
-            _lazyLinkProvider.Initialize();
-            return _lazyLinkProvider;
+            _instanceLazyLinkProvider.Initialize();
+            return _instanceLazyLinkProvider;
         }
 
         public SyncanoResponse<T> PageableList(IDictionary<string, object> parameters)
@@ -74,13 +74,13 @@ namespace Syncano4.Shared
 #endif
 
 #if dotNET
-         private async Task<LazyLinkProvider> GetLazyLinkProvider()
+        private async Task<ILazyLinkProvider> GetLazyLinkProvider()
         {
-         if (_lazyLinkProvider == null)
+         if (_instanceLazyLinkProvider == null)
                 return null;
 
-            await _lazyLinkProvider.Initialize();
-            return _lazyLinkProvider;
+            await _instanceLazyLinkProvider.Initialize();
+            return _instanceLazyLinkProvider;
         }
 
         public async Task<T> GetAsync(string identifier)

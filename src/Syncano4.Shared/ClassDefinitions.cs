@@ -40,7 +40,8 @@ namespace Syncano4.Shared
 
     public class ClassDefinitions : SyncanoRepository<SyncanoClass, NewClass>
     {
-        public ClassDefinitions(Func<LazyLinkProvider, string> getLink, LazyLinkProvider lazyLinkProvider,  ISyncanoHttpClient httpClient) : base(getLink, lazyLinkProvider,  httpClient)
+        public ClassDefinitions(Func<ILazyLinkProvider, string> getLink, InstanceLazyLinkProvider instanceLazyLinkProvider, ISyncanoHttpClient httpClient)
+            : base(getLink, instanceLazyLinkProvider, httpClient)
         {
         }
     }
