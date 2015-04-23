@@ -38,6 +38,11 @@ namespace Syncano4.Tests.Unity3d
         {
             return Task.FromResult(result.GetNext());
         }
+
+        public static Task<PageableResult<T>> GetPreviousAsync<T>(this PageableResult<T> result)
+        {
+            return Task.FromResult(result.GetPrevious());
+        }
        
     }
 }

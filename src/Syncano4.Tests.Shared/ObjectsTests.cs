@@ -1,0 +1,165 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Syncano4.Shared;
+using Shouldly;
+#if Unity3d
+using Syncano4.Unity3d;
+using Syncano4.Tests.Unity3d;
+#endif
+#if dotNET
+using Syncano4.Net;
+#endif
+using Xunit;
+
+namespace Syncano4.Tests.Shared
+{
+    public class ObjectsTests
+    {
+        private InstanceResources _instanceResources;
+        private SyncanoDataObjects<TestObject> _objectsRepository;
+
+        public InstanceResources CreateInstance()
+        {
+            var syncano = Syncano.Using(TestData.AccountKey);
+            var name = "UnitTest_" + DateTime.UtcNow.ToFileTime();
+            syncano.Administration.Instances.AddAsync(new NewInstance() {Name = name}).Wait(TimeSpan.FromSeconds(20));
+
+            return syncano.ResourcesFor(name);
+        }
+
+        
+        public class TestObject : DataObject
+        {
+            [JsonProperty("myid")]
+            public long MyId { get; set; }
+
+            [JsonProperty("name")]
+            public string Name { get; set; }
+
+            //[JsonProperty("current_time")]
+            public DateTime CurrentTime { get; set; }
+
+            [JsonProperty("ischecked")]
+            public bool IsChecked { get; set; }
+
+            [JsonProperty("float")]
+            public float Float { get; set; }
+
+            [JsonProperty("longtext")]
+            public string LongText { get; set; }
+            }
+
+        public ObjectsTests()
+        {
+            _instanceResources = CreateInstance();
+            _instanceResources.Schema.AddAsync(NewClass.From<TestObject>()).Wait(TimeSpan.FromSeconds(15));
+            _objectsRepository = _instanceResources.Objects<TestObject>();
+        }
+
+        [Fact]
+        public async Task AddObject()
+        {
+            //given
+            var expectedObject = new TestObject() { Name = "Name 1", CurrentTime = DateTime.UtcNow };
+            //when
+            
+            var newTestObject = await _objectsRepository.AddAsync(expectedObject);
+
+            //then
+            newTestObject.Id.ShouldBeGreaterThan(0);
+            newTestObject.Revision.ShouldBeGreaterThan(0);
+            newTestObject.UpdatedAt.ShouldBeGreaterThanOrEqualTo(DateTime.UtcNow.AddSeconds(-5));
+            newTestObject.CreatedAt.ShouldBeGreaterThanOrEqualTo(DateTime.UtcNow.AddSeconds(-5));
+
+            //newTestObject.CurrentTime.ShouldBe(expectedObject.CurrentTime, TimeSpan.FromTicks(10));
+            newTestObject.Name.ShouldBe(expectedObject.Name);
+        }
+
+
+        [Fact]
+        public async Task ListObjects()
+        {
+            //given
+            for (int i = 0; i < 20; i++)
+            {
+                await _objectsRepository.AddAsync(new TestObject() { Name = "Name " + i, CurrentTime = DateTime.UtcNow, MyId = i });
+            }
+
+            //when
+            var list = await _objectsRepository.ListAsync(pageSize: 10);
+
+            //then
+            list.Count.ShouldBe(10);
+            list.ShouldAllBe(t => t.MyId < 10);
+        }
+
+
+        [Fact]
+        public async Task ListObjects_Pageable_GetNext()
+        {
+            //given
+            for (int i = 0; i < 20; i++)
+            {
+                await _objectsRepository.AddAsync(new TestObject() { Name = "Name " + i, CurrentTime = DateTime.UtcNow, MyId = i });
+            }
+
+            //when
+            var page1 = await _objectsRepository.PageableListAsync(pageSize: 10);
+            var page2 = await page1.GetNextAsync();
+
+            //then
+            page1.Current.Count.ShouldBe(10);
+            page1.Current.ShouldAllBe(t => t.MyId < 10);
+            page1.HasPrevious.ShouldBe(false);
+            page1.HasNext.ShouldBe(true);
+
+
+            page2.HasPrevious.ShouldBe(true);
+            page2.Current.Count.ShouldBe(10);
+            page2.Current.ShouldAllBe(t => t.MyId < 20 && t.MyId >= 10);
+        }
+
+        [Fact]
+        public async Task ListObjects_Pageable_GetNext_EmptyPage()
+        {
+            //given
+            for (int i = 0; i < 10; i++)
+            {
+                await _objectsRepository.AddAsync(new TestObject() { Name = "Name " + i, CurrentTime = DateTime.UtcNow, MyId = i });
+            }
+
+            //when
+            var page1 = await _objectsRepository.PageableListAsync(pageSize: 5);
+            var page2 = await page1.GetNextAsync();
+            var page3 = await page2.GetNextAsync();
+
+            //then
+            page3.Current.Count.ShouldBe(0);
+        }
+
+
+        [Fact]
+        public async Task ListObjects_Pageable_GetPrevious()
+        {
+            //given
+            for (int i = 0; i < 10; i++)
+            {
+                await _objectsRepository.AddAsync(new TestObject() { Name = "Name " + i, CurrentTime = DateTime.UtcNow, MyId = i });
+            }
+
+            //when
+            var page1 = await _objectsRepository.PageableListAsync(pageSize: 5);
+            var page2 = await page1.GetNextAsync();
+            var page1again = await page2.GetPreviousAsync();
+
+            //then
+           page1.Current.ShouldBe(page1again.Current);
+        }
+
+
+    }
+}

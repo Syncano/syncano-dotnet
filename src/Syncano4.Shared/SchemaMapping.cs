@@ -46,7 +46,7 @@ namespace Syncano4.Shared
 
         private static FieldType GetSyncanoType(Type propertyType)
         {
-            if (propertyType == typeof(int))
+            if (propertyType == typeof(int) || propertyType == typeof(long) || propertyType == typeof(short))
                 return FieldType.Integer;
 
             if (propertyType == typeof(string))
