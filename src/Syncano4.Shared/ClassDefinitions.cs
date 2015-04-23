@@ -13,6 +13,13 @@ namespace Syncano4.Shared
 {
     public class NewClass : IArgs
     {
+
+        public static NewClass From<T>()
+        {
+            var schema = SchemaMapping.GetSchema<T>();
+            return new NewClass(typeof (T).Name, schema.ToArray());
+        }
+
         public NewClass()
         {
             

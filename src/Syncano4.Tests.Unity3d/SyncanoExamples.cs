@@ -25,28 +25,6 @@ namespace Syncano4.Tests.Unity3d
             newInstance.Name.ShouldBe(instanceNameToCreate);
         }
 
-        [Fact]
-        public void CreateSchema()
-        {
-            //given an existingInstance
-            string existingInstance = TestFactory.CreateInstance();
-            string authKey = "a1546d926e32a940a57cc6dc68a22fc40a3ae7f6";
-
-            //switch to instance 
-            var instanceResources = Syncano.Using(authKey).ResourcesFor(existingInstance);
-
-            //create class with two simple properties.  (at this moment manual mapping is required - this will change in the near future )
-            var classDef = instanceResources.Schema.Add(
-                new NewClass("sample_class",
-                    new FieldDef() {Name = "order", Type = FieldType.Integer},
-                    new FieldDef() {Name = "name", Type = FieldType.String})
-                );
-
-            //verify
-            classDef.Name.ShouldBe("sample_class");
-            classDef.Schema.ShouldContain(new FieldDef() {Name = "order", Type = FieldType.Integer});
-            classDef.Schema.ShouldContain(new FieldDef() {Name = "name", Type = FieldType.String});
-        }
 
         /// <summary>
         /// sample object to store in syncano
@@ -59,6 +37,30 @@ namespace Syncano4.Tests.Unity3d
             [JsonProperty("name")]
             public string Name { get; set; }
         }
+
+
+
+        [Fact]
+        public void CreateSchema()
+        {
+            //given an existingInstance
+            string existingInstance = TestFactory.CreateInstance();
+            string authKey = "a1546d926e32a940a57cc6dc68a22fc40a3ae7f6";
+
+            //switch to instance 
+            var instanceResources = Syncano.Using(authKey).ResourcesFor(existingInstance);
+
+            //create class with two simple properties.  (at this moment manual mapping is required - this will change in the near future )
+            var classDef = instanceResources.Schema.Add(NewClass.From<SampleObject>());
+                
+
+            //verify
+            classDef.Name.ShouldBe("SampleObject",Case.Insensitive);
+            classDef.Schema.ShouldContain(new FieldDef() {Name = "order", Type = FieldType.Integer});
+            classDef.Schema.ShouldContain(new FieldDef() {Name = "name", Type = FieldType.String});
+        }
+
+       
 
 
         [Fact]

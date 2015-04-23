@@ -12,20 +12,24 @@ public  class SchemaMapperTests
     public class SimpleClass:DataObject
     {
         public const string OrderNumberPropertyName = "order_number";
+        public const string NamePropertyName = "name";
+        public const string DatePropertyName = "date";
+        public const string ValuePropertyName = "value";
+        public const string IsCheckedPropertyName = "is_checked";
 
         [JsonProperty(OrderNumberPropertyName)]
         public int OrderNumber { get; set; }
 
-        [JsonProperty("name")]
+        [JsonProperty(NamePropertyName)]
         public string Name { get; set; }
 
-        [JsonProperty("date")]
+        [JsonProperty(DatePropertyName)]
         public DateTime Date { get; set; }
 
-        [JsonProperty("value")]
+        [JsonProperty(ValuePropertyName)]
         public float Value { get; set; }
 
-        [JsonProperty("is_checked")]
+        [JsonProperty(IsCheckedPropertyName)]
         public bool IsChecked { get; set; }
     }
 
@@ -39,6 +43,10 @@ public  class SchemaMapperTests
 
         fields.Count.ShouldBe(5);
         fields.ShouldContain(new FieldDef() { Name = SimpleClass.OrderNumberPropertyName, Type = FieldType.Integer});
+        fields.ShouldContain(new FieldDef() { Name = SimpleClass.NamePropertyName, Type = FieldType.String });
+        fields.ShouldContain(new FieldDef() { Name = SimpleClass.DatePropertyName, Type = FieldType.Datetime });
+        fields.ShouldContain(new FieldDef() { Name = SimpleClass.ValuePropertyName, Type = FieldType.Float });
+        fields.ShouldContain(new FieldDef() { Name = SimpleClass.IsCheckedPropertyName, Type = FieldType.Boolean });
     }
 
     }

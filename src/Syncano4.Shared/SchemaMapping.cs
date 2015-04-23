@@ -51,8 +51,7 @@ namespace Syncano4.Shared
 
             if (propertyType == typeof(string))
                 return FieldType.String;
-
-
+            
             if (propertyType == typeof(bool))
                 return FieldType.Boolean;
 
