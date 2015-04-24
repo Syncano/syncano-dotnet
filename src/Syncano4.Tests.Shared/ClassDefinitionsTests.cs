@@ -97,6 +97,30 @@ namespace Syncano4.Tests.Shared
             classDef.Schema.ShouldBeSubsetOf(schema);
             classDef.Schema.Count.ShouldBe(schema.Count);
         }
+
+        [Fact(Skip =  "post not supprote? change?")]
+        
+        public async Task Update()
+        {
+            //given
+            var classDefintions = CreateInstance().Schema;
+            var schema = TestObject.GetSchema();
+
+            var classDef = await classDefintions.AddAsync(new NewClass()
+            {
+                Name = "ClassUnitTest_" + Guid.NewGuid().ToString(),
+                Description = "generated in unittest",
+                Schema = schema
+            });
+
+            //when
+            classDef.Description = "new description" + DateTime.UtcNow;
+            var updatedClassDef = await classDefintions.UpdateAsync(classDef.Name, classDef);
+
+            //then
+            updatedClassDef.Name.ShouldBe(classDef.Name);
+            updatedClassDef.Description.ShouldBe(classDef.Description);
+        }
                  
 
     }

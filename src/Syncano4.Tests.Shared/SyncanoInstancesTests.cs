@@ -91,5 +91,26 @@ namespace Syncano4.Tests.Shared
             ex.Message.ShouldContain("Instance with this Name already exists");
           
         }
+
+
+
+        [Fact(Skip = "post not supprote? change?")]
+        public async Task Update()
+        {
+            //given
+            var i = GetInstanceAdminstration();
+            string name = "unittest" + Guid.NewGuid().ToString();
+            var instance = await i.AddAsync(new NewInstance() { Name = name, Description = "desc of " + name });
+
+            //when
+            instance.Description = "Updated description";
+            instance.Name = "newname" + Guid.NewGuid().ToString();
+
+            var updatedInstance = await i.UpdateAsync(name, instance);
+
+            //then
+            updatedInstance.Name.ShouldBe(instance.Name);
+            updatedInstance.Description.ShouldBe(instance.Description);
+        }
     }
 }

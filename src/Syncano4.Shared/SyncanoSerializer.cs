@@ -21,6 +21,11 @@ namespace Syncano4.Shared
                 dictionary.Remove("links");
             }
 
+            if (objectToSerialize is Instance)
+            {
+                dictionary.Remove("links");
+                dictionary.Remove("created_at");
+            }
             return dictionary;
 
         }
