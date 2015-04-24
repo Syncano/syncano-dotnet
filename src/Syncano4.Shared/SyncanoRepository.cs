@@ -9,16 +9,12 @@ using System.Threading.Tasks;
 
 namespace Syncano4.Shared
 {
-    public interface IArgs
+    public class SyncanoRepository<T, K>
     {
-        IDictionary<string, object> ToDictionary();
-    }
-
-    public class SyncanoRepository<T, K> where K : IArgs
-    {
-        private readonly Func<ILazyLinkProvider, string> _getLink  ;
+        private readonly Func<ILazyLinkProvider, string> _getLink;
         private readonly ISyncanoHttpClient _httpClient;
         private ILazyLinkProvider _instanceLazyLinkProvider;
+        private SyncanoSerializer _syncanoSerializer = new SyncanoSerializer();
 
         public SyncanoRepository(Func<ILazyLinkProvider, string> getLink, ILazyLinkProvider instanceLazyLinkProvider, ISyncanoHttpClient httpClient)
         {
@@ -67,7 +63,13 @@ namespace Syncano4.Shared
 
         public T Add(K addArgs)
         {
-            return _httpClient.Post<T>(_getLink(GetLazyLinkProvider()), addArgs.ToDictionary());
+            return _httpClient.Post<T>(_getLink(GetLazyLinkProvider()), _syncanoSerializer.ToDictionary(addArgs));
+        }
+
+        public T Update(T objectToUpdate)
+        {
+            return _httpClient.Post<T>(_getLink(GetLazyLinkProvider()), _syncanoSerializer.ToDictionary(objectToUpdate))
+            ;
         }
 
 
@@ -106,7 +108,7 @@ namespace Syncano4.Shared
 
           public async Task<T> AddAsync(K addArgs)
         {
-            return await _httpClient.PostAsync<T>(_getLink(await GetLazyLinkProvider()), addArgs.ToDictionary());
+            return await _httpClient.PostAsync<T>(_getLink(await GetLazyLinkProvider()), _syncanoSerializer.ToDictionary(addArgs));
         }
 
 

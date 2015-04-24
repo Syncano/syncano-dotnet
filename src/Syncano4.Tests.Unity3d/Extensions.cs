@@ -7,17 +7,17 @@ namespace Syncano4.Tests.Unity3d
     public static class Extensions
     {
 
-        public static Task<IList<T>> ListAsync<T, K>(this SyncanoRepository<T, K> repo) where K : IArgs
+        public static Task<IList<T>> ListAsync<T, K>(this SyncanoRepository<T, K> repo) 
         {
             return Task.FromResult(repo.List());
         }
 
-        public static Task<T> GetAsync<T, K>(this SyncanoRepository<T, K> repo, string identifier) where K : IArgs
+        public static Task<T> GetAsync<T, K>(this SyncanoRepository<T, K> repo, string identifier)
         {
             return Task.FromResult(repo.Get(identifier));
         }
 
-        public static Task<T> AddAsync<T,K>(this SyncanoRepository<T,K> repo, K args) where K:IArgs
+        public static Task<T> AddAsync<T,K>(this SyncanoRepository<T,K> repo, K args) 
         {
             return Task.FromResult(repo.Add(args));
         }

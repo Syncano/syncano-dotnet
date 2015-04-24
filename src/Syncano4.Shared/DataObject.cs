@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Syncano4.Shared
 {
-    public class DataObject:IArgs, IEquatable<DataObject>
+    public class DataObject: IEquatable<DataObject>
     {
         [JsonProperty("id")]
         public int Id { get; private set; }
@@ -23,23 +23,7 @@ namespace Syncano4.Shared
         
         [JsonProperty("links")]
         public Dictionary<string, string> Links { get; private set; }
-
-
-        public IDictionary<string, object> ToDictionary()
-        {
-            var jsonString = JsonConvert.SerializeObject(this);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(jsonString);
-
-            dictionary.Remove("id");
-            dictionary.Remove("revision");
-            dictionary.Remove("created_at");
-
-            dictionary.Remove("updated_at");
-            dictionary.Remove("links");
-
-            return dictionary;
-        }
-
+        
         public bool Equals(DataObject other)
         {
             if (ReferenceEquals(null, other)) return false;

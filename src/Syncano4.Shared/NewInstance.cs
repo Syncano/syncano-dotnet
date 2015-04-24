@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace Syncano4.Shared
 {
-    public class NewInstance : IArgs
+    public class NewInstance 
     {
+        [JsonProperty("name")]
         public string Name { get; set; }
 
+        [JsonProperty("description")]
         public string Description { get; set; }
-        
-        public IDictionary<string, object> ToDictionary()
-        {
-            return new Dictionary<string, object>() { { "name", this.Name }, { "description", this.Description } };
-        }
+       
     }
 }

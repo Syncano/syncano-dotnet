@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Syncano4.Shared
 {
-    public class NewClass : IArgs
+    public class NewClass 
     {
 
         public static NewClass From<T>()
@@ -32,17 +32,15 @@ namespace Syncano4.Shared
                 this.Schema = new List<FieldDef>(fields);
         }
 
+        [JsonProperty("name")]
         public string Name { get; set; }
 
+        [JsonProperty("description")]
         public string Description { get; set; }
 
+        [JsonProperty("schema")]
         public IList<FieldDef> Schema { get; set; }
-
-        public IDictionary<string, object> ToDictionary()
-        {
-            var schemaJson = JsonConvert.SerializeObject(this.Schema);
-            return new Dictionary<string, object>() {{"name", this.Name}, {"description", this.Description}, {"schema", schemaJson}};
-        }
+        
     }
 
     public class ClassDefinitions : SyncanoRepository<SyncanoClass, NewClass>

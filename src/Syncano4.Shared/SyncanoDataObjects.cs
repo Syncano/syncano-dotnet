@@ -14,17 +14,7 @@ namespace Syncano4.Shared
             : base(i => i.Links["objects"], new SchemaLazyLinkProvider(instanceResources, objectName), httpClient)
         {
         }
-
-
-        private static string ToJson(IList<FieldDef> schema)
-        {
-            //  var jsonSerializerSettings = new JsonSerializerSettings();
-            // jsonSerializerSettings.Converters.Add(new StringEnumConverter() { CamelCaseText = true, AllowIntegerValues = true});
-
-            var schemaJson = JsonConvert.SerializeObject(schema);
-            return schemaJson;
-        }
-
+        
 
 #if Unity3d
         public IList<T> List(int pageSize = 10)
