@@ -87,7 +87,7 @@ namespace Syncano4.Net
                 new FormUrlEncodedContent(parameters.Where(p => p.Value != null)
                     .ToDictionary(p => p.Key, p => p.Value is DateTime ? ((DateTime) p.Value).ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ") : p.Value.ToString()));
             var response = await _client.PostAsync(CreateGetUri(endpoint, null), postContent);
-            if (response.StatusCode != HttpStatusCode.Created)
+            if (new[] {HttpStatusCode.Created,HttpStatusCode.OK}.Contains(response.StatusCode) == false)
             {
                 throw new SyncanoException(await response.Content.ReadAsStringAsync());
             }

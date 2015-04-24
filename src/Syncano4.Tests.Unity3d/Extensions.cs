@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using Syncano4.Shared;
 
@@ -17,9 +18,24 @@ namespace Syncano4.Tests.Unity3d
             return Task.FromResult(repo.Get(identifier));
         }
 
+        public static Task<T> GetAsync<T,K>(this SyncanoRepository<T, K> repo, int identifier)
+        {
+            return Task.FromResult(repo.Get(identifier));
+        }
+
         public static Task<T> AddAsync<T,K>(this SyncanoRepository<T,K> repo, K args) 
         {
             return Task.FromResult(repo.Add(args));
+        }
+
+        public static Task<T> UpdateAsync<T, K>(this SyncanoRepository<T, K> repo, string key, T objectToUpdate)
+        {
+            return Task.FromResult(repo.Update(key, objectToUpdate));
+        }
+
+        public static Task<T> UpdateAsync<T, K>(this SyncanoRepository<T, K> repo, int key, T objectToUpdate)
+        {
+            return Task.FromResult(repo.Update(key, objectToUpdate));
         }
 
 
@@ -43,6 +59,7 @@ namespace Syncano4.Tests.Unity3d
         {
             return Task.FromResult(result.GetPrevious());
         }
+
        
     }
 }

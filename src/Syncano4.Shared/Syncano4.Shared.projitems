@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Instance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISyncanoHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PageableResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaLazyLinkProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaMapping.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Syncano.cs" />

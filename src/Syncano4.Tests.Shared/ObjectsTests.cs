@@ -80,6 +80,25 @@ namespace Syncano4.Tests.Shared
         }
 
 
+
+        [Fact]
+        public async Task UpdateObject()
+        {
+            //given
+            var expectedObject = new TestObject() { Name = "Name 1", CurrentTime = DateTime.UtcNow };
+            var newTestObject = await _objectsRepository.AddAsync(expectedObject);
+            //when
+            newTestObject.Name = "UpdatedName";
+            await _objectsRepository.UpdateAsync(newTestObject.Id, newTestObject);
+            
+            //then
+            var updatedObject = await _objectsRepository.GetAsync(newTestObject.Id);
+
+            updatedObject.Name.ShouldBe(newTestObject.Name);
+            updatedObject.UpdatedAt.ShouldBe(DateTime.UtcNow, TimeSpan.FromSeconds(10));
+        }
+
+
         [Fact]
         public async Task ListObjects()
         {
