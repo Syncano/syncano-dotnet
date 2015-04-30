@@ -12,6 +12,8 @@ namespace Syncano4.Shared
 
         T Get<T>(string link);
 
+        void Delete(string link);
+
         SyncanoResponse<T> List<T>(string link, IDictionary<string, object> parameters);
 
         T Post<T>(string instances, IDictionary<string, object> parameters);
@@ -22,6 +24,8 @@ namespace Syncano4.Shared
 
 #if dotNET
         Task<string> GetAsync(string methodName, IDictionary<string, object> parameters);
+
+        Task DeleteAsync(string link);
 
         Task<SyncanoResponse<T>> ListAsync<T>(string methodName, IDictionary<string, object> parameters);
 

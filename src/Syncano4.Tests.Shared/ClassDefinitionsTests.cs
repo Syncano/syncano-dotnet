@@ -19,13 +19,24 @@ namespace Syncano4.Tests.Shared
 {
     public class ClassDefinitionsTests
     {
+        private InstanceResources _instanceResourcesUnderTest;
+
         public InstanceResources CreateInstance()
         {
             var syncano = Syncano.Using(TestData.AccountKey);
             var name = "UnitTest_" + DateTime.UtcNow.ToFileTime();
             syncano.Administration.Instances.AddAsync(new NewInstance() {Name = name}).Wait(TimeSpan.FromSeconds(20));
 
-            return syncano.ResourcesFor(name);
+            _instanceResourcesUnderTest = syncano.ResourcesFor(name);
+            return _instanceResourcesUnderTest;
+        }
+
+        public async Task Cleanup()
+        {
+            if (_instanceResourcesUnderTest != null)
+            {
+                await Syncano.Using(TestData.AccountKey).Administration.Instances.DeleteAsync(_instanceResourcesUnderTest.InstanceName);
+            }
         }
 
 
@@ -40,6 +51,9 @@ namespace Syncano4.Tests.Shared
 
             //then
             classes.ShouldAllBe(c => c.Name != null);
+
+            //cleanup
+            await Cleanup();
         }
 
         public class TestObject : DataObject
@@ -96,6 +110,10 @@ namespace Syncano4.Tests.Shared
             //then
             classDef.Schema.ShouldBeSubsetOf(schema);
             classDef.Schema.Count.ShouldBe(schema.Count);
+
+
+            //cleanup
+            await Cleanup();
         }
 
         [Fact]
@@ -120,6 +138,9 @@ namespace Syncano4.Tests.Shared
             //then
             updatedClassDef.Name.ShouldBe(classDef.Name);
             updatedClassDef.Description.ShouldBe(classDef.Description);
+
+            //cleanup
+            await Cleanup();
         }
                  
 

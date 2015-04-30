@@ -56,6 +56,8 @@ namespace Syncano4.Tests.Shared
             fetchedInstance.CreatedAt.ShouldBe(instance.CreatedAt);
             fetchedInstance.Description.ShouldBe(instance.Description);
 
+            //cleanup
+            await i.DeleteAsync(name);
 
         }
 
@@ -73,6 +75,9 @@ namespace Syncano4.Tests.Shared
             //then
             instance.Name.ShouldBe(name);
             instance.CreatedAt.ShouldBeGreaterThan(DateTime.UtcNow.AddMinutes(-1));
+
+            //cleanup
+            await i.DeleteAsync(name);
         }
 
 
@@ -89,6 +94,10 @@ namespace Syncano4.Tests.Shared
 
             //then
             ex.Message.ShouldContain("Instance with this Name already exists");
+
+
+            //cleanup
+            await i.DeleteAsync(name);
           
         }
 
@@ -109,6 +118,9 @@ namespace Syncano4.Tests.Shared
 
             //then
             updatedInstance.Description.ShouldBe(instance.Description);
+
+            //cleanup
+            await i.DeleteAsync(name);
         }
     }
 }

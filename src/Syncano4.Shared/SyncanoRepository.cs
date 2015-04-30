@@ -42,6 +42,11 @@ namespace Syncano4.Shared
             return Get(key.ToString(CultureInfo.InvariantCulture));
         }
 
+        public void Delete(string key)
+        {
+            _httpClient.Delete(string.Format("{0}{1}/", _getLink(GetLazyLinkProvider()), key));
+        }
+
 
         public IList<T> List()
         {
@@ -106,6 +111,12 @@ namespace Syncano4.Shared
 
             await _instanceLazyLinkProvider.Initialize();
             return _instanceLazyLinkProvider;
+        }
+
+
+        public async Task DeleteAsync(string key)
+        {
+            await _httpClient.DeleteAsync(string.Format("{0}{1}/", _getLink(await GetLazyLinkProvider()), key));
         }
 
         public async Task<T> GetAsync(string key)

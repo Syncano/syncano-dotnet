@@ -4,6 +4,12 @@ namespace Syncano4.Shared
     {
         private readonly ISyncanoHttpClient _httpClient;
         private readonly string _instanceName;
+
+        public string InstanceName
+        {
+            get { return _instanceName; }
+        }
+
         private readonly InstanceLazyLinkProvider _linkProvider;
 
         public InstanceResources(Syncano syncano, ISyncanoHttpClient httpClient, string instanceName)

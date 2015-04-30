@@ -80,6 +80,13 @@ namespace Syncano4.Net
             return JsonConvert.DeserializeObject<T>(content);
         }
 
+        public async Task DeleteAsync(string link)
+        {
+            var response = await _client.DeleteAsync(CreateGetUri(link));
+            if (response.StatusCode != HttpStatusCode.NoContent)
+                throw new SyncanoException(await response.Content.ReadAsStringAsync());
+        }
+
 
         public async Task<T> PostAsync<T>(string endpoint, IDictionary<string, object> parameters)
         {
@@ -87,7 +94,7 @@ namespace Syncano4.Net
                 new FormUrlEncodedContent(parameters.Where(p => p.Value != null)
                     .ToDictionary(p => p.Key, p => p.Value is DateTime ? ((DateTime) p.Value).ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ") : p.Value.ToString()));
             var response = await _client.PostAsync(CreateGetUri(endpoint, null), postContent);
-            if (new[] {HttpStatusCode.Created,HttpStatusCode.OK}.Contains(response.StatusCode) == false)
+            if (new[] {HttpStatusCode.Created, HttpStatusCode.OK}.Contains(response.StatusCode) == false)
             {
                 throw new SyncanoException(await response.Content.ReadAsStringAsync());
             }
@@ -98,12 +105,12 @@ namespace Syncano4.Net
         {
             var postContent =
                 new FormUrlEncodedContent(parameters.Where(p => p.Value != null)
-                    .ToDictionary(p => p.Key, p => p.Value is DateTime ? ((DateTime)p.Value).ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ") : p.Value.ToString()));
+                    .ToDictionary(p => p.Key, p => p.Value is DateTime ? ((DateTime) p.Value).ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ") : p.Value.ToString()));
 
-            HttpRequestMessage msg = new HttpRequestMessage(new HttpMethod("PATCH"), CreateGetUri(endpoint,null) );
+            HttpRequestMessage msg = new HttpRequestMessage(new HttpMethod("PATCH"), CreateGetUri(endpoint, null));
             msg.Content = postContent;
             var response = await _client.SendAsync(msg);
-            if (new[] { HttpStatusCode.Created, HttpStatusCode.OK }.Contains(response.StatusCode) == false)
+            if (new[] {HttpStatusCode.Created, HttpStatusCode.OK}.Contains(response.StatusCode) == false)
             {
                 throw new SyncanoException(await response.Content.ReadAsStringAsync());
             }

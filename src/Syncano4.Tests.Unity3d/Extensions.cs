@@ -18,6 +18,11 @@ namespace Syncano4.Tests.Unity3d
             return Task.FromResult(repo.Get(identifier));
         }
 
+        public static Task DeleteAsync<T,K>(this SyncanoRepository<T, K> repo, string identifier)
+        {
+            return Task.Run( () => repo.Delete(identifier));
+        }
+
         public static Task<T> GetAsync<T,K>(this SyncanoRepository<T, K> repo, int identifier)
         {
             return Task.FromResult(repo.Get(identifier));

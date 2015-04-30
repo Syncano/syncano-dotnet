@@ -105,6 +105,19 @@ namespace Syncano4.Unity3d
             return JsonConvert.DeserializeObject<T>(content);
         }
 
+        public void Delete(string link)
+        {
+            var request = CreateRequest(link, "DELETE", null);
+            var response =  (HttpWebResponse)request.GetResponse();
+
+            if (response.StatusCode != HttpStatusCode.NoContent)
+            {
+                throw new SyncanoException("Failed to delete." + GetResponseContent(response));
+            }
+
+
+        }
+
         public T Patch<T>(string endpoint, IDictionary<string, object> parameters)
         {
             var request = CreateRequest(endpoint, "PATCH" , null);
@@ -163,14 +176,7 @@ namespace Syncano4.Unity3d
             }
             catch (WebException e)
             {
-                string message = null;
-                using (var s = e.Response.GetResponseStream())
-                {
-                    using (var r = new StreamReader(s))
-                    {
-                        message = r.ReadToEnd();
-                    }
-                }
+                var message = GetResponseContent(e.Response);
                 throw new SyncanoException(message);
             }
             finally
@@ -178,6 +184,19 @@ namespace Syncano4.Unity3d
                 if (response != null)
                     response.Close();
             }
+        }
+
+        private static string GetResponseContent(WebResponse response)
+        {
+            string message = null;
+            using (var s = response.GetResponseStream())
+            {
+                using (var r = new StreamReader(s))
+                {
+                    message = r.ReadToEnd();
+                }
+            }
+            return message;
         }
 
 
