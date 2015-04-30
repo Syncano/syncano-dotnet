@@ -24,7 +24,7 @@ namespace Syncano4.Unity3d
         public SyncanoHttpClient(string apiKey)
         {
             _apiKey = apiKey;
-            _baseUrl = string.Format("https://syncanotest1-env.elasticbeanstalk.com");
+            _baseUrl = string.Format("https://api.syncano.io");
             _client = new WebClient();
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
         }
