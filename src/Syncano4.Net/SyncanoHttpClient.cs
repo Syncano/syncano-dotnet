@@ -94,6 +94,22 @@ namespace Syncano4.Net
             return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
         }
 
+        public async Task<T> PatchAsync<T>(string endpoint, IDictionary<string, object> parameters)
+        {
+            var postContent =
+                new FormUrlEncodedContent(parameters.Where(p => p.Value != null)
+                    .ToDictionary(p => p.Key, p => p.Value is DateTime ? ((DateTime)p.Value).ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ") : p.Value.ToString()));
+
+            HttpRequestMessage msg = new HttpRequestMessage(new HttpMethod("PATCH"), CreateGetUri(endpoint,null) );
+            msg.Content = postContent;
+            var response = await _client.SendAsync(msg);
+            if (new[] { HttpStatusCode.Created, HttpStatusCode.OK }.Contains(response.StatusCode) == false)
+            {
+                throw new SyncanoException(await response.Content.ReadAsStringAsync());
+            }
+            return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
+        }
+
         private string CreateParametersString(IDictionary<string, object> query)
         {
             var sb = new StringBuilder();

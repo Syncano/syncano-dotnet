@@ -15,6 +15,8 @@ namespace Syncano4.Shared
         SyncanoResponse<T> List<T>(string link, IDictionary<string, object> parameters);
 
         T Post<T>(string instances, IDictionary<string, object> parameters);
+
+        T Patch<T>(string instances, IDictionary<string, object> parameters);
 #endif
 
 
@@ -26,6 +28,8 @@ namespace Syncano4.Shared
         Task<T> GetAsync<T>(string link);
 
         Task<T> PostAsync<T>(string instances, IDictionary<string, object> parameters);
+
+        Task<T> PatchAsync<T>(string instances, IDictionary<string, object> parameters);
 
 #endif
     }

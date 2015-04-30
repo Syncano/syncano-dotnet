@@ -98,9 +98,9 @@ namespace Syncano4.Tests.Shared
             classDef.Schema.Count.ShouldBe(schema.Count);
         }
 
-        [Fact(Skip =  "post not supprote? change?")]
+        [Fact]
         
-        public async Task Update()
+        public async Task Update_description()
         {
             //given
             var classDefintions = CreateInstance().Schema;
@@ -115,7 +115,7 @@ namespace Syncano4.Tests.Shared
 
             //when
             classDef.Description = "new description" + DateTime.UtcNow;
-            var updatedClassDef = await classDefintions.UpdateAsync(classDef.Name, classDef);
+            var updatedClassDef = await classDefintions.PatchAsync(classDef.Name, classDef);
 
             //then
             updatedClassDef.Name.ShouldBe(classDef.Name);

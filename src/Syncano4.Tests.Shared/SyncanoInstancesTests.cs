@@ -94,8 +94,8 @@ namespace Syncano4.Tests.Shared
 
 
 
-        [Fact(Skip = "post not supprote? change?")]
-        public async Task Update()
+        [Fact]
+        public async Task Update_Description()
         {
             //given
             var i = GetInstanceAdminstration();
@@ -104,12 +104,10 @@ namespace Syncano4.Tests.Shared
 
             //when
             instance.Description = "Updated description";
-            instance.Name = "newname" + Guid.NewGuid().ToString();
 
-            var updatedInstance = await i.UpdateAsync(name, instance);
+            var updatedInstance = await i.PatchAsync(name, instance);
 
             //then
-            updatedInstance.Name.ShouldBe(instance.Name);
             updatedInstance.Description.ShouldBe(instance.Description);
         }
     }

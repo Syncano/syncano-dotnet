@@ -33,6 +33,16 @@ namespace Syncano4.Tests.Unity3d
             return Task.FromResult(repo.Update(key, objectToUpdate));
         }
 
+        public static Task<T> PatchAsync<T, K>(this SyncanoRepository<T, K> repo, int key, T objectToUpdate)
+        {
+            return Task.FromResult(repo.Patch(key, objectToUpdate));
+        }
+
+        public static Task<T> PatchAsync<T, K>(this SyncanoRepository<T, K> repo, string key, T objectToUpdate)
+        {
+            return Task.FromResult(repo.Patch(key, objectToUpdate));
+        }
+
         public static Task<T> UpdateAsync<T, K>(this SyncanoRepository<T, K> repo, int key, T objectToUpdate)
         {
             return Task.FromResult(repo.Update(key, objectToUpdate));

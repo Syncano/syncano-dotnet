@@ -104,11 +104,22 @@ namespace Syncano4.Unity3d
 
             return JsonConvert.DeserializeObject<T>(content);
         }
-        
+
+        public T Patch<T>(string endpoint, IDictionary<string, object> parameters)
+        {
+            var request = CreateRequest(endpoint, "PATCH" , null);
+            return SendRequest<T>(parameters, request);
+        }
+
 
         public T Post<T>(string endpoint, IDictionary<string, object> parameters)
         {
             var request = CreateRequest(endpoint, WebRequestMethods.Http.Post, null);
+            return SendRequest<T>(parameters, request);
+        }
+
+        private  T SendRequest<T>(IDictionary<string, object> parameters, HttpWebRequest request)
+        {
             request.ContentType = "application/x-www-form-urlencoded";
 
             StringBuilder sb = new StringBuilder();
@@ -123,7 +134,9 @@ namespace Syncano4.Unity3d
                     firstParam = false;
                 }
 
-                sb.AppendFormat("{0}={1}", parameter.Key, parameter.Value is DateTime ? ((DateTime)parameter.Value).ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ") : Uri.EscapeDataString(parameter.Value.ToString())/*.Replace("%20","+")*/);
+                sb.AppendFormat("{0}={1}", parameter.Key,
+                    parameter.Value is DateTime ? ((DateTime) parameter.Value).ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ") : Uri.EscapeDataString(parameter.Value.ToString())
+                    /*.Replace("%20","+")*/);
             }
             var postBytes = Encoding.UTF8.GetBytes(sb.ToString());
             request.ContentLength = postBytes.Length;

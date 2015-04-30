@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+
 #if dotNET
 using System.Threading.Tasks;
 
@@ -73,8 +74,20 @@ namespace Syncano4.Shared
 
         public T Update(string key, T objectToUpdate)
         {
-            return _httpClient.Post<T>(string.Format("{0}{1}/",_getLink(GetLazyLinkProvider()),key), _syncanoSerializer.ToDictionary(objectToUpdate))
-            ;
+            return _httpClient.Post<T>(string.Format("{0}{1}/", _getLink(GetLazyLinkProvider()), key), _syncanoSerializer.ToDictionary(objectToUpdate))
+                ;
+        }
+
+        public T Patch(int key, T objectToUpdate)
+        {
+            return Patch(key.ToString(CultureInfo.InvariantCulture), objectToUpdate);
+        }
+
+
+        public T Patch(string key, T objectToUpdate)
+        {
+            return _httpClient.Patch<T>(string.Format("{0}{1}/", _getLink(GetLazyLinkProvider()), key), _syncanoSerializer.ToDictionary(objectToUpdate))
+                ;
         }
 
         public T Update(int key, T objectToUpdate)
@@ -134,6 +147,16 @@ namespace Syncano4.Shared
         public async Task<T> UpdateAsync(int key, T objectToUpdate)
         {
             return await UpdateAsync(key.ToString(CultureInfo.InvariantCulture), objectToUpdate);
+        }
+
+        public async Task<T> PatchAsync(string key, T objectToUpdate)
+        {
+            return await _httpClient.PatchAsync<T>(string.Format("{0}{1}/", _getLink(await GetLazyLinkProvider()), key), _syncanoSerializer.ToDictionary(objectToUpdate));
+        }
+
+        public async Task<T> PatchAsync(int key, T objectToUpdate)
+        {
+            return await PatchAsync(key.ToString(CultureInfo.InvariantCulture), objectToUpdate);
         }
 
 #endif
