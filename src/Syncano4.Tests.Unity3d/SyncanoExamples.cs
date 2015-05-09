@@ -9,11 +9,13 @@ namespace Syncano4.Tests.Unity3d
 {
     public class SyncanoExamples
     {
+        private const string TestAuthKey = "db79a6ac3a949e6a42cc0b60c3884b9bff7b7820";
+
         [Fact]
         public void CreateInstance()
         {
             //given
-            string authKey = "a1546d926e32a940a57cc6dc68a22fc40a3ae7f6";
+            string authKey = TestAuthKey;
             string instanceNameToCreate = "unity3d_demo_" + DateTime.Now.Ticks; //just to be unique for test
 
             //add instanace using instance administration
@@ -45,7 +47,7 @@ namespace Syncano4.Tests.Unity3d
         {
             //given an existingInstance
             string existingInstance = TestFactory.CreateInstance();
-            string authKey = "a1546d926e32a940a57cc6dc68a22fc40a3ae7f6";
+            string authKey = TestAuthKey;
 
             //switch to instance 
             var instanceResources = Syncano.Using(authKey).ResourcesFor(existingInstance);
@@ -67,7 +69,7 @@ namespace Syncano4.Tests.Unity3d
         public void AddObject()
         {
             //given an existingInstance
-            string authKey = "a1546d926e32a940a57cc6dc68a22fc40a3ae7f6";
+            string authKey = TestAuthKey;
             string existingInstance = TestFactory.CreateInstance();
             string existingClass = TestFactory.CreateClass(existingInstance, typeof (SampleObject));
 
