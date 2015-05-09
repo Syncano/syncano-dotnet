@@ -100,9 +100,20 @@ namespace Syncano4.Unity3d
 
         public T Get<T>(string link)
         {
-            var content = Get(link, null);
 
-            return JsonConvert.DeserializeObject<T>(content);
+            try
+            {
+                var content = Get(link, null);
+                return JsonConvert.DeserializeObject<T>(content);
+            }
+            catch (WebException e)
+            {
+                var httpResponse = e.Response as HttpWebResponse;
+                if (httpResponse != null && httpResponse.StatusCode == HttpStatusCode.NotFound)
+                    return default(T);
+
+                throw;
+            }
         }
 
         public void Delete(string link)

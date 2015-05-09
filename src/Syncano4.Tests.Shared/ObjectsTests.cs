@@ -180,5 +180,20 @@ namespace Syncano4.Tests.Shared
         }
 
 
+        [Fact]
+        public async Task DeleteObject()
+        {
+            //given
+            var testObject =   await _objectsRepository.AddAsync(new TestObject() { Name = "Name", CurrentTime = DateTime.UtcNow, MyId = 1 });
+            
+
+            //when
+            await _objectsRepository.DeleteAsync(testObject.Id.ToString());
+
+            //then
+            var deleteObject = await  _objectsRepository.GetAsync(testObject.Id);
+            deleteObject.ShouldBe(null);
+        }
+
     }
 }

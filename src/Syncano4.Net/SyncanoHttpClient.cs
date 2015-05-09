@@ -75,6 +75,10 @@ namespace Syncano4.Net
         public async Task<T> GetAsync<T>(string methodName)
         {
             var response = await _client.GetAsync(CreateGetUri(methodName, null));
+
+            if (!response.IsSuccessStatusCode)
+                return default(T);
+
             var content = await response.Content.ReadAsStringAsync();
 
             return JsonConvert.DeserializeObject<T>(content);
