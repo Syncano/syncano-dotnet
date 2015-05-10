@@ -4,9 +4,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Newtonsoft.Json;
-
+using Syncano4.Shared.Serialization;
 #if Unity3d
 using Syncano4.Unity3d;
+
 #endif
 
 namespace Syncano4.Shared
@@ -15,53 +16,68 @@ namespace Syncano4.Shared
     {
         public static List<FieldDef> GetSchema<T>()
         {
+            return GetSchema(typeof (T));
+        }
+
+        public static List<FieldDef> GetSchema(Type type, bool includeSystemFields = false)
+        {
             var fieldDefs = new List<FieldDef>();
-            var properties = GetProperties<T>();
+            var properties = GetProperties(type);
             foreach (var propertyInfo in properties)
             {
-                fieldDefs.Add(new FieldDef() { Name = propertyInfo.GetCustomAttribute<JsonPropertyAttribute>().PropertyName, Type = GetSyncanoType(propertyInfo.PropertyType) });
+                var syncanoFieldAttribute = propertyInfo.GetCustomAttribute<SyncanoFieldAttribute>();
+                if (includeSystemFields || syncanoFieldAttribute.Ignore == false)
+                {
+                    fieldDefs.Add(new FieldDef()
+                    {
+                        Name = syncanoFieldAttribute.Name,
+                        Type = GetSyncanoType(propertyInfo.PropertyType),
+                        PropertyInfo = propertyInfo,
+                        CanBeFiltered = syncanoFieldAttribute.CanBeFiltered,
+                        CanBeOrdered = syncanoFieldAttribute.CanBeOrdered
+                    });
+                }
             }
             return fieldDefs;
         }
 
 #if Unity3d
-        private static IEnumerable<PropertyInfo> GetProperties<T>()
+        public static IEnumerable<PropertyInfo> GetProperties(Type type)
         {
-            var properties = typeof (T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
-                .Where(p => p.GetCustomAttribute<JsonPropertyAttribute>() != null);
+            var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.GetCustomAttribute<SyncanoFieldAttribute>() != null);
             return properties;
         }
 
 
-        
 #endif
 
 #if dotNET
-        private static IEnumerable<PropertyInfo> GetProperties<T>()
+        public static IEnumerable<PropertyInfo> GetProperties(Type type)
         {
-            var properties = typeof (T).GetTypeInfo().DeclaredProperties.Where(p => p.GetCustomAttribute<JsonPropertyAttribute>() != null);
+            var properties = type.GetRuntimeProperties().Where(p => p.GetCustomAttribute<SyncanoFieldAttribute>() != null);
             return properties;
         }
 #endif
 
         private static FieldType GetSyncanoType(Type propertyType)
         {
-            if (propertyType == typeof(int) || propertyType == typeof(long) || propertyType == typeof(short))
+            if (propertyType == typeof (int) || propertyType == typeof (long) || propertyType == typeof (short))
                 return FieldType.Integer;
 
-            if (propertyType == typeof(string))
+            if (propertyType == typeof (string))
                 return FieldType.String;
-            
-            if (propertyType == typeof(bool))
+
+            if (propertyType == typeof (bool))
                 return FieldType.Boolean;
 
-            if (propertyType == typeof(DateTime))
+            if (propertyType == typeof (DateTime))
                 return FieldType.Datetime;
 
-            if (propertyType == typeof(float))
+            if (propertyType == typeof (float))
                 return FieldType.Float;
 
-            throw new NotSupportedException(string.Format("Type: {0} is not supported by syncano", propertyType.FullName));
+            return FieldType.NotSet;
         }
     }
 }

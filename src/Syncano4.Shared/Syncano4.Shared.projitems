@@ -22,6 +22,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Query\SyncanoQuery.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaLazyLinkProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaMapping.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Serialization\SyncanoJsonConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Syncano.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SyncanoClass.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SyncanoDataObjects.cs" />
@@ -29,6 +30,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)SyncanoInstances.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SyncanoRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SyncanoResponse.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)SyncanoSerializer.cs" />
   </ItemGroup>
 </Project>

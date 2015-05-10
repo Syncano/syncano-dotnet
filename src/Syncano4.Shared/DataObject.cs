@@ -2,26 +2,26 @@
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
-
+using Syncano4.Shared.Serialization;
 
 
 namespace Syncano4.Shared
 {
     public class DataObject: IEquatable<DataObject>
     {
-        [JsonProperty("id")]
+        [SyncanoField("id", Ignore = true)]
         public int Id { get; private set; }
 
-        [JsonProperty("revision")]
+        [SyncanoField("revision", Ignore = true)]
         public int Revision { get; private set; }
         
-        [JsonProperty("created_at")]
+        [SyncanoField("created_at", Ignore = true)]
         public DateTime CreatedAt { get; private set; }
 
-        [JsonProperty("updated_at")]
+        [SyncanoField("updated_at", Ignore = true)]
         public DateTime UpdatedAt { get; private set; }
         
-        [JsonProperty("links")]
+        [SyncanoField("links", Ignore = true)]
         public Dictionary<string, string> Links { get; private set; }
         
         public bool Equals(DataObject other)

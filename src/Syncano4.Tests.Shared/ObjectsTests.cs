@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Syncano4.Shared;
 using Shouldly;
+using Syncano4.Shared.Serialization;
 #if Unity3d
 using Syncano4.Unity3d;
 using Syncano4.Tests.Unity3d;
@@ -34,22 +35,22 @@ namespace Syncano4.Tests.Shared
         
         public class TestObject : DataObject
         {
-            [JsonProperty("myid")]
+            [SyncanoField("myid")]
             public long MyId { get; set; }
 
-            [JsonProperty("name")]
+            [SyncanoField("name")]
             public string Name { get; set; }
 
             //[JsonProperty("current_time")]
             public DateTime CurrentTime { get; set; }
 
-            [JsonProperty("ischecked")]
+            [SyncanoField("ischecked")]
             public bool IsChecked { get; set; }
 
-            [JsonProperty("float")]
+            [SyncanoField("float")]
             public float Float { get; set; }
 
-            [JsonProperty("longtext")]
+            [SyncanoField("longtext")]
             public string LongText { get; set; }
             }
 

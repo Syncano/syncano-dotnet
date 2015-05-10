@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using Syncano4.Shared.Serialization;
 
 #if dotNET
 using System.Threading.Tasks;
@@ -15,7 +16,6 @@ namespace Syncano4.Shared
         private readonly Func<ILazyLinkProvider, string> _getLink;
         private readonly ISyncanoHttpClient _httpClient;
         private ILazyLinkProvider _instanceLazyLinkProvider;
-        private SyncanoSerializer _syncanoSerializer = new SyncanoSerializer();
 
         public SyncanoRepository(Func<ILazyLinkProvider, string> getLink, ILazyLinkProvider instanceLazyLinkProvider, ISyncanoHttpClient httpClient)
         {
@@ -74,12 +74,12 @@ namespace Syncano4.Shared
 
         public T Add(K addArgs)
         {
-            return _httpClient.Post<T>(_getLink(GetLazyLinkProvider()), _syncanoSerializer.ToDictionary(addArgs));
+            return _httpClient.Post<T>(_getLink(GetLazyLinkProvider()), SyncanoJsonConverter.ToDictionary(addArgs));
         }
 
         public T Update(string key, T objectToUpdate)
         {
-            return _httpClient.Post<T>(string.Format("{0}{1}/", _getLink(GetLazyLinkProvider()), key), _syncanoSerializer.ToDictionary(objectToUpdate))
+            return _httpClient.Post<T>(string.Format("{0}{1}/", _getLink(GetLazyLinkProvider()), key), SyncanoJsonConverter.ToDictionary(objectToUpdate))
                 ;
         }
 
@@ -91,7 +91,7 @@ namespace Syncano4.Shared
 
         public T Patch(string key, T objectToUpdate)
         {
-            return _httpClient.Patch<T>(string.Format("{0}{1}/", _getLink(GetLazyLinkProvider()), key), _syncanoSerializer.ToDictionary(objectToUpdate))
+            return _httpClient.Patch<T>(string.Format("{0}{1}/", _getLink(GetLazyLinkProvider()), key), SyncanoJsonConverter.ToDictionary(objectToUpdate))
                 ;
         }
 
@@ -147,12 +147,12 @@ namespace Syncano4.Shared
 
         public async Task<T> AddAsync(K addArgs)
         {
-            return await _httpClient.PostAsync<T>(_getLink(await GetLazyLinkProvider()), _syncanoSerializer.ToDictionary(addArgs));
+            return await _httpClient.PostAsync<T>(_getLink(await GetLazyLinkProvider()), SyncanoJsonConverter.ToDictionary(addArgs));
         }
 
         public async Task<T> UpdateAsync(string key, T objectToUpdate)
         {
-            return await _httpClient.PostAsync<T>(string.Format("{0}{1}/",_getLink(await GetLazyLinkProvider()),key), _syncanoSerializer.ToDictionary(objectToUpdate));
+            return await _httpClient.PostAsync<T>(string.Format("{0}{1}/",_getLink(await GetLazyLinkProvider()),key), SyncanoJsonConverter.ToDictionary(objectToUpdate));
         }
 
         public async Task<T> UpdateAsync(int key, T objectToUpdate)
@@ -162,7 +162,7 @@ namespace Syncano4.Shared
 
         public async Task<T> PatchAsync(string key, T objectToUpdate)
         {
-            return await _httpClient.PatchAsync<T>(string.Format("{0}{1}/", _getLink(await GetLazyLinkProvider()), key), _syncanoSerializer.ToDictionary(objectToUpdate));
+            return await _httpClient.PatchAsync<T>(string.Format("{0}{1}/", _getLink(await GetLazyLinkProvider()), key), SyncanoJsonConverter.ToDictionary(objectToUpdate));
         }
 
         public async Task<T> PatchAsync(int key, T objectToUpdate)

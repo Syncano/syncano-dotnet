@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -47,6 +48,17 @@ namespace Syncano4.Shared
         public string Name { get; set; }
 
 
+        [JsonProperty("filter_index")]
+        public bool CanBeFiltered { get; set; }
+
+
+        [JsonProperty("order_index")]
+        public bool CanBeOrdered { get; set; }
+
+
+        [JsonIgnore]
+        public PropertyInfo PropertyInfo { get; set; }
+
 
 
 
@@ -87,6 +99,6 @@ namespace Syncano4.Shared
 
     public enum FieldType
     {
-        Text, String, Integer, Float, Boolean, Datetime, File, Reference
+        NotSet,Text, String, Integer, Float, Boolean, Datetime, File, Reference
     }
 }

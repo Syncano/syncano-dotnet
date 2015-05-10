@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Shouldly;
 using Syncano4.Shared;
+using Syncano4.Shared.Serialization;
 using Xunit;
 
 namespace Syncano4.Tests.Unity3d
@@ -33,10 +34,10 @@ namespace Syncano4.Tests.Unity3d
         /// </summary>
         public class SampleObject : DataObject
         {
-            [JsonProperty("order")]
+            [SyncanoField("order")]
             public int Order { get; set; }
 
-            [JsonProperty("name")]
+            [SyncanoField("name")]
             public string Name { get; set; }
         }
 
