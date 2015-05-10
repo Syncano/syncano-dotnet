@@ -195,5 +195,25 @@ namespace Syncano4.Tests.Shared
             deleteObject.ShouldBe(null);
         }
 
+
+        [Fact]
+        public async Task Query_simple_equals()
+        {
+            //given
+            for (int i = 0; i < 3; i++)
+            {
+                await _objectsRepository.AddAsync(new TestObject() { Name = "Name " + i, CurrentTime = DateTime.UtcNow, MyId = i });
+            }
+
+            //when
+            var objects = await _objectsRepository.CreateQuery().Where(x => x.Id, 1).ToListAsync();
+
+            //then
+
+            objects.Current.Count.ShouldBe(1);
+            objects.Current[0].Name.ShouldBe("Name 0");
+            
+        }
+
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Syncano4.Shared.Query;
 
 #if dotNET
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace Syncano4.Shared
             : base(i => i.Links["objects"], new SchemaLazyLinkProvider(instanceResources, objectName), httpClient)
         {
         }
-        
+
 
 #if Unity3d
         public IList<T> List(int pageSize = 10)
@@ -25,6 +26,13 @@ namespace Syncano4.Shared
         public PageableResult<T> PageableList(int pageSize = 10)
         {
             var response = PageableList(new Dictionary<string, object>() {{"page_size", pageSize}});
+
+            return new PageableResult<T>(this.HttpClient, response);
+        }
+
+        public PageableResult<T> PageableList(SyncanoQuery<T> query )
+        {
+            var response = PageableList(new Dictionary<string, object>() { { "query", query.ToJson() } });
 
             return new PageableResult<T>(this.HttpClient, response);
         }
@@ -44,6 +52,18 @@ namespace Syncano4.Shared
             return new PageableResult<T>(this.HttpClient, response);
         }
 
+            public async Task<PageableResult<T>> PageableListAsync(SyncanoQuery<T> query)
+        {
+            var response = await PageableListAsync(new Dictionary<string, object>() {{"query", query.ToJson()}});
+
+            return new PageableResult<T>(this.HttpClient, response);
+        }
+
 #endif
+
+        public SyncanoQuery<T> CreateQuery()
+        {
+            return new SyncanoQuery<T>(this);
+        }
     }
 }

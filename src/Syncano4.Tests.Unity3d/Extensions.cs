@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Threading.Tasks;
 using Syncano4.Shared;
+using Syncano4.Shared.Query;
 
 namespace Syncano4.Tests.Unity3d
 {
@@ -57,6 +58,11 @@ namespace Syncano4.Tests.Unity3d
         public static Task<IList<T>> ListAsync<T>(this SyncanoDataObjects<T> repo, int pageSize) where T : DataObject
         {
             return Task.FromResult((repo).List(pageSize));
+        }
+
+        public static Task<PageableResult<T>> ToListAsync<T>(this SyncanoQuery<T> query) where T : DataObject
+        {
+            return Task.FromResult(query.ToList());
         }
 
 
