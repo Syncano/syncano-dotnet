@@ -11,5 +11,10 @@ namespace Syncano4.Unity3d
         {
             return  (T) propertyInfo.GetCustomAttributes(typeof (T), false).FirstOrDefault();
         }
+
+        public static Type GetTypeInfo(this Type t)
+        {
+            return t;
+        }
     }
 }

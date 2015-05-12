@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using Newtonsoft.Json;
 using Syncano4.Shared;
+using Syncano4.Shared.Serialization;
 
 namespace Syncano4.Unity3d
 {
@@ -94,7 +95,7 @@ namespace Syncano4.Unity3d
         {
             var content = Get(methodName, parameters);
 
-            return JsonConvert.DeserializeObject<SyncanoResponse<T>>(content);
+            return SyncanoJsonConverter.DeserializeObject<SyncanoResponse<T>>(content);
         }
         
 
@@ -104,7 +105,7 @@ namespace Syncano4.Unity3d
             try
             {
                 var content = Get(link, null);
-                return JsonConvert.DeserializeObject<T>(content);
+                return SyncanoJsonConverter.DeserializeObject<T>(content);
             }
             catch (WebException e)
             {
@@ -183,7 +184,7 @@ namespace Syncano4.Unity3d
                     }
                 }
 
-                return JsonConvert.DeserializeObject<T>(responseString);
+                return SyncanoJsonConverter.DeserializeObject<T>(responseString);
             }
             catch (WebException e)
             {

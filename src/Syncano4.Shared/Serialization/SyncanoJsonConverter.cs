@@ -6,6 +6,10 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
+#if Unity3d
+using Syncano4.Unity3d;
+#endif
+
 namespace Syncano4.Shared.Serialization
 {
     public class SyncanoJsonContractResolver:DefaultContractResolver
@@ -31,7 +35,8 @@ namespace Syncano4.Shared.Serialization
             var syncanoFieldAttribute = (SyncanoFieldAttribute) member.GetCustomAttributes(typeof (SyncanoFieldAttribute), false).Single();
 
             property.PropertyName = syncanoFieldAttribute.Name;
-
+            property.HasMemberAttribute = true;
+            property.Writable = true;
             return property;
 
         }
@@ -42,7 +47,7 @@ namespace Syncano4.Shared.Serialization
     {
         public static string Serialize(object o)
         {
-            var jsonSettings = new JsonSerializerSettings() { ContractResolver = new SyncanoJsonContractResolver() };
+            var jsonSettings = new JsonSerializerSettings() { ContractResolver = new SyncanoJsonContractResolver()  };
             return JsonConvert.SerializeObject(o, jsonSettings);
         }
 
@@ -54,6 +59,16 @@ namespace Syncano4.Shared.Serialization
             {
                 return JsonConvert.DeserializeObject<Dictionary<string, object>>(JsonConvert.SerializeObject(objectToSerialize));
             }
+        }
+
+        public static T DeserializeObject<T>(string json)
+        {
+            var jsonSettings = new JsonSerializerSettings();
+
+            if (typeof (T).GetTypeInfo().IsSubclassOf(typeof (DataObject)))
+                jsonSettings.ContractResolver = new SyncanoJsonContractResolver();
+
+            return JsonConvert.DeserializeObject<T>(json, jsonSettings);
         }
     }
 

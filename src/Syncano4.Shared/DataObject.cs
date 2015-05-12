@@ -10,19 +10,20 @@ namespace Syncano4.Shared
     public class DataObject: IEquatable<DataObject>
     {
         [SyncanoField("id", Ignore = true)]
-        public int Id { get; private set; }
+        public int Id { get; protected set; }
 
         [SyncanoField("revision", Ignore = true)]
-        public int Revision { get; private set; }
+        public int Revision { get; protected set; }
         
         [SyncanoField("created_at", Ignore = true)]
-        public DateTime CreatedAt { get; private set; }
+        public DateTime CreatedAt { get; protected set; }
 
         [SyncanoField("updated_at", Ignore = true)]
-        public DateTime UpdatedAt { get; private set; }
+        public DateTime UpdatedAt { get; protected set; }
         
         [SyncanoField("links", Ignore = true)]
-        public Dictionary<string, string> Links { get; private set; }
+        public Dictionary<string, string> Links { get; protected set; }
+
         
         public bool Equals(DataObject other)
         {

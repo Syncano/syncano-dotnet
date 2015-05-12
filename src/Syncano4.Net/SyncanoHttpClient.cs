@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Syncano4.Shared;
+using Syncano4.Shared.Serialization;
 
 namespace Syncano4.Net
 {
@@ -69,7 +70,7 @@ namespace Syncano4.Net
             var response = await _client.GetAsync(CreateGetUri(methodName, parameters));
             var content = await response.Content.ReadAsStringAsync();
 
-            return JsonConvert.DeserializeObject<SyncanoResponse<T>>(content);
+            return SyncanoJsonConverter.DeserializeObject<SyncanoResponse<T>>(content);
         }
 
         public async Task<T> GetAsync<T>(string methodName)
@@ -81,7 +82,7 @@ namespace Syncano4.Net
 
             var content = await response.Content.ReadAsStringAsync();
 
-            return JsonConvert.DeserializeObject<T>(content);
+            return SyncanoJsonConverter.DeserializeObject<T>(content);
         }
 
         public async Task DeleteAsync(string link)
@@ -102,7 +103,7 @@ namespace Syncano4.Net
             {
                 throw new SyncanoException(await response.Content.ReadAsStringAsync());
             }
-            return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
+            return SyncanoJsonConverter.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
         }
 
         public async Task<T> PatchAsync<T>(string endpoint, IDictionary<string, object> parameters)
@@ -118,7 +119,7 @@ namespace Syncano4.Net
             {
                 throw new SyncanoException(await response.Content.ReadAsStringAsync());
             }
-            return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
+            return SyncanoJsonConverter.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
         }
 
         private string CreateParametersString(IDictionary<string, object> query)
