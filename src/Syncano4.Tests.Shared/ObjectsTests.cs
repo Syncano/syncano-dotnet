@@ -41,7 +41,7 @@ namespace Syncano4.Tests.Shared
             [SyncanoField("name")]
             public string Name { get; set; }
 
-            //[JsonProperty("current_time")]
+            [SyncanoField("current_time")]
             public DateTime CurrentTime { get; set; }
 
             [SyncanoField("ischecked")]
