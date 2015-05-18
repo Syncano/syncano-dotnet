@@ -235,5 +235,27 @@ namespace Syncano4.Tests.Shared
 
         }
 
+
+        [Fact]
+        public async Task Query_simple_byfield_orderby()
+        {
+            //given
+            for (int i = 0; i < 3; i++)
+            {
+                await _objectsRepository.AddAsync(new TestObject() { Name = "Name " + i, CurrentTime = DateTime.UtcNow, MyId = i });
+            }
+
+            //when
+            var objects = await _objectsRepository.CreateQuery().OrderByDescending(x => x.MyId).ToListAsync();
+
+            //then
+
+            objects.Current.Count.ShouldBe(3);
+            objects.Current[0].Name.ShouldBe("Name 2");
+            objects.Current[1].Name.ShouldBe("Name 1");
+            objects.Current[2].Name.ShouldBe("Name 0");
+
+        }
+
     }
 }

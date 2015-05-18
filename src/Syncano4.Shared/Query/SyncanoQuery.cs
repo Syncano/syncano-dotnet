@@ -20,6 +20,7 @@ namespace Syncano4.Shared.Query
     {
         private readonly SyncanoDataObjects<T> _syncanoDataObjects;
         private FieldQuery _fieldQuery;
+        List<string> _orderBy = new List<string>();
 
         public Dictionary<string, Dictionary<string, object>> ToDictionary()
         {
@@ -28,6 +29,9 @@ namespace Syncano4.Shared.Query
 
         public string ToJson()
         {
+            if (_fieldQuery == null)
+                return null;
+
             return JsonConvert.SerializeObject(_fieldQuery.ToDictionary());
         }
 
@@ -76,31 +80,18 @@ namespace Syncano4.Shared.Query
         }
 #endif
 
+        public SyncanoQuery<T> OrderByDescending(Expression<Func<T, object>> memberExpression)
+        {
+            string fieldName = GetPropertyName(memberExpression).ToLower();
+            _orderBy.Add($"-{fieldName}");
+            return this;
+        }
+
+        public string GetOrderByFields()
+        {
+            return string.Join(",", _orderBy.ToArray());
+        }
     }
-
-    public class FieldQuery
-    {
-        private readonly string _fieldName;
-        private readonly SyncanoQueryExpression _expression;
-
-        public string FieldName
-        {
-            get { return _fieldName; }
-        }
-        
-        public FieldQuery(string fieldName, SyncanoQueryExpression expression)
-        {
-            _fieldName = fieldName;
-            _expression = expression;
-        }
-
-        public Dictionary<string, Dictionary<string, object>> ToDictionary()
-        {
-            return new Dictionary<string, Dictionary<string, object>>() { { FieldName,_expression.ToDictionary() } };
-        }
-
-    }
-
 
 
     public abstract class SyncanoQueryExpression

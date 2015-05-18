@@ -54,7 +54,7 @@ namespace Syncano4.Shared
 
             public async Task<PageableResult<T>> PageableListAsync(SyncanoQuery<T> query)
         {
-            var response = await PageableListAsync(new Dictionary<string, object>() {{"query", query.ToJson()}});
+            var response = await PageableListAsync(new Dictionary<string, object>() {{"query", query.ToJson()}, {"order_by", query.GetOrderByFields()} });
 
             return new PageableResult<T>(this.HttpClient, response);
         }
