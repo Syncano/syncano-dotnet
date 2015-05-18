@@ -15,7 +15,8 @@ namespace Syncano4.Unity3d
     {
         private readonly string _apiKey;
         private readonly WebClient _client;
-        private readonly string _baseUrl;
+        private readonly string _baseUrl = "https://api.syncano.io";
+        private HttpContentFactory _contentFactory;
 
         /// <summary>
         /// Creates SyncanoHttpClientObject.
@@ -25,11 +26,11 @@ namespace Syncano4.Unity3d
         public SyncanoHttpClient(string apiKey)
         {
             _apiKey = apiKey;
-            _baseUrl = string.Format("https://api.syncano.io");
+            _contentFactory = new HttpContentFactory();
             _client = new WebClient();
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
         }
-        
+
         private string CreateBaseUri(string methodName, IDictionary<string, object> parameters)
         {
             var sb = new StringBuilder(_baseUrl);
@@ -51,7 +52,7 @@ namespace Syncano4.Unity3d
                     {
                         if (each.Value.GetType().IsArray)
                         {
-                            var array = (Array)each.Value;
+                            var array = (Array) each.Value;
 
                             foreach (var item in array)
                             {
@@ -84,9 +85,10 @@ namespace Syncano4.Unity3d
             }
         }
 
-        private HttpWebRequest CreateRequest(string methodName, string httpMethod, IDictionary<string, object> parameters)
+        private HttpWebRequest CreateRequest(string methodName, string httpMethod,
+            IDictionary<string, object> parameters)
         {
-            var request = (HttpWebRequest)WebRequest.Create(CreateBaseUri(methodName, parameters));
+            var request = (HttpWebRequest) WebRequest.Create(CreateBaseUri(methodName, parameters));
             request.Method = httpMethod;
             return request;
         }
@@ -97,11 +99,10 @@ namespace Syncano4.Unity3d
 
             return SyncanoJsonConverter.DeserializeObject<SyncanoResponse<T>>(content);
         }
-        
+
 
         public T Get<T>(string link)
         {
-
             try
             {
                 var content = Get(link, null);
@@ -120,55 +121,37 @@ namespace Syncano4.Unity3d
         public void Delete(string link)
         {
             var request = CreateRequest(link, "DELETE", null);
-            var response =  (HttpWebResponse)request.GetResponse();
+            var response = (HttpWebResponse) request.GetResponse();
 
             if (response.StatusCode != HttpStatusCode.NoContent)
             {
                 throw new SyncanoException("Failed to delete." + GetResponseContent(response));
             }
-
-
         }
 
-        public T Patch<T>(string endpoint, IDictionary<string, object> parameters)
+        public T Patch<T>(string endpoint, IRequestContent requestContent)
         {
-            var request = CreateRequest(endpoint, "PATCH" , null);
-            return SendRequest<T>(parameters, request);
+            var request = CreateRequest(endpoint, "PATCH", null);
+            return SendRequest<T>(requestContent, request);
         }
 
 
-        public T Post<T>(string endpoint, IDictionary<string, object> parameters)
+        public T Post<T>(string endpoint, IRequestContent requestContent)
         {
             var request = CreateRequest(endpoint, WebRequestMethods.Http.Post, null);
-            return SendRequest<T>(parameters, request);
+            return SendRequest<T>(requestContent, request);
         }
 
-        private  T SendRequest<T>(IDictionary<string, object> parameters, HttpWebRequest request)
+        private T SendRequest<T>(IRequestContent requestContent, HttpWebRequest request)
         {
-            request.ContentType = "application/x-www-form-urlencoded";
-
-            StringBuilder sb = new StringBuilder();
-
-            bool firstParam = true;
-            foreach (var parameter in parameters.Where(p => p.Value != null))
-            {
-                if (!firstParam)
-                    sb.Append("&");
-                else
-                {
-                    firstParam = false;
-                }
-
-                sb.AppendFormat("{0}={1}", parameter.Key,
-                    parameter.Value is DateTime ? ((DateTime) parameter.Value).ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ") : Uri.EscapeDataString(parameter.Value.ToString())
-                    /*.Replace("%20","+")*/);
-            }
-            var postBytes = Encoding.UTF8.GetBytes(sb.ToString());
-            request.ContentLength = postBytes.Length;
+            var content = _contentFactory.Create(requestContent);
+            request.ContentType = content.ContentType;
+            var bytes = content.GetBytes();
+            request.ContentLength = bytes.Length;
 
             using (var requestStream = request.GetRequestStream())
             {
-                requestStream.Write(postBytes, 0, postBytes.Length);
+                requestStream.Write(bytes, 0, bytes.Length);
                 requestStream.Flush();
             }
             HttpWebResponse response = null;
@@ -209,37 +192,6 @@ namespace Syncano4.Unity3d
                 }
             }
             return message;
-        }
-
-
-        private string CreateParametersString(object query)
-        {
-            var sb = new StringBuilder();
-
-            if (query != null)
-            {
-                foreach (var each in query.GetType().GetProperties())
-                {
-                    if (each.GetValue(query, null) != null)
-                    {
-                        if (each.GetValue(query, null).GetType().IsArray)
-                        {
-                            var array = (Array) each.GetValue(query, null);
-
-                            foreach (var item in array)
-                            {
-                                sb.AppendFormat("&{0}={1}", each.Name, Uri.EscapeDataString(item.ToString()));
-                            }
-                        }
-                        else
-                        {
-                            sb.AppendFormat("&{0}={1}", each.Name, Uri.EscapeDataString(each.GetValue(query, null).ToString()));
-                        }
-                    }
-                }
-            }
-
-            return sb.ToString();
         }
     }
 }

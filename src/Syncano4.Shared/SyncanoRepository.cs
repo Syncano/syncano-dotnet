@@ -17,7 +17,8 @@ namespace Syncano4.Shared
         private readonly ISyncanoHttpClient _httpClient;
         private ILazyLinkProvider _instanceLazyLinkProvider;
 
-        public SyncanoRepository(Func<ILazyLinkProvider, string> getLink, ILazyLinkProvider instanceLazyLinkProvider, ISyncanoHttpClient httpClient)
+        public SyncanoRepository(Func<ILazyLinkProvider, string> getLink, ILazyLinkProvider instanceLazyLinkProvider,
+            ISyncanoHttpClient httpClient)
         {
             _getLink = getLink;
             _httpClient = httpClient;
@@ -74,12 +75,13 @@ namespace Syncano4.Shared
 
         public T Add(K addArgs)
         {
-            return _httpClient.Post<T>(_getLink(GetLazyLinkProvider()), SyncanoJsonConverter.ToDictionary(addArgs));
+            return _httpClient.Post<T>(_getLink(GetLazyLinkProvider()), ToRequestData(addArgs));
         }
 
         public T Update(string key, T objectToUpdate)
         {
-            return _httpClient.Post<T>(string.Format("{0}{1}/", _getLink(GetLazyLinkProvider()), key), SyncanoJsonConverter.ToDictionary(objectToUpdate))
+            return _httpClient.Post<T>(string.Format("{0}{1}/", _getLink(GetLazyLinkProvider()), key),
+                ToRequestData(objectToUpdate))
                 ;
         }
 
@@ -91,8 +93,8 @@ namespace Syncano4.Shared
 
         public T Patch(string key, T objectToUpdate)
         {
-            return _httpClient.Patch<T>(string.Format("{0}{1}/", _getLink(GetLazyLinkProvider()), key), SyncanoJsonConverter.ToDictionary(objectToUpdate))
-                ;
+            return _httpClient.Patch<T>(string.Format("{0}{1}/", _getLink(GetLazyLinkProvider()), key),
+                ToRequestData(objectToUpdate));
         }
 
         public T Update(int key, T objectToUpdate)
@@ -178,6 +180,4 @@ namespace Syncano4.Shared
             return new FormRequestContent(SyncanoJsonConverter.ToDictionary(requestObject));
         }
     }
-
-    
 }

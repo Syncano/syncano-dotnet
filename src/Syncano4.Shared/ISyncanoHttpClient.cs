@@ -16,9 +16,9 @@ namespace Syncano4.Shared
 
         SyncanoResponse<T> List<T>(string link, IDictionary<string, object> parameters);
 
-        T Post<T>(string instances, IDictionary<string, object> parameters);
+        T Post<T>(string instances, IRequestContent requestContent);
 
-        T Patch<T>(string instances, IDictionary<string, object> parameters);
+        T Patch<T>(string instances, IRequestContent requestContent);
 #endif
 
 
