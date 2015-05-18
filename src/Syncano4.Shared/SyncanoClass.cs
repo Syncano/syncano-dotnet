@@ -48,12 +48,12 @@ namespace Syncano4.Shared
         public string Name { get; set; }
 
 
-        [JsonProperty("filter_index")]
-        public bool CanBeFiltered { get; set; }
+        [JsonProperty("filter_index",NullValueHandling = NullValueHandling.Ignore)]
+        public bool? CanBeFiltered { get; set; }
 
 
-        [JsonProperty("order_index")]
-        public bool CanBeOrdered { get; set; }
+        [JsonProperty("order_index", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? CanBeOrdered { get; set; }
 
 
         [JsonIgnore]

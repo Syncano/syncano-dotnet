@@ -28,14 +28,22 @@ namespace Syncano4.Shared
                 var syncanoFieldAttribute = propertyInfo.GetCustomAttribute<SyncanoFieldAttribute>();
                 if (includeSystemFields || syncanoFieldAttribute.Ignore == false)
                 {
-                    fieldDefs.Add(new FieldDef()
+                    var fieldDef = new FieldDef()
                     {
                         Name = syncanoFieldAttribute.Name,
                         Type = GetSyncanoType(propertyInfo.PropertyType),
                         PropertyInfo = propertyInfo,
                         CanBeFiltered = syncanoFieldAttribute.CanBeFiltered,
                         CanBeOrdered = syncanoFieldAttribute.CanBeOrdered
-                    });
+                    };
+
+                    if (fieldDef.Type == FieldType.File || fieldDef.Type == FieldType.Text)
+                    {
+                        fieldDef.CanBeFiltered = null;
+                        fieldDef.CanBeOrdered = null;
+                    }
+
+                    fieldDefs.Add(fieldDef);
                 }
             }
             return fieldDefs;

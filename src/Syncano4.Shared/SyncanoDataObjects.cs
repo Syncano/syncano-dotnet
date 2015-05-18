@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Syncano4.Shared.Query;
-
+using Syncano4.Shared.Serialization;
 #if dotNET
 using System.Threading.Tasks;
 
@@ -64,6 +64,11 @@ namespace Syncano4.Shared
         public SyncanoQuery<T> CreateQuery()
         {
             return new SyncanoQuery<T>(this);
+        }
+
+        protected override IRequestContent ToRequestData(object requestObject)
+        {
+            return new JsonRequestContent(SyncanoJsonConverter.Serialize(requestObject)) ;
         }
     }
 }

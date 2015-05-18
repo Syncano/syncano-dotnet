@@ -19,7 +19,8 @@ namespace Syncano4.Net
     {
         private readonly string _apiKey;
         private readonly HttpClient _client;
-        private readonly string _baseUrl;
+        private readonly string _baseUrl = "https://api.syncano.io";
+        private HttpContentFactory _contentFactory;
 
         /// <summary>
         /// Creates SyncanoHttpClientObject.
@@ -29,8 +30,8 @@ namespace Syncano4.Net
         public SyncanoHttpClient(string apiKey)
         {
             _apiKey = apiKey;
-            _baseUrl = string.Format("https://api.syncano.io");
             _client = new HttpClient();
+            _contentFactory = new HttpContentFactory();
         }
 
         private string CreateGetUri(string methodName, IDictionary<string, object> query = null)
@@ -93,11 +94,9 @@ namespace Syncano4.Net
         }
 
 
-        public async Task<T> PostAsync<T>(string endpoint, IDictionary<string, object> parameters)
+        public async Task<T> PostAsync<T>(string endpoint, IRequestContent requestContent)
         {
-            var postContent =
-                new FormUrlEncodedContent(parameters.Where(p => p.Value != null)
-                    .ToDictionary(p => p.Key, p => p.Value is DateTime ? ((DateTime) p.Value).ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ") : p.Value.ToString()));
+            HttpContent postContent = _contentFactory.Create(requestContent);
             var response = await _client.PostAsync(CreateGetUri(endpoint, null), postContent);
             if (new[] {HttpStatusCode.Created, HttpStatusCode.OK}.Contains(response.StatusCode) == false)
             {
@@ -106,13 +105,10 @@ namespace Syncano4.Net
             return SyncanoJsonConverter.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
         }
 
-        public async Task<T> PatchAsync<T>(string endpoint, IDictionary<string, object> parameters)
+        public async Task<T> PatchAsync<T>(string endpoint, IRequestContent requestContent)
         {
-            var postContent =
-                new FormUrlEncodedContent(parameters.Where(p => p.Value != null)
-                    .ToDictionary(p => p.Key, p => p.Value is DateTime ? ((DateTime) p.Value).ToString("yyyy-MM-ddTHH:mm:ss.ffffffZ") : p.Value.ToString()));
-
-            HttpRequestMessage msg = new HttpRequestMessage(new HttpMethod("PATCH"), CreateGetUri(endpoint, null));
+            HttpContent postContent = _contentFactory.Create(requestContent);
+            var msg = new HttpRequestMessage(new HttpMethod("PATCH"), CreateGetUri(endpoint, null));
             msg.Content = postContent;
             var response = await _client.SendAsync(msg);
             if (new[] {HttpStatusCode.Created, HttpStatusCode.OK}.Contains(response.StatusCode) == false)
@@ -150,6 +146,31 @@ namespace Syncano4.Net
             }
 
             return sb.ToString();
+        }
+    }
+
+     class HttpContentFactory
+    {
+        public HttpContent Create(IRequestContent requestContent)
+        {
+            if (requestContent is FormRequestContent)
+                return Create((FormRequestContent) requestContent);
+            if(requestContent is JsonRequestContent)
+                return Create((JsonRequestContent)requestContent);
+
+            throw new NotSupportedException("Cannot create HttpContent for: " + requestContent);
+
+        }
+
+        protected HttpContent Create(JsonRequestContent jsonRequestContent)
+        {
+           return new StringContent(jsonRequestContent.Json, Encoding.UTF8, "application/json");
+        }
+
+        protected HttpContent Create(FormRequestContent formRequestContent)
+        {
+           return new FormUrlEncodedContent(formRequestContent.Parameters.Where(p => p.Value != null)
+                     .ToDictionary(p => p.Key, p => p.Value.ToString()));
         }
     }
 }

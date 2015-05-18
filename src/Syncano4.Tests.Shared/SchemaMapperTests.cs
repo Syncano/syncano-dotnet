@@ -68,38 +68,6 @@ namespace Syncano4.Tests.Shared
             _testOutput.WriteLine(json);
             json.ShouldContain("ABC");
         }
-
-
-        [Fact]
-        public void Serialize_datetime_only_user_defined_datetimes_are_serialized_in_a_object_wrapper()
-        {
-            //given
-            var simpleClass = new SimpleClass() { Name = "ABC", OrderNumber = 1, Date = DateTime.Today };
-
-            //when
-            string json = SyncanoJsonConverter.Serialize(simpleClass);
-
-
-            //then
-            _testOutput.WriteLine(json);
-            json.ShouldContain("date\":{\"type\":\"datetime\",\"value\":");
-            json.ShouldContain("\"updated_at\":\"0001-01-01T00:00:00\"");
-            
-        }
-
-        [Fact]
-        public void Deserialize_datetime_user_defined()
-        {
-            //given
-            var simpleClass = new SimpleClass() { Name = "ABC", OrderNumber = 1, Date = DateTime.Today };
-            string json = SyncanoJsonConverter.Serialize(simpleClass);
-
-            //when
-            var deserialized = SyncanoJsonConverter.DeserializeObject<SimpleClass>(json);
-
-            //then
-            deserialized.Date.ShouldBe(simpleClass.Date);
-
-        }
+        
     }
 }

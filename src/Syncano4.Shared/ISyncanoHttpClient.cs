@@ -31,9 +31,9 @@ namespace Syncano4.Shared
 
         Task<T> GetAsync<T>(string link);
 
-        Task<T> PostAsync<T>(string instances, IDictionary<string, object> parameters);
+        Task<T> PostAsync<T>(string instances, IRequestContent requestContent);
 
-        Task<T> PatchAsync<T>(string instances, IDictionary<string, object> parameters);
+        Task<T> PatchAsync<T>(string instances, IRequestContent requestContent);
 
 #endif
     }

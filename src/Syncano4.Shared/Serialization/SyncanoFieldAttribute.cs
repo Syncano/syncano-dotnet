@@ -22,5 +22,7 @@ namespace Syncano4.Shared.Serialization
         public bool CanBeFiltered { get; set; }
 
 
+
+
     }
 }

@@ -147,12 +147,13 @@ namespace Syncano4.Shared
 
         public async Task<T> AddAsync(K addArgs)
         {
-            return await _httpClient.PostAsync<T>(_getLink(await GetLazyLinkProvider()), SyncanoJsonConverter.ToDictionary(addArgs));
+            return await _httpClient.PostAsync<T>(_getLink(await GetLazyLinkProvider()), ToRequestData(addArgs));
         }
 
+        
         public async Task<T> UpdateAsync(string key, T objectToUpdate)
         {
-            return await _httpClient.PostAsync<T>(string.Format("{0}{1}/",_getLink(await GetLazyLinkProvider()),key), SyncanoJsonConverter.ToDictionary(objectToUpdate));
+            return await _httpClient.PostAsync<T>(string.Format("{0}{1}/",_getLink(await GetLazyLinkProvider()),key), ToRequestData(objectToUpdate));
         }
 
         public async Task<T> UpdateAsync(int key, T objectToUpdate)
@@ -162,7 +163,7 @@ namespace Syncano4.Shared
 
         public async Task<T> PatchAsync(string key, T objectToUpdate)
         {
-            return await _httpClient.PatchAsync<T>(string.Format("{0}{1}/", _getLink(await GetLazyLinkProvider()), key), SyncanoJsonConverter.ToDictionary(objectToUpdate));
+            return await _httpClient.PatchAsync<T>(string.Format("{0}{1}/", _getLink(await GetLazyLinkProvider()), key), ToRequestData(objectToUpdate));
         }
 
         public async Task<T> PatchAsync(int key, T objectToUpdate)
@@ -171,5 +172,12 @@ namespace Syncano4.Shared
         }
 
 #endif
+
+        protected virtual IRequestContent ToRequestData(object requestObject)
+        {
+            return new FormRequestContent(SyncanoJsonConverter.ToDictionary(requestObject));
+        }
     }
+
+    
 }

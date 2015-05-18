@@ -20,7 +20,12 @@ namespace Syncano4.Shared
 
     class JsonRequestContent : IRequestContent
     {
-        public string Json { get; set; }
+        public JsonRequestContent(string json)
+        {
+            Json = json;
+        }
+
+        public string Json { get;  }
     }
 
 
