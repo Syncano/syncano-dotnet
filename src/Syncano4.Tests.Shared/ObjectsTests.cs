@@ -35,7 +35,7 @@ namespace Syncano4.Tests.Shared
         
         public class TestObject : DataObject
         {
-            [SyncanoField("myid")]
+            [SyncanoField("myid", CanBeFiltered = true, CanBeOrdered = true)]
             public long MyId { get; set; }
 
             [SyncanoField("name")]
@@ -198,7 +198,7 @@ namespace Syncano4.Tests.Shared
 
 
         [Fact]
-        public async Task Query_simple_equals()
+        public async Task Query_by_id_simple_equals()
         {
             //given
             for (int i = 0; i < 3; i++)
@@ -214,6 +214,25 @@ namespace Syncano4.Tests.Shared
             objects.Current.Count.ShouldBe(1);
             objects.Current[0].Name.ShouldBe("Name 0");
             
+        }
+
+        [Fact]
+        public async Task Query_simple_byfield_equals()
+        {
+            //given
+            for (int i = 0; i < 3; i++)
+            {
+                await _objectsRepository.AddAsync(new TestObject() { Name = "Name " + i, CurrentTime = DateTime.UtcNow, MyId = i });
+            }
+
+            //when
+            var objects = await _objectsRepository.CreateQuery().Where(x => x.MyId, 0).ToListAsync();
+
+            //then
+
+            objects.Current.Count.ShouldBe(1);
+            objects.Current[0].Name.ShouldBe("Name 0");
+
         }
 
     }
