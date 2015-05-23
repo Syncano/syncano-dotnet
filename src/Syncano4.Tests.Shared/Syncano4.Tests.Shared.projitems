@@ -9,6 +9,7 @@
     <Import_RootNamespace>Syncano4.Tests.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)QueryTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ObjectsTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ClassDefinitionsTests.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaMapperTests.cs" />

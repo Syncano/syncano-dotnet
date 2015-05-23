@@ -4,24 +4,17 @@ namespace Syncano4.Shared.Query
 {
     public class FieldQuery
     {
-        private readonly string _fieldName;
-        private readonly SyncanoQueryExpression _expression;
+        public string OperatorName { get; }
 
-        public string FieldName
-        {
-            get { return _fieldName; }
-        }
-        
-        public FieldQuery(string fieldName, SyncanoQueryExpression expression)
-        {
-            _fieldName = fieldName;
-            _expression = expression;
-        }
+        public object Value { get; }
 
-        public Dictionary<string, Dictionary<string, object>> ToDictionary()
-        {
-            return new Dictionary<string, Dictionary<string, object>>() { { FieldName,_expression.ToDictionary() } };
-        }
+        public string FieldName { get; }
 
-    }
+        public FieldQuery(string fieldName, string operatorName, object value)
+        {
+            FieldName = fieldName;
+            OperatorName = operatorName;
+            Value = value;
+        }
+     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
@@ -19,20 +20,31 @@ namespace Syncano4.Shared.Query
     public class SyncanoQuery<T> where T:DataObject
     {
         private readonly SyncanoDataObjects<T> _syncanoDataObjects;
-        private FieldQuery _fieldQuery;
-        List<string> _orderBy = new List<string>();
+        private List<FieldQuery> _fieldQueries = new List<FieldQuery>();
 
-        public Dictionary<string, Dictionary<string, object>> ToDictionary()
+        public IEnumerable<FieldQuery> FieldQueries
         {
-            return _fieldQuery.ToDictionary();
+            get { return _fieldQueries; }
         }
+
+        List<string> _orderBy = new List<string>();
+        private List<FieldDef> _schema;
+
 
         public string ToJson()
         {
-            if (_fieldQuery == null)
+            if (_fieldQueries.Count == 0)
                 return null;
 
-            return JsonConvert.SerializeObject(_fieldQuery.ToDictionary());
+            Dictionary<string, Dictionary<string,object>> query = new Dictionary<string, Dictionary<string, object>>();
+            foreach (var fieldQuery in _fieldQueries)
+            {
+                if(query.ContainsKey(fieldQuery.FieldName) == false)
+                    query.Add(fieldQuery.FieldName, new Dictionary<string, object>());
+
+                query[fieldQuery.FieldName].Add(fieldQuery.OperatorName,fieldQuery.Value);
+            }
+            return JsonConvert.SerializeObject(query);
         }
 
         public SyncanoQuery(SyncanoDataObjects<T> syncanoDataObjects)
@@ -40,30 +52,78 @@ namespace Syncano4.Shared.Query
             _syncanoDataObjects = syncanoDataObjects;
         }
 
-        public SyncanoQuery<T> Where(Expression<Func<T, object>> memberExpression, object i)
+
+        string GetFieldName(string propertyName)
         {
-            string fieldName = GetPropertyName(memberExpression).ToLower();
-            _fieldQuery = new FieldQuery(fieldName, new SyncanoEqual(i));
+            if(_schema == null)
+                _schema = SchemaMapping.GetSchema<T>();
+
+            return _schema.Single(f => f.PropertyInfo.Name == propertyName).Name;
+        }
+      
+        public SyncanoQuery<T> Where(Expression<Func<T, bool>> memberExpression)
+        {
+            var binaryExpression = memberExpression.Body as BinaryExpression;
+
+            if (binaryExpression != null)
+            {
+                var propertyName = ((MemberExpression) binaryExpression.Left).Member.Name;
+
+                
+
+                var constant = binaryExpression.Right as ConstantExpression;
+                
+                _fieldQueries.Add(new FieldQuery(GetFieldName(propertyName), GetSyncanoOperatorName(binaryExpression.NodeType), constant.Value));
+            }
+
             return this;
+        }
+
+        static string GetSyncanoOperatorName(ExpressionType expressionType)
+        {
+            switch (expressionType)
+            {
+                    case ExpressionType.GreaterThan:
+                    return "_gt";
+                case ExpressionType.GreaterThanOrEqual:
+                    return "_gte";
+                case ExpressionType.LessThan:
+                    return "_lt";
+                case ExpressionType.LessThanOrEqual:
+                    return "_lte";
+                case ExpressionType.Equal:
+                    return "_eq";
+                case ExpressionType.NotEqual:
+                    return "_neq";
+                default:
+                    throw new NotSupportedException($"Expression type {expressionType} is not supported");
+            }
         }
 
 
         public static string GetPropertyName<K>(System.Linq.Expressions.Expression<Func<K, object>> property)
         {
-            System.Linq.Expressions.LambdaExpression lambda = (System.Linq.Expressions.LambdaExpression)property;
-            System.Linq.Expressions.MemberExpression memberExpression;
+            LambdaExpression lambda = (System.Linq.Expressions.LambdaExpression)property;
 
+            var memberExpression = GetMemberExpression(lambda);
+
+            return ((PropertyInfo)memberExpression.Member).Name;
+        }
+
+        private static MemberExpression GetMemberExpression(LambdaExpression lambda)
+        {
+            MemberExpression memberExpression;
             if (lambda.Body is System.Linq.Expressions.UnaryExpression)
             {
-                System.Linq.Expressions.UnaryExpression unaryExpression = (System.Linq.Expressions.UnaryExpression)(lambda.Body);
-                memberExpression = (System.Linq.Expressions.MemberExpression)(unaryExpression.Operand);
+                System.Linq.Expressions.UnaryExpression unaryExpression =
+                    (System.Linq.Expressions.UnaryExpression) (lambda.Body);
+                memberExpression = (System.Linq.Expressions.MemberExpression) (unaryExpression.Operand);
             }
             else
             {
-                memberExpression = (System.Linq.Expressions.MemberExpression)(lambda.Body);
+                memberExpression = (System.Linq.Expressions.MemberExpression) (lambda.Body);
             }
-
-            return ((PropertyInfo)memberExpression.Member).Name;
+            return memberExpression;
         }
 
 #if dotNET
@@ -91,30 +151,7 @@ namespace Syncano4.Shared.Query
         {
             return string.Join(",", _orderBy.ToArray());
         }
+
+
     }
-
-
-    public abstract class SyncanoQueryExpression
-    {
-        public abstract Dictionary<string, object> ToDictionary();
     }
-
-    class SyncanoEqual : SyncanoQueryExpression
-    {
-        private readonly object _value;
-
-        public SyncanoEqual(object value)
-        {
-            _value = value;
-        }
-
-
-        public override Dictionary<string, object> ToDictionary()
-        {
-            return new Dictionary<string, object>()
-            {
-                { "_eq", _value}
-            };
-        }
-    }
-}

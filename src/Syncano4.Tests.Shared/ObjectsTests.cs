@@ -207,7 +207,7 @@ namespace Syncano4.Tests.Shared
             }
 
             //when
-            var objects = await _objectsRepository.CreateQuery().Where(x => x.Id, 1).ToListAsync();
+            var objects = await _objectsRepository.CreateQuery().Where(x => x.Id == 1).ToListAsync();
 
             //then
 
@@ -226,7 +226,7 @@ namespace Syncano4.Tests.Shared
             }
 
             //when
-            var objects = await _objectsRepository.CreateQuery().Where(x => x.MyId, 0).ToListAsync();
+            var objects = await _objectsRepository.CreateQuery().Where(x => x.MyId == 0).ToListAsync();
 
             //then
 
