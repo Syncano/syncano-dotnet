@@ -34,10 +34,10 @@ namespace Syncano4.Tests.Unity3d
         /// </summary>
         public class SampleObject : DataObject
         {
-            [SyncanoField("order")]
+            [SyncanoField("order", CanBeOrdered = true, CanBeFiltered = true)]
             public int Order { get; set; }
 
-            [SyncanoField("name")]
+            [SyncanoField("name", CanBeOrdered = true, CanBeFiltered = true)]
             public string Name { get; set; }
         }
 
@@ -53,7 +53,7 @@ namespace Syncano4.Tests.Unity3d
             //switch to instance 
             var instanceResources = Syncano.Using(authKey).ResourcesFor(existingInstance);
 
-            //create class with two simple properties.  (at this moment manual mapping is required - this will change in the near future )
+            //create class with two simple properties. 
             var classDef = instanceResources.Schema.Add(NewClass.From<SampleObject>());
                 
 
@@ -72,7 +72,7 @@ namespace Syncano4.Tests.Unity3d
             //given an existingInstance
             string authKey = TestAuthKey;
             string existingInstance = TestFactory.CreateInstance();
-            string existingClass = TestFactory.CreateClass(existingInstance, typeof (SampleObject));
+            string existingClass = TestFactory.CreateClass<SampleObject>(existingInstance);
 
             //switch to instance 
             var instanceResources = Syncano.Using(authKey).ResourcesFor(existingInstance);
@@ -92,6 +92,39 @@ namespace Syncano4.Tests.Unity3d
             addedObject.Name.ShouldBe("Demo object 1");
 
             objectList.Count.ShouldBe(1);
+        }
+
+
+        [Fact]
+        public void FilterObjects()
+        {
+            //given an existingInstance
+            string authKey = TestAuthKey;
+            string existingInstance = TestFactory.CreateInstance();
+            string existingClass = TestFactory.CreateClass<SampleObject>(existingInstance);
+
+            //switch to instance 
+            var instanceResources = Syncano.Using(authKey).ResourcesFor(existingInstance);
+
+            //create some object
+            for (int i = 0; i < 10; i++)
+            {
+                var sampleObject = new SampleObject() { Name = "Demo object " + i, Order = i };
+                instanceResources.Objects<SampleObject>().Add(sampleObject);
+            }
+            
+            
+            //list objects
+            var objectList = instanceResources.Objects<SampleObject>().CreateQuery()
+                .Where(s => s.Order > 5)
+                .Where(s => s.Order <= 7)
+                .OrderByDescending(s => s.Name)
+                .ToList();
+
+            //verify
+            objectList.Current.Count.ShouldBe(2);
+            objectList.Current[0].Order.ShouldBe(7);
+            objectList.Current[1].Order.ShouldBe(6);
         }
     }
 }

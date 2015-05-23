@@ -32,7 +32,7 @@ namespace Syncano4.Shared
 
         public PageableResult<T> PageableList(SyncanoQuery<T> query )
         {
-            var response = PageableList(new Dictionary<string, object>() { { "query", query.ToJson() } });
+            var response = PageableList(new Dictionary<string, object>() { { "query", query.ToJson() }, {"order_by", query.GetOrderByFields()} });
 
             return new PageableResult<T>(this.HttpClient, response);
         }

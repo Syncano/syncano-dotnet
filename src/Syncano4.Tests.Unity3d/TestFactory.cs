@@ -18,15 +18,11 @@ namespace Syncano4.Tests.Unity3d
             return instance.Name;
         }
 
-        public static string CreateClass(string existingInstance, Type type)
+        public static string CreateClass<T>(string existingInstance)
         {
             var instanceResources = Syncano.Using(_authKey).ResourcesFor(existingInstance);
 
-            var classDef = instanceResources.Schema.Add(
-                new NewClass(type.Name,
-                    new FieldDef() {Name = "order", Type = FieldType.Integer},
-                    new FieldDef() {Name = "name", Type = FieldType.String})
-                );
+            var classDef = instanceResources.Schema.Add(NewClass.From<T>());
 
             return classDef.Name;
         }

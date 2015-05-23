@@ -142,7 +142,7 @@ namespace Syncano4.Shared.Query
 
         public SyncanoQuery<T> OrderByDescending(Expression<Func<T, object>> memberExpression)
         {
-            string fieldName = GetPropertyName(memberExpression).ToLower();
+            string fieldName = GetFieldName(GetPropertyName(memberExpression));
             _orderBy.Add($"-{fieldName}");
             return this;
         }
